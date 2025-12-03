@@ -114,6 +114,7 @@ impl Flags {
 
     /// Check whether the nth bit is set.
     pub fn test_nth(&self, bit: u32) -> bool {
+        #[cfg(not(feature = "sonair_certified"))]
         debug_assert!(bit < u32::BITS, "bit index out-of-bounds");
         self.0 & (1 << bit) != 0
     }
@@ -137,6 +138,7 @@ pub fn get_or_init_flags_cache(cache: &AtomicU32, init: impl FnOnce() -> Flags) 
         cold_path();
 
         flags = init();
+        #[cfg(not(feature = "sonair_certified"))]
         debug_assert!(
             !flags.contains(INITIALIZED),
             "initialized bit shouldn't be set"

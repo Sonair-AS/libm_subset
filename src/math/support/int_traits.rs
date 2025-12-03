@@ -1,10 +1,10 @@
-use core::{cmp, fmt, ops};
+use core::{cmp, ops};
 
 /// Minimal integer implementations needed on all integer types, including wide integers.
 #[allow(dead_code)] // Some constants are only used with tests
 pub trait MinInt:
     Copy
-    + fmt::Debug
+    // + fmt::Debug
     + ops::BitOr<Output = Self>
     + ops::Not<Output = Self>
     + ops::Shl<u32, Output = Self>
@@ -34,9 +34,9 @@ pub type OtherSign<I> = <I as MinInt>::OtherSign;
 #[allow(dead_code)]
 pub trait Int:
     MinInt
-    + fmt::Display
-    + fmt::Binary
-    + fmt::LowerHex
+    // + fmt::Display
+    // + fmt::Binary
+    // + fmt::LowerHex
     + ops::AddAssign
     + ops::SubAssign
     + ops::MulAssign
@@ -433,6 +433,7 @@ macro_rules! cast_into {
                 // All we can really do to enforce casting rules is check the rules when in
                 // debug mode.
                 #[cfg(not(feature = "compiler-builtins"))]
+                #[cfg(not(feature = "sonair_certified"))]
                 debug_assert!(<$into>::try_from(self).is_ok(), "failed cast from {self}");
                 self as $into
             }
@@ -458,6 +459,7 @@ macro_rules! cast_into_float {
         impl CastInto<$into> for $ty {
             fn cast(self) -> $into {
                 #[cfg(not(feature = "compiler-builtins"))]
+                #[cfg(not(feature = "sonair_certified"))]
                 debug_assert_eq!(self as $into as $ty, self, "inexact float cast");
                 self as $into
             }

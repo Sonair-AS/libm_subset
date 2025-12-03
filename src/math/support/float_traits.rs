@@ -1,6 +1,6 @@
 #![allow(unknown_lints)] // FIXME(msrv) we shouldn't need this
 
-use core::{fmt, mem, ops};
+use core::{mem, ops};
 
 use super::int_traits::{CastFrom, Int, MinInt};
 
@@ -9,7 +9,7 @@ use super::int_traits::{CastFrom, Int, MinInt};
 #[allow(dead_code)] // Some constants are only used with tests
 pub trait Float:
     Copy
-    + fmt::Debug
+    // + fmt::Debug
     + PartialEq
     + PartialOrd
     + ops::AddAssign
