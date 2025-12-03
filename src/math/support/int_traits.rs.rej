@@ -1,0 +1,20 @@
+--- src/math/support/int_traits.rs
++++ src/math/support/int_traits.rs
+@@ -1,13 +1,15 @@
+-use core::{cmp, fmt, ops};
++use core::{cmp, ops};
+
++#[cfg(not(feature = "sonair_certified"))]
+ mod narrowing_div;
++#[cfg(not(feature = "sonair_certified"))]
+ pub use narrowing_div::NarrowingDiv;
+
+ /// Minimal integer implementations needed on all integer types, including wide integers.
+ #[allow(dead_code)] // Some constants are only used with tests
+ pub trait MinInt:
+     Copy
+-    + fmt::Debug
++    // + fmt::Debug
+     + ops::BitOr<Output = Self>
+     + ops::Not<Output = Self>
+     + ops::Shl<u32, Output = Self>
