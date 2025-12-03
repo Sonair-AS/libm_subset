@@ -175,10 +175,12 @@ pub trait Float:
     fn copysign(self, other: Self) -> Self;
 
     /// Fused multiply add, rounding once.
+    #[cfg(not(feature = "sonair_certified"))]
     fn fma(self, y: Self, z: Self) -> Self;
 
     /// Returns (normalized exponent, normalized significand)
     #[allow(dead_code)]
+    #[cfg(not(feature = "sonair_certified"))]
     fn normalize(significand: Self::Int) -> (i32, Self::Int);
 
     /// Returns a number that represents the sign of self.
@@ -285,6 +287,7 @@ macro_rules! float_impl {
                     }
                 }
             }
+            #[cfg(not(feature = "sonair_certified"))]
             fn fma(self, y: Self, z: Self) -> Self {
                 cfg_if! {
                     // fma is not yet available in `core`
@@ -295,6 +298,7 @@ macro_rules! float_impl {
                     }
                 }
             }
+            #[cfg(not(feature = "sonair_certified"))]
             fn normalize(significand: Self::Int) -> (i32, Self::Int) {
                 let shift = significand.leading_zeros().wrapping_sub(Self::EXP_BITS);
                 (
@@ -386,6 +390,7 @@ pub const fn f64_to_bits(x: f64) -> u64 {
 }
 
 /// Trait for floats twice the bit width of another integer.
+#[cfg(not(feature = "sonair_certified"))]
 pub trait DFloat: Float {
     /// Float that is half the bit width of the floatthis trait is implemented for.
     type H: HFloat<D = Self>;
@@ -395,6 +400,7 @@ pub trait DFloat: Float {
 }
 
 /// Trait for floats half the bit width of another float.
+#[cfg(not(feature = "sonair_certified"))]
 pub trait HFloat: Float {
     /// Float that is double the bit width of the float this trait is implemented for.
     type D: DFloat<H = Self>;
@@ -403,6 +409,7 @@ pub trait HFloat: Float {
     fn widen(self) -> Self::D;
 }
 
+#[cfg(not(feature = "sonair_certified"))]
 macro_rules! impl_d_float {
     ($($X:ident $D:ident),*) => {
         $(
@@ -417,6 +424,7 @@ macro_rules! impl_d_float {
     };
 }
 
+#[cfg(not(feature = "sonair_certified"))]
 macro_rules! impl_h_float {
     ($($H:ident $X:ident),*) => {
         $(
@@ -431,12 +439,14 @@ macro_rules! impl_h_float {
     };
 }
 
+#[cfg(not(feature = "sonair_certified"))]
 impl_d_float!(f32 f64);
 #[cfg(f16_enabled)]
 impl_d_float!(f16 f32);
 #[cfg(f128_enabled)]
 impl_d_float!(f64 f128);
 
+#[cfg(not(feature = "sonair_certified"))]
 impl_h_float!(f32 f64);
 #[cfg(f16_enabled)]
 impl_h_float!(f16 f32);

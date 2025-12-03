@@ -23,11 +23,18 @@ cfg_if! {
     ))] {
         mod aarch64;
 
+        #[cfg(not(feature = "sonair_certified"))]
         pub use aarch64::{
             fma,
             fmaf,
             rint,
             rintf,
+            sqrt,
+            sqrtf,
+        };
+
+        #[cfg(feature = "sonair_certified")]
+        pub use aarch64::{
             sqrt,
             sqrtf,
         };

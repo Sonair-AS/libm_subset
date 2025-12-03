@@ -13,6 +13,9 @@ rust-version = "1.63"
 [features]
 default = ["arch"]
 
+# certifiable parts of libm
+sonair_certified = []
+
 # Enable architecture-specific features such as SIMD or assembly routines.
 arch = []
 

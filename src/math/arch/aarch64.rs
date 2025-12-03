@@ -2,6 +2,7 @@
 
 use core::arch::asm;
 
+#[cfg(not(feature = "sonair_certified"))]
 pub fn fma(mut x: f64, y: f64, z: f64) -> f64 {
     // SAFETY: `fmadd` is available with neon and has no side effects.
     unsafe {
@@ -16,6 +17,7 @@ pub fn fma(mut x: f64, y: f64, z: f64) -> f64 {
     x
 }
 
+#[cfg(not(feature = "sonair_certified"))]
 pub fn fmaf(mut x: f32, y: f32, z: f32) -> f32 {
     // SAFETY: `fmadd` is available with neon and has no side effects.
     unsafe {
@@ -35,6 +37,7 @@ pub fn fmaf(mut x: f32, y: f32, z: f32) -> f32 {
 // side-effect-free `frintn`.
 //
 // In general, C code that calls Rust's libm should assume that fpenv is ignored.
+#[cfg(not(feature = "sonair_certified"))]
 
 pub fn rint(mut x: f64) -> f64 {
     // SAFETY: `frintn` is available with neon and has no side effects.
@@ -51,6 +54,7 @@ pub fn rint(mut x: f64) -> f64 {
     x
 }
 
+#[cfg(not(feature = "sonair_certified"))]
 pub fn rintf(mut x: f32) -> f32 {
     // SAFETY: `frintn` is available with neon and has no side effects.
     //

@@ -103,6 +103,7 @@ impl Status {
         self.0 & Self::OVERFLOW.0 != 0
     }
 
+    #[cfg(not(feature = "sonair_certified"))]
     pub fn set_underflow(&mut self, val: bool) {
         self.set_flag(val, Self::UNDERFLOW);
     }
@@ -112,10 +113,12 @@ impl Status {
         self.0 & Self::INEXACT.0 != 0
     }
 
+    #[cfg(not(feature = "sonair_certified"))]
     pub fn set_inexact(&mut self, val: bool) {
         self.set_flag(val, Self::INEXACT);
     }
 
+    #[cfg(not(feature = "sonair_certified"))]
     fn set_flag(&mut self, val: bool, mask: Self) {
         if val {
             self.0 |= mask.0;

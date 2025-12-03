@@ -4,17 +4,28 @@
 mod ceil;
 mod copysign;
 mod fabs;
+#[cfg(not(feature = "sonair_certified"))]
 mod fdim;
 mod floor;
+#[cfg(not(feature = "sonair_certified"))]
 mod fma;
+#[cfg(not(feature = "sonair_certified"))]
 mod fma_wide;
+#[cfg(not(feature = "sonair_certified"))]
 mod fmax;
+#[cfg(not(feature = "sonair_certified"))]
 mod fmaximum;
+#[cfg(not(feature = "sonair_certified"))]
 mod fmaximum_num;
+#[cfg(not(feature = "sonair_certified"))]
 mod fmin;
+#[cfg(not(feature = "sonair_certified"))]
 mod fminimum;
+#[cfg(not(feature = "sonair_certified"))]
 mod fminimum_num;
+#[cfg(not(feature = "sonair_certified"))]
 mod fmod;
+#[cfg(not(feature = "sonair_certified"))]
 mod rint;
 mod round;
 mod scalbn;
@@ -24,17 +35,28 @@ mod trunc;
 pub use ceil::ceil;
 pub use copysign::copysign;
 pub use fabs::fabs;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fdim::fdim;
 pub use floor::floor;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fma::fma_round;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fma_wide::fma_wide_round;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fmax::fmax;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fmaximum::fmaximum;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fmaximum_num::fmaximum_num;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fmin::fmin;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fminimum::fminimum;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fminimum_num::fminimum_num;
+#[cfg(not(feature = "sonair_certified"))]
 pub use fmod::fmod;
+#[cfg(not(feature = "sonair_certified"))]
 pub use rint::rint_round;
 pub use round::round;
 pub use scalbn::scalbn;
