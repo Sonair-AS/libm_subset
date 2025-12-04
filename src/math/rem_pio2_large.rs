@@ -265,7 +265,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
     /* set up f[0] to f[jx+jk] where f[jx+jk] = ipio2[jv+jk] */
     let mut j = (jv as i32) - (jx as i32);
     let m = jx + jk;
-    for i in 0..=m {
+    for i in 0..(m + 1) {
         i!(f, i, =, if j < 0 {
             0.
         } else {
@@ -275,9 +275,9 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
     }
 
     /* compute q[0],q[1],...q[jk] */
-    for i in 0..=jk {
+    for i in 0..(jk + 1) {
         fw = 0f64;
-        for j in 0..=jx {
+        for j in 0..(jx + 1) {
             fw += i!(x, j) * i!(f, jx + i - j);
         }
         i!(q, i, =, fw);
@@ -289,7 +289,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         /* distill q[] into iq[] reversingly */
         let mut i = 0i32;
         z = i!(q, jz);
-        for j in (1..=jz).rev() {
+        for j in (1..(jz + 1)).rev() {
             fw = (x1p_24 * z) as i32 as f64;
             i!(iq, i as usize, =, (z - x1p24 * fw) as i32);
             z = i!(q, j - 1) + fw;
@@ -353,7 +353,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         /* check if recomputation is needed */
         if z == 0. {
             let mut j = 0;
-            for i in (jk..=jz - 1).rev() {
+            for i in (jk..jz).rev() {
                 j |= i!(iq, i);
             }
             if j == 0 {
@@ -363,11 +363,11 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
                     k += 1; /* k = no. of terms needed */
                 }
 
-                for i in (jz + 1)..=(jz + k) {
+                for i in (jz + 1)..(jz + k + 1) {
                     /* add q[jz+1] to q[jz+k] */
                     i!(f, jx + i, =, i!(IPIO2, jv + i) as f64);
                     fw = 0f64;
-                    for j in 0..=jx {
+                    for j in 0..(jx + 1) {
                         fw += i!(x, j) * i!(f, jx + i - j);
                     }
                     i!(q, i, =, fw);
@@ -404,13 +404,13 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
 
     /* convert integer "bit" chunk to floating-point value */
     fw = scalbn(1., q0);
-    for i in (0..=jz).rev() {
+    for i in (0..(jz + 1)).rev() {
         i!(q, i, =, fw * (i!(iq, i) as f64));
         fw *= x1p_24;
     }
 
     /* compute PIo2[0,...,jp]*q[jz,...,0] */
-    for i in (0..=jz).rev() {
+    for i in (0..(jz + 1)).rev() {
         fw = 0f64;
         let mut k = 0;
         while (k <= jp) && (k <= jz - i) {
@@ -424,37 +424,37 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
     match prec {
         0 => {
             fw = 0f64;
-            for i in (0..=jz).rev() {
+            for i in (0..(jz + 1)).rev() {
                 fw += i!(fq, i);
             }
             i!(y, 0, =, if ih == 0 { fw } else { -fw });
         }
         1 | 2 => {
             fw = 0f64;
-            for i in (0..=jz).rev() {
+            for i in (0..(jz + 1)).rev() {
                 fw += i!(fq, i);
             }
             i!(y, 0, =, if ih == 0 { fw } else { -fw });
             fw = i!(fq, 0) - fw;
-            for i in 1..=jz {
+            for i in 1..(jz + 1) {
                 fw += i!(fq, i);
             }
             i!(y, 1, =, if ih == 0 { fw } else { -fw });
         }
         3 => {
             /* painful */
-            for i in (1..=jz).rev() {
+            for i in (1..(jz + 1)).rev() {
                 fw = i!(fq, i - 1) + i!(fq, i);
                 i!(fq, i, +=, i!(fq, i - 1) - fw);
                 i!(fq, i - 1, =, fw);
             }
-            for i in (2..=jz).rev() {
+            for i in (2..(jz + 1)).rev() {
                 fw = i!(fq, i - 1) + i!(fq, i);
                 i!(fq, i, +=, i!(fq, i - 1) - fw);
                 i!(fq, i - 1, =, fw);
             }
             fw = 0f64;
-            for i in (2..=jz).rev() {
+            for i in (2..(jz + 1)).rev() {
                 fw += i!(fq, i);
             }
             if ih == 0 {
