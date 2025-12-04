@@ -221,11 +221,11 @@ macro_rules! int_impl {
             }
 
             fn abs(self) -> Self {
-                unimplemented!()
+                panic!("abs is not implemented");
             }
 
             fn unsigned_abs(self) -> Self {
-                unimplemented!()
+                panic!("unsigned_abs is not implemented");
             }
 
             // It makes writing macros easier if this is implemented for both signed and unsigned
