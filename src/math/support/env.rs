@@ -36,7 +36,8 @@ impl<T> FpResult<T> {
 ///
 /// Integer representation comes from what CORE-MATH uses for indexing.
 #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(not(feature = "sonair_certified"), derive(Debug))]
+#[derive(Clone, Copy, PartialEq)]
 pub enum Round {
     /// IEEE 754 nearest, `roundTiesToEven`.
     Nearest = 0,
@@ -49,7 +50,8 @@ pub enum Round {
 }
 
 /// IEEE 754 exception status flags.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[cfg_attr(not(feature = "sonair_certified"), derive(Debug))]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Status(u8);
 
 impl Status {
