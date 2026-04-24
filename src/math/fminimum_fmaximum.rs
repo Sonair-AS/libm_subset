@@ -69,7 +69,7 @@ pub fn fmaximumf128(x: f128, y: f128) -> f128 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::support::{Float, Hexf};
+    use crate::support::Float;
 
     fn fminimum_spec_test<F: Float>(f: impl Fn(F, F) -> F) {
         let cases = [
@@ -126,7 +126,7 @@ mod tests {
 
         for (x, y, res) in cases {
             let val = f(x, y);
-            assert_biteq!(val, res, "fminimum({}, {})", Hexf(x), Hexf(y));
+            assert_biteq!(val, res);
         }
 
         // Ordering between NaNs does not matter
@@ -224,7 +224,7 @@ mod tests {
 
         for (x, y, res) in cases {
             let val = f(x, y);
-            assert_biteq!(val, res, "fmaximum({}, {})", Hexf(x), Hexf(y));
+            assert_biteq!(val, res);
         }
 
         // Ordering between NaNs does not matter

@@ -77,7 +77,7 @@ pub fn fmaxf128(x: f128, y: f128) -> f128 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::support::{Float, Hexf};
+    use crate::support::Float;
 
     fn fmin_spec_test<F: Float>(f: impl Fn(F, F) -> F) {
         let cases = [
@@ -144,12 +144,12 @@ mod tests {
 
         for (x, y, res) in cases {
             let val = f(x, y);
-            assert_biteq!(val, res, "fmin({}, {})", Hexf(x), Hexf(y));
+            assert_biteq!(val, res);
         }
 
         // Ordering between zeros and NaNs does not matter
-        assert_eq!(f(F::ZERO, F::NEG_ZERO), F::ZERO);
-        assert_eq!(f(F::NEG_ZERO, F::ZERO), F::ZERO);
+        assert!(f(F::ZERO, F::NEG_ZERO) == F::ZERO);
+        assert!(f(F::NEG_ZERO, F::ZERO) == F::ZERO);
         assert!(f(F::NAN, F::NEG_NAN).is_nan());
         assert!(f(F::NEG_NAN, F::NAN).is_nan());
         assert!(f(F::NEG_NAN, F::NEG_NAN).is_nan());
@@ -242,12 +242,12 @@ mod tests {
 
         for (x, y, res) in cases {
             let val = f(x, y);
-            assert_biteq!(val, res, "fmax({}, {})", Hexf(x), Hexf(y));
+            assert_biteq!(val, res);
         }
 
         // Ordering between zeros and NaNs does not matter
-        assert_eq!(f(F::ZERO, F::NEG_ZERO), F::ZERO);
-        assert_eq!(f(F::NEG_ZERO, F::ZERO), F::ZERO);
+        assert!(f(F::ZERO, F::NEG_ZERO) == F::ZERO);
+        assert!(f(F::NEG_ZERO, F::ZERO) == F::ZERO);
         assert!(f(F::NAN, F::NEG_NAN).is_nan());
         assert!(f(F::NEG_NAN, F::NAN).is_nan());
         assert!(f(F::NEG_NAN, F::NEG_NAN).is_nan());

@@ -70,7 +70,6 @@ pub fn ceil_status<F: Float>(x: F) -> FpResult<F> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::support::Hexf;
 
     /// Test against https://en.cppreference.com/w/cpp/numeric/math/ceil
     fn spec_test<F: Float>(cases: &[(F, F, Status)]) {
@@ -85,14 +84,14 @@ mod tests {
 
         for x in roundtrip {
             let FpResult { val, status } = ceil_status(x);
-            assert_biteq!(val, x, "{}", Hexf(x));
-            assert_eq!(status, Status::OK, "{}", Hexf(x));
+            assert_biteq!(val, x);
+            assert!(status == Status::OK);
         }
 
         for &(x, res, res_stat) in cases {
             let FpResult { val, status } = ceil_status(x);
-            assert_biteq!(val, res, "{}", Hexf(x));
-            assert_eq!(status, res_stat, "{}", Hexf(x));
+            assert_biteq!(val, res);
+            assert!(status == res_stat);
         }
     }
 

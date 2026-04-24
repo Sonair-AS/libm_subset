@@ -42,7 +42,7 @@
 //! computed at the same time, i.e. there is no need to calculate `1/sqrt(x)` and invert it.
 
 use crate::support::{
-    CastFrom, CastInto, DInt, Float, FpResult, HInt, Int, IntTy, MinInt, Round, Status, cold_path,
+    cold_path, CastFrom, CastInto, DInt, Float, FpResult, HInt, Int, IntTy, MinInt, Round, Status,
 };
 
 #[inline]
@@ -427,12 +427,7 @@ mod tests {
         ];
 
         for (input, output) in cases {
-            assert_biteq!(
-                sqrt(input),
-                f16::from_bits(output),
-                "input: {input:?} ({:#018x})",
-                input.to_bits()
-            );
+            assert_biteq!(sqrt(input), f16::from_bits(output),);
         }
     }
 
@@ -458,12 +453,7 @@ mod tests {
         ];
 
         for (input, output) in cases {
-            assert_biteq!(
-                sqrt(input),
-                f32::from_bits(output),
-                "input: {input:?} ({:#018x})",
-                input.to_bits()
-            );
+            assert_biteq!(sqrt(input), f32::from_bits(output));
         }
     }
 
@@ -489,12 +479,7 @@ mod tests {
         ];
 
         for (input, output) in cases {
-            assert_biteq!(
-                sqrt(input),
-                f64::from_bits(output),
-                "input: {input:?} ({:#018x})",
-                input.to_bits()
-            );
+            assert_biteq!(sqrt(input), f64::from_bits(output));
         }
     }
 
