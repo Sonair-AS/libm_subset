@@ -21,11 +21,6 @@
 #![allow(clippy::zero_divided_by_zero)]
 #![forbid(unsafe_op_in_unsafe_fn)]
 
-mod libm_helper;
 mod math;
-
-use core::f32;
-
-pub use libm_helper::*;
 
 pub use self::math::*;
