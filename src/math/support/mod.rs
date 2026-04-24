@@ -8,7 +8,7 @@ mod env;
 #[cfg(not(feature = "sonair_certified"))]
 pub(crate) mod feature_detect;
 mod float_traits;
-#[cfg(not(feature = "sonair_certified"))]
+#[cfg(any(not(feature = "sonair_certified"), test))]
 pub mod hex_float;
 mod int_traits;
 
@@ -26,7 +26,7 @@ pub use float_traits::{DFloat, Float, HFloat, IntTy};
 #[cfg(feature = "sonair_certified")]
 pub use float_traits::{Float, IntTy};
 #[allow(unused_imports)]
-#[cfg(not(feature = "sonair_certified"))]
+#[cfg(any(not(feature = "sonair_certified"), test))]
 pub use hex_float::{hf32, hf64};
 pub use int_traits::{CastFrom, CastInto, DInt, HInt, Int, MinInt};
 
