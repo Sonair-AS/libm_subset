@@ -13,21 +13,6 @@ pub fn fabsf(x: f32) -> f32 {
     super::generic::fabs(x)
 }
 
-/// Absolute value (magnitude) (f64)
-///
-/// Calculates the absolute value (magnitude) of the argument `x`,
-/// by direct manipulation of the bit representation of `x`.
-#[cfg_attr(assert_no_panic, no_panic::no_panic)]
-pub fn fabs(x: f64) -> f64 {
-    select_implementation! {
-        name: fabs,
-        use_arch: all(target_arch = "wasm32", intrinsics_enabled),
-        args: x,
-    }
-
-    super::generic::fabs(x)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -55,16 +40,5 @@ mod tests {
     #[test]
     fn spec_tests_f32() {
         spec_test::<f32>(fabsf);
-    }
-
-    #[test]
-    fn sanity_check_f64() {
-        assert_eq!(fabs(-1.0f64), 1.0);
-        assert_eq!(fabs(2.8f64), 2.8);
-    }
-
-    #[test]
-    fn spec_tests_f64() {
-        spec_test::<f64>(fabs);
     }
 }

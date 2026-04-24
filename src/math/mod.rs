@@ -183,7 +183,6 @@ mod coshf;
 mod erf;
 #[cfg(not(feature = "sonair_certified"))]
 mod erff;
-mod exp;
 #[cfg(not(feature = "sonair_certified"))]
 mod exp10;
 #[cfg(not(feature = "sonair_certified"))]
@@ -342,7 +341,7 @@ pub use self::atanhf::atanhf;
 pub use self::cbrt::cbrt;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::cbrtf::cbrtf;
-pub use self::ceil::{ceil, ceilf};
+pub use self::ceil::ceilf;
 pub use self::copysign::{copysign, copysignf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::cos::cos;
@@ -355,7 +354,6 @@ pub use self::coshf::coshf;
 pub use self::erf::{erf, erfc};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::erff::{erfcf, erff};
-pub use self::exp::exp;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::exp10::exp10;
 #[cfg(not(feature = "sonair_certified"))]
@@ -369,7 +367,7 @@ pub use self::expf::expf;
 pub use self::expm1::expm1;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::expm1f::expm1f;
-pub use self::fabs::{fabs, fabsf};
+pub use self::fabs::fabsf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::fdim::{fdim, fdimf};
 pub use self::floor::{floor, floorf};
@@ -453,7 +451,7 @@ pub use self::remquo::remquo;
 pub use self::remquof::remquof;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::rint::{rint, rintf};
-pub use self::round::{round, roundf};
+pub use self::round::roundf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::roundeven::{roundeven, roundevenf};
 pub use self::scalbn::{scalbn, scalbnf};
@@ -468,7 +466,7 @@ pub use self::sinf::sinf;
 pub use self::sinh::sinh;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::sinhf::sinhf;
-pub use self::sqrt::{sqrt, sqrtf};
+pub use self::sqrt::sqrtf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::tan::tan;
 pub use self::tanf::tanf;

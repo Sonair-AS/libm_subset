@@ -117,64 +117,17 @@ libm_helper! {
     f32,
     funcs: {
         // verify-sorted-start
-        // (fn acos(x: f32) -> (f32);                  => acosf);
-        // (fn acosh(x: f32) -> (f32);                 => acoshf);
-        // (fn asin(x: f32) -> (f32);                  => asinf);
-        // (fn asinh(x: f32) -> (f32);                 => asinhf);
-        // (fn atan(x: f32) -> (f32);                  => atanf);
         (fn atan2(y: f32, x: f32) -> (f32);         => atan2f);
-        // (fn atanh(x: f32) -> (f32);                 => atanhf);
-        // (fn cbrt(x: f32) -> (f32);                  => cbrtf);
         (fn ceil(x: f32) -> (f32);                  => ceilf);
-        // (fn copysign(x: f32, y: f32) -> (f32);      => copysignf);
         (fn cos(x: f32) -> (f32);                   => cosf);
-        // (fn cosh(x: f32) -> (f32);                  => coshf);
-        // (fn erf(x: f32) -> (f32);                   => erff);
-        // (fn erfc(x: f32) -> (f32);                  => erfcf);
         (fn exp(x: f32) -> (f32);                   => expf);
-        // (fn exp10(x: f32) -> (f32);                 => exp10f);
-        // (fn exp2(x: f32) -> (f32);                  => exp2f);
-        // (fn expm1(x: f32) -> (f32);                 => expm1f);
         (fn fabs(x: f32) -> (f32);                  => fabsf);
-        // (fn fdim(x: f32, y: f32) -> (f32);          => fdimf);
         (fn floor(x: f32) -> (f32);                 => floorf);
-        // (fn fma(x: f32, y: f32, z: f32) -> (f32);   => fmaf);
-        // (fn fmax(x: f32, y: f32) -> (f32);          => fmaxf);
-        // (fn fmin(x: f32, y: f32) -> (f32);          => fminf);
-        // (fn fmod(x: f32, y: f32) -> (f32);          => fmodf);
-        // (fn frexp(x: f32) -> (f32, i32);            => frexpf);
-        // (fn hypot(x: f32, y: f32) -> (f32);         => hypotf);
-        // (fn ilogb(x: f32) -> (i32);                 => ilogbf);
-        // (fn j0(x: f32) -> (f32);                    => j0f);
-        // (fn j1(x: f32) -> (f32);                    => j1f);
-        // (fn jn(n: i32, x: f32) -> (f32);            => jnf);
-        // (fn ldexp(x: f32, n: i32) -> (f32);         => ldexpf);
-        // (fn lgamma(x: f32) -> (f32);                => lgammaf);
-        // (fn lgamma_r(x: f32) -> (f32, i32);         => lgammaf_r);
-        // (fn log(x: f32) -> (f32);                   => logf);
-        // (fn log10(x: f32) -> (f32);                 => log10f);
-        // (fn log1p(x: f32) -> (f32);                 => log1pf);
-        // (fn log2(x: f32) -> (f32);                  => log2f);
-        // (fn modf(x: f32) -> (f32, f32);             => modff);
-        // (fn nextafter(x: f32, y: f32) -> (f32);     => nextafterf);
         (fn pow(x: f32, y: f32) -> (f32);           => powf);
-        // (fn remainder(x: f32, y: f32) -> (f32);     => remainderf);
-        // (fn remquo(x: f32, y: f32) -> (f32, i32);   => remquof);
-        // (fn rint(x: f32) -> (f32);                  => rintf);
         (fn round(x: f32) -> (f32);                 => roundf);
-        // (fn roundeven(x: f32) -> (f32);             => roundevenf);
-        // (fn scalbn(x: f32, n: i32) -> (f32);        => scalbnf);
         (fn sin(x: f32) -> (f32);                   => sinf);
-        // (fn sincos(x: f32) -> (f32, f32);           => sincosf);
-        // (fn sinh(x: f32) -> (f32);                  => sinhf);
         (fn sqrt(x: f32) -> (f32);                  => sqrtf);
         (fn tan(x: f32) -> (f32);                   => tanf);
-        // (fn tanh(x: f32) -> (f32);                  => tanhf);
-        // (fn tgamma(x: f32) -> (f32);                => tgammaf);
-        // (fn trunc(x: f32) -> (f32);                 => truncf);
-        // (fn y0(x: f32) -> (f32);                    => y0f);
-        // (fn y1(x: f32) -> (f32);                    => y1f);
-        // (fn yn(n: i32, x: f32) -> (f32);            => ynf);
         // verify-sorted-end
     }
 }
