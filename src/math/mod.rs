@@ -141,11 +141,7 @@ mod floor;
 #[cfg(not(feature = "sonair_certified"))]
 mod pow;
 mod powf;
-#[cfg(not(feature = "sonair_certified"))]
-mod rint;
 mod round;
-#[cfg(not(feature = "sonair_certified"))]
-mod roundeven;
 mod scalbn;
 #[cfg(not(feature = "sonair_certified"))]
 mod sin;
@@ -168,11 +164,7 @@ pub use self::floor::{floor, floorf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::pow::pow;
 pub use self::powf::powf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::rint::{rint, rintf};
 pub use self::round::roundf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::roundeven::{roundeven, roundevenf};
 pub use self::scalbn::{scalbn, scalbnf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::sin::sin;

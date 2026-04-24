@@ -58,9 +58,7 @@ libm_helper! {
         (fn fabs(x: f32) -> (f32);                  => fabsf);
         (fn floor(x: f32) -> (f32);                 => floorf);
         (fn pow(x: f32, y: f32) -> (f32);           => powf);
-        (fn rint(x: f32) -> (f32);                  => rintf);
         (fn round(x: f32) -> (f32);                 => roundf);
-        (fn roundeven(x: f32) -> (f32);             => roundevenf);
         (fn scalbn(x: f32, n: i32) -> (f32);        => scalbnf);
         (fn sin(x: f32) -> (f32);                   => sinf);
         (fn sqrt(x: f32) -> (f32);                  => sqrtf);
@@ -101,9 +99,7 @@ libm_helper! {
         (fn fabs(x: f64) -> (f64);                  => fabs);
         (fn floor(x: f64) -> (f64);                 => floor);
         (fn pow(x: f64, y: f64) -> (f64);           => pow);
-        (fn rint(x: f64) -> (f64);                  => rint);
         (fn round(x: f64) -> (f64);                 => round);
-        (fn roundevem(x: f64) -> (f64);             => roundeven);
         (fn scalbn(x: f64, n: i32) -> (f64);        => scalbn);
         (fn sin(x: f64) -> (f64);                   => sin);
         (fn sqrt(x: f64) -> (f64);                  => sqrt);

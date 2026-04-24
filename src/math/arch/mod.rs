@@ -12,7 +12,7 @@ cfg_if! {
     if #[cfg(all(target_arch = "wasm32", intrinsics_enabled))] {
         mod wasm32;
         pub use wasm32::{
-            ceil, ceilf, fabs, fabsf, floor, floorf, rint, rintf, sqrt, sqrtf,
+            ceil, ceilf, fabs, fabsf, floor, floorf, sqrt, sqrtf,
         };
     } else if #[cfg(target_feature = "sse2")] {
         mod x86;
@@ -24,7 +24,7 @@ cfg_if! {
         mod aarch64;
 
         #[cfg(not(feature = "sonair_certified"))]
-        pub use aarch64::{rint, rintf, sqrt, sqrtf};
+        pub use aarch64::{sqrt, sqrtf};
 
         #[cfg(feature = "sonair_certified")]
         pub use aarch64::{
