@@ -138,6 +138,7 @@ mod cosf;
 mod expf;
 mod fabs;
 mod floor;
+mod logf;
 #[cfg(not(feature = "sonair_certified"))]
 mod pow;
 mod powf;
@@ -150,16 +151,27 @@ mod sqrt;
 mod tan;
 mod tanf;
 // Use separated imports instead of {}-grouped imports for easier merging.
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::atan2::atan2;
 pub use self::atan2f::atan2f;
 pub use self::ceil::ceilf;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::cos::cos;
 pub use self::cosf::cosf;
 pub use self::expf::expf;
 pub use self::fabs::fabsf;
-pub use self::floor::floorf;
+pub use self::floor::{floor, floorf};
+pub use self::logf::logf;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::pow::pow;
 pub use self::powf::powf;
 pub use self::round::roundf;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::sin::sin;
 pub use self::sinf::sinf;
 pub use self::sqrt::sqrtf;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::tan::tan;
 pub use self::tanf::tanf;
 #[cfg(not(feature = "sonair_certified"))]
 #[inline]

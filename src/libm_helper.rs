@@ -50,6 +50,7 @@ libm_helper! {
         (fn exp(x: f32) -> (f32);                   => expf);
         (fn fabs(x: f32) -> (f32);                  => fabsf);
         (fn floor(x: f32) -> (f32);                 => floorf);
+        (fn logf(x: f32) -> (f32);           => logf);
         (fn pow(x: f32, y: f32) -> (f32);           => powf);
         (fn round(x: f32) -> (f32);                 => roundf);
         (fn sin(x: f32) -> (f32);                   => sinf);
