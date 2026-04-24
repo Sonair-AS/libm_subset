@@ -145,10 +145,6 @@ mod acos;
 #[cfg(not(feature = "sonair_certified"))]
 mod acosf;
 #[cfg(not(feature = "sonair_certified"))]
-mod acosh;
-#[cfg(not(feature = "sonair_certified"))]
-mod acoshf;
-#[cfg(not(feature = "sonair_certified"))]
 mod asin;
 #[cfg(not(feature = "sonair_certified"))]
 mod asinf;
@@ -315,10 +311,6 @@ mod trunc;
 pub use self::acos::acos;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::acosf::acosf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::acosh::acosh;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::acoshf::acoshf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::asin::asin;
 #[cfg(not(feature = "sonair_certified"))]

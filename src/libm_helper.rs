@@ -7,17 +7,18 @@ use crate::*;
 /// - `T`: Either `f32` or `f64`
 ///
 /// # Examples
+///
+/// `f32` helpers match the `libm::*f` functions and are available in all builds.
+/// With the default features (without `sonair_certified`), the same pattern applies
+/// for `f64` and the unprefixed `libm` exports where present.
+///
 /// ```rust
 /// use libm::{self, Libm};
 ///
 /// const PI_F32: f32 = 3.1415927410e+00;
-/// const PI_F64: f64 = 3.1415926535897931160e+00;
 ///
 /// assert!(Libm::<f32>::cos(0.0f32) == libm::cosf(0.0));
 /// assert!(Libm::<f32>::sin(PI_F32) == libm::sinf(PI_F32));
-///
-/// assert!(Libm::<f64>::cos(0.0f64) == libm::cos(0.0));
-/// assert!(Libm::<f64>::sin(PI_F64) == libm::sin(PI_F64));
 /// ```
 pub struct Libm<T>(PhantomData<T>);
 
@@ -51,7 +52,6 @@ libm_helper! {
     funcs: {
         // verify-sorted-start
         // (fn acos(x: f32) -> (f32);                  => acosf);
-        (fn acosh(x: f32) -> (f32);                 => acoshf);
         (fn asin(x: f32) -> (f32);                  => asinf);
         (fn asinh(x: f32) -> (f32);                 => asinhf);
         (fn atan(x: f32) -> (f32);                  => atanf);
@@ -138,7 +138,6 @@ libm_helper! {
     funcs: {
         // verify-sorted-start
         (fn acos(x: f64) -> (f64);                  => acos);
-        (fn acosh(x: f64) -> (f64);                 => acosh);
         (fn asin(x: f64) -> (f64);                  => asin);
         (fn asinh(x: f64) -> (f64);                 => asinh);
         (fn atan(x: f64) -> (f64);                  => atan);
