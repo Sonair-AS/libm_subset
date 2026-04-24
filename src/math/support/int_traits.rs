@@ -447,13 +447,7 @@ macro_rules! cast_into {
 
 macro_rules! cast_into_float {
     ($ty:ty) => {
-        #[cfg(f16_enabled)]
-        cast_into_float!($ty; f16);
-
         cast_into_float!($ty; f32, f64);
-
-        #[cfg(f128_enabled)]
-        cast_into_float!($ty; f128);
     };
     ($ty:ty; $($into:ty),*) => {$(
         impl CastInto<$into> for $ty {

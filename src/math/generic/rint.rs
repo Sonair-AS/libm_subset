@@ -77,13 +77,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(f16_enabled)]
-    fn spec_tests_f16() {
-        let cases = [];
-        spec_test::<f16>(&cases);
-    }
-
-    #[test]
     fn spec_tests_f32() {
         let cases = [
             (0.1, 0.0, Status::OK),
@@ -123,12 +116,5 @@ mod tests {
             (-2.8, -3.0, Status::OK),
         ];
         spec_test::<f64>(&cases);
-    }
-
-    #[test]
-    #[cfg(f128_enabled)]
-    fn spec_tests_f128() {
-        let cases = [];
-        spec_test::<f128>(&cases);
     }
 }

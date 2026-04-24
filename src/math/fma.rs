@@ -4,14 +4,6 @@
 use super::generic;
 use crate::support::Round;
 
-// Placeholder so we can have `fmaf16` in the `Float` trait.
-#[allow(unused)]
-#[cfg(f16_enabled)]
-#[cfg_attr(assert_no_panic, no_panic::no_panic)]
-pub(crate) fn fmaf16(_x: f16, _y: f16, _z: f16) -> f16 {
-    unimplemented!()
-}
-
 /// Floating multiply add (f32)
 ///
 /// Computes `(x*y)+z`, rounded as one ternary operation (i.e. calculated with infinite precision).
@@ -43,15 +35,6 @@ pub fn fma(x: f64, y: f64, z: f64) -> f64 {
         args: x, y, z,
     }
 
-    generic::fma_round(x, y, z, Round::Nearest).val
-}
-
-/// Fused multiply add (f128)
-///
-/// Computes `(x*y)+z`, rounded as one ternary operation (i.e. calculated with infinite precision).
-#[cfg(f128_enabled)]
-#[cfg_attr(assert_no_panic, no_panic::no_panic)]
-pub fn fmaf128(x: f128, y: f128, z: f128) -> f128 {
     generic::fma_round(x, y, z, Round::Nearest).val
 }
 
@@ -117,12 +100,6 @@ mod tests {
             assert_biteq!(val, res);
             assert_eq!(status, Status::UNDERFLOW);
         }
-    }
-
-    #[test]
-    #[cfg(f128_enabled)]
-    fn spec_test_f128() {
-        spec_test::<f128>(fmaf128);
     }
 
     #[test]

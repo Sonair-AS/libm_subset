@@ -1,12 +1,3 @@
-/// Ceil (f16)
-///
-/// Finds the nearest integer greater than or equal to `x`.
-#[cfg(f16_enabled)]
-#[cfg_attr(assert_no_panic, no_panic::no_panic)]
-pub fn ceilf16(x: f16) -> f16 {
-    super::generic::ceil(x)
-}
-
 /// Ceil (f32)
 ///
 /// Finds the nearest integer greater than or equal to `x`.
@@ -33,14 +24,5 @@ pub fn ceil(x: f64) -> f64 {
         args: x,
     }
 
-    super::generic::ceil(x)
-}
-
-/// Ceil (f128)
-///
-/// Finds the nearest integer greater than or equal to `x`.
-#[cfg(f128_enabled)]
-#[cfg_attr(assert_no_panic, no_panic::no_panic)]
-pub fn ceilf128(x: f128) -> f128 {
     super::generic::ceil(x)
 }

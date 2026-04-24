@@ -1,12 +1,3 @@
-/// Rounds the number toward 0 to the closest integral value (f16).
-///
-/// This effectively removes the decimal part of the number, leaving the integral part.
-#[cfg(f16_enabled)]
-#[cfg_attr(assert_no_panic, no_panic::no_panic)]
-pub fn truncf16(x: f16) -> f16 {
-    super::generic::trunc(x)
-}
-
 /// Rounds the number toward 0 to the closest integral value (f32).
 ///
 /// This effectively removes the decimal part of the number, leaving the integral part.
@@ -32,15 +23,6 @@ pub fn trunc(x: f64) -> f64 {
         args: x,
     }
 
-    super::generic::trunc(x)
-}
-
-/// Rounds the number toward 0 to the closest integral value (f128).
-///
-/// This effectively removes the decimal part of the number, leaving the integral part.
-#[cfg(f128_enabled)]
-#[cfg_attr(assert_no_panic, no_panic::no_panic)]
-pub fn truncf128(x: f128) -> f128 {
     super::generic::trunc(x)
 }
 

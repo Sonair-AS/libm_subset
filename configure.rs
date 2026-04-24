@@ -62,7 +62,6 @@ pub fn emit_libm_config(cfg: &Config) {
     emit_optimization_cfg(cfg);
     emit_cfg_shorthands(cfg);
     emit_cfg_env(cfg);
-    emit_f16_f128_cfg(cfg);
 }
 
 /// Tests don't need most feature-related config.
@@ -71,19 +70,12 @@ pub fn emit_test_config(cfg: &Config) {
     emit_optimization_cfg(cfg);
     emit_cfg_shorthands(cfg);
     emit_cfg_env(cfg);
-    emit_f16_f128_cfg(cfg);
 }
 
 /// Simplify the feature logic for enabling intrinsics so code only needs to use
 /// `cfg(intrinsics_enabled)`.
 fn emit_intrinsics_cfg() {
     println!("cargo:rustc-check-cfg=cfg(intrinsics_enabled)");
-
-    // Disabled by default; `unstable-intrinsics` enables again; `force-soft-floats` overrides
-    // to disable.
-    if cfg!(feature = "unstable-intrinsics") && !cfg!(feature = "force-soft-floats") {
-        println!("cargo:rustc-cfg=intrinsics_enabled");
-    }
 }
 
 /// Simplify the feature logic for enabling arch-specific features so code only needs to use
@@ -128,28 +120,8 @@ fn emit_cfg_env(cfg: &Config) {
     );
 }
 
-/// Configure whether or not `f16` and `f128` support should be enabled.
-fn emit_f16_f128_cfg(cfg: &Config) {
-    println!("cargo:rustc-check-cfg=cfg(f16_enabled)");
-    println!("cargo:rustc-check-cfg=cfg(f128_enabled)");
-
-    // `unstable-float` enables these features.
-    if !cfg!(feature = "unstable-float") {
-        return;
-    }
-
-    /* See the compiler-builtins configure file for info about the meaning of these options */
-
-    // If the feature is set, disable both of these types.
-    let no_f16_f128 = cfg.cargo_features.iter().any(|s| s == "no-f16-f128");
-
-    println!("cargo:rustc-check-cfg=cfg(f16_enabled)");
-    if cfg.reliable_f16 && !no_f16_f128 {
-        println!("cargo:rustc-cfg=f16_enabled");
-    }
-
-    println!("cargo:rustc-check-cfg=cfg(f128_enabled)");
-    if cfg.reliable_f128 && !no_f16_f128 {
-        println!("cargo:rustc-cfg=f128_enabled");
-    }
-}
+// Configure whether or not `f16` and `f128` support should be enabled.
+// fn emit_f16_f128_cfg(cfg: &Config) {
+//     println!("cargo:rustc-check-cfg=cfg(f16_enabled)");
+//     println!("cargo:rustc-check-cfg=cfg(f128_enabled)");
+// }

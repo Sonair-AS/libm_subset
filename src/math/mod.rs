@@ -357,13 +357,13 @@ pub use self::erf::{erf, erfc};
 pub use self::erff::{erfcf, erff};
 pub use self::exp::exp;
 #[cfg(not(feature = "sonair_certified"))]
-pub use self::exp2::exp2;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::exp2f::exp2f;
-#[cfg(not(feature = "sonair_certified"))]
 pub use self::exp10::exp10;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::exp10f::exp10f;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::exp2::exp2;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::exp2f::exp2f;
 pub use self::expf::expf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::expm1::expm1;
@@ -420,6 +420,10 @@ pub use self::lgammaf_r::lgammaf_r;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::log::log;
 #[cfg(not(feature = "sonair_certified"))]
+pub use self::log10::log10;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::log10f::log10f;
+#[cfg(not(feature = "sonair_certified"))]
 pub use self::log1p::log1p;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::log1pf::log1pf;
@@ -427,10 +431,6 @@ pub use self::log1pf::log1pf;
 pub use self::log2::log2;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::log2f::log2f;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log10::log10;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log10f::log10f;
 pub use self::logf::logf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::modf::modf;
@@ -482,56 +482,6 @@ pub use self::tgamma::tgamma;
 pub use self::tgammaf::tgammaf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::trunc::{trunc, truncf};
-
-cfg_if! {
-    if #[cfg(f16_enabled)] {
-        // verify-sorted-start
-        pub use self::ceil::ceilf16;
-        pub use self::copysign::copysignf16;
-        pub use self::fabs::fabsf16;
-        pub use self::fdim::fdimf16;
-        pub use self::floor::floorf16;
-        pub use self::fmin_fmax::{fmaxf16, fminf16};
-        pub use self::fminimum_fmaximum::{fmaximumf16, fminimumf16};
-        pub use self::fminimum_fmaximum_num::{fmaximum_numf16, fminimum_numf16};
-        pub use self::fmod::fmodf16;
-        pub use self::ldexp::ldexpf16;
-        pub use self::rint::rintf16;
-        pub use self::round::roundf16;
-        pub use self::roundeven::roundevenf16;
-        pub use self::scalbn::scalbnf16;
-        pub use self::sqrt::sqrtf16;
-        pub use self::trunc::truncf16;
-        // verify-sorted-end
-
-        #[allow(unused_imports)]
-        pub(crate) use self::fma::fmaf16;
-    }
-}
-
-cfg_if! {
-    if #[cfg(f128_enabled)] {
-        // verify-sorted-start
-        pub use self::ceil::ceilf128;
-        pub use self::copysign::copysignf128;
-        pub use self::fabs::fabsf128;
-        pub use self::fdim::fdimf128;
-        pub use self::floor::floorf128;
-        pub use self::fma::fmaf128;
-        pub use self::fmin_fmax::{fmaxf128, fminf128};
-        pub use self::fminimum_fmaximum::{fmaximumf128, fminimumf128};
-        pub use self::fminimum_fmaximum_num::{fmaximum_numf128, fminimum_numf128};
-        pub use self::fmod::fmodf128;
-        pub use self::ldexp::ldexpf128;
-        pub use self::rint::rintf128;
-        pub use self::round::roundf128;
-        pub use self::roundeven::roundevenf128;
-        pub use self::scalbn::scalbnf128;
-        pub use self::sqrt::sqrtf128;
-        pub use self::trunc::truncf128;
-        // verify-sorted-end
-    }
-}
 
 #[cfg(not(feature = "sonair_certified"))]
 #[inline]

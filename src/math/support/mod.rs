@@ -25,12 +25,6 @@ pub(crate) use float_traits::{f32_from_bits, f64_from_bits};
 pub use float_traits::{DFloat, Float, HFloat, IntTy};
 #[cfg(feature = "sonair_certified")]
 pub use float_traits::{Float, IntTy};
-#[cfg(f128_enabled)]
-#[allow(unused_imports)]
-pub use hex_float::hf128;
-#[cfg(f16_enabled)]
-#[allow(unused_imports)]
-pub use hex_float::hf16;
 #[allow(unused_imports)]
 #[cfg(not(feature = "sonair_certified"))]
 pub use hex_float::{hf32, hf64};

@@ -98,13 +98,6 @@ mod tests {
     /* Skipping f16 / f128 "sanity_check"s and spec cases due to rejected literal lexing at MSRV */
 
     #[test]
-    #[cfg(f16_enabled)]
-    fn spec_tests_f16() {
-        let cases = [];
-        spec_test::<f16>(&cases);
-    }
-
-    #[test]
     fn sanity_check_f32() {
         assert_eq!(floor(0.5f32), 0.0);
         assert_eq!(floor(1.1f32), 1.0);
@@ -145,12 +138,5 @@ mod tests {
             (-1.9, -2.0, Status::INEXACT),
         ];
         spec_test::<f64>(&cases);
-    }
-
-    #[test]
-    #[cfg(f128_enabled)]
-    fn spec_tests_f128() {
-        let cases = [];
-        spec_test::<f128>(&cases);
     }
 }
