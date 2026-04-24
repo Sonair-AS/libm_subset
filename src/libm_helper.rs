@@ -55,15 +55,9 @@ libm_helper! {
         (fn asin(x: f32) -> (f32);                  => asinf);
         (fn atan2(y: f32, x: f32) -> (f32);         => atan2f);
         (fn atanh(x: f32) -> (f32);                 => atanhf);
-        (fn cbrt(x: f32) -> (f32);                  => cbrtf);
         (fn ceil(x: f32) -> (f32);                  => ceilf);
-        (fn copysign(x: f32, y: f32) -> (f32);      => copysignf);
         (fn cos(x: f32) -> (f32);                   => cosf);
-        (fn cosh(x: f32) -> (f32);                  => coshf);
         (fn exp(x: f32) -> (f32);                   => expf);
-        (fn exp10(x: f32) -> (f32);                 => exp10f);
-        (fn exp2(x: f32) -> (f32);                  => exp2f);
-        (fn expm1(x: f32) -> (f32);                 => expm1f);
         (fn fabs(x: f32) -> (f32);                  => fabsf);
         (fn fdim(x: f32, y: f32) -> (f32);          => fdimf);
         (fn floor(x: f32) -> (f32);                 => floorf);
@@ -74,9 +68,6 @@ libm_helper! {
         (fn frexp(x: f32) -> (f32, i32);            => frexpf);
         (fn hypot(x: f32, y: f32) -> (f32);         => hypotf);
         (fn ilogb(x: f32) -> (i32);                 => ilogbf);
-        (fn j0(x: f32) -> (f32);                    => j0f);
-        (fn j1(x: f32) -> (f32);                    => j1f);
-        (fn jn(n: i32, x: f32) -> (f32);            => jnf);
         (fn ldexp(x: f32, n: i32) -> (f32);         => ldexpf);
         (fn lgamma(x: f32) -> (f32);                => lgammaf);
         (fn lgamma_r(x: f32) -> (f32, i32);         => lgammaf_r);
@@ -101,9 +92,6 @@ libm_helper! {
         (fn tanh(x: f32) -> (f32);                  => tanhf);
         (fn tgamma(x: f32) -> (f32);                => tgammaf);
         (fn trunc(x: f32) -> (f32);                 => truncf);
-        (fn y0(x: f32) -> (f32);                    => y0f);
-        (fn y1(x: f32) -> (f32);                    => y1f);
-        (fn yn(n: i32, x: f32) -> (f32);            => ynf);
         // verify-sorted-end
     }
 }
@@ -137,15 +125,9 @@ libm_helper! {
         (fn asin(x: f64) -> (f64);                  => asin);
         (fn atan2(y: f64, x: f64) -> (f64);         => atan2);
         (fn atanh(x: f64) -> (f64);                 => atanh);
-        (fn cbrt(x: f64) -> (f64);                  => cbrt);
         (fn ceil(x: f64) -> (f64);                  => ceil);
-        (fn copysign(x: f64, y: f64) -> (f64);      => copysign);
         (fn cos(x: f64) -> (f64);                   => cos);
-        (fn cosh(x: f64) -> (f64);                  => cosh);
         (fn exp(x: f64) -> (f64);                   => exp);
-        (fn exp10(x: f64) -> (f64);                 => exp10);
-        (fn exp2(x: f64) -> (f64);                  => exp2);
-        (fn expm1(x: f64) -> (f64);                 => expm1);
         (fn fabs(x: f64) -> (f64);                  => fabs);
         (fn fdim(x: f64, y: f64) -> (f64);          => fdim);
         (fn floor(x: f64) -> (f64);                 => floor);
@@ -164,9 +146,6 @@ libm_helper! {
         (fn frexp(x: f64) -> (f64, i32);            => frexp);
         (fn hypot(x: f64, y: f64) -> (f64);         => hypot);
         (fn ilogb(x: f64) -> (i32);                 => ilogb);
-        (fn j0(x: f64) -> (f64);                    => j0);
-        (fn j1(x: f64) -> (f64);                    => j1);
-        (fn jn(n: i32, x: f64) -> (f64);            => jn);
         (fn ldexp(x: f64, n: i32) -> (f64);         => ldexp);
         (fn lgamma(x: f64) -> (f64);                => lgamma);
         (fn lgamma_r(x: f64) -> (f64, i32);         => lgamma_r);
@@ -191,9 +170,6 @@ libm_helper! {
         (fn tanh(x: f64) -> (f64);                  => tanh);
         (fn tgamma(x: f64) -> (f64);                => tgamma);
         (fn trunc(x: f64) -> (f64);                 => trunc);
-        (fn y0(x: f64) -> (f64);                    => y0);
-        (fn y1(x: f64) -> (f64);                    => y1);
-        (fn yn(n: i32, x: f64) -> (f64);            => yn);
         // verify-sorted-end
     }
 }
