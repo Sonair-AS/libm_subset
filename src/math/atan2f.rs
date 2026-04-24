@@ -178,3 +178,43 @@ pub fn atan2f(y: f32, x: f32) -> f32 {
         _ => (z - PI_LO) - PI, /* case 3 */ /* atan(-,-) */
     }
 }
+
+#[cfg(test)]
+mod tests {
+    //! Unit tests for [`atan2f`].
+
+    use super::*;
+
+    #[test]
+    fn atan2f_nan_inputs() {
+        assert!(atan2f(f32::NAN, 1.0).is_nan());
+        assert!(atan2f(1.0, f32::NAN).is_nan());
+    }
+
+    #[test]
+    fn atan2f_signed_zero_quadrants() {
+        assert_biteq!(atan2f(0.0, 1.0), 0.0);
+        assert_biteq!(atan2f(-0.0, 1.0), -0.0);
+        assert_biteq!(atan2f(0.0, -1.0), f32::from_bits(0x40490fdb));
+        assert_biteq!(atan2f(-0.0, -1.0), f32::from_bits(0xc0490fdb));
+    }
+
+    #[test]
+    fn atan2f_conformance_bit_exact() {
+        let cases = [
+            (0x3f800000_u32, 0x3f800000_u32, 0x3f490fdb_u32), // atan2(1,1)
+            (0x3f800000_u32, 0x0_u32, 0x3fc90fdb_u32),       // atan2(1,0) = pi/2
+            (0xbf800000_u32, 0x0_u32, 0xbfc90fdb_u32),       // atan2(-1,0)
+            (0x40400000_u32, 0x40800000_u32, 0x3f24bc7d_u32), // atan2(3,4)
+            (0x7f800000_u32, 0x7f800000_u32, 0x3f490fdb_u32), // atan2(+inf,+inf)
+            (0xff800000_u32, 0x7f800000_u32, 0xbf490fdb_u32), // atan2(-inf,+inf)
+        ];
+
+        for (yb, xb, rb) in cases {
+            assert_biteq!(
+                atan2f(f32::from_bits(yb), f32::from_bits(xb)),
+                f32::from_bits(rb)
+            );
+        }
+    }
+}

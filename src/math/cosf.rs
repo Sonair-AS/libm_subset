@@ -84,3 +84,43 @@ pub fn cosf(x: f32) -> f32 {
         _ => k_sinf(y),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    //! Unit tests for [`cosf`].
+
+    use super::*;
+
+    #[test]
+    fn cosf_preserves_even_symmetry() {
+        let x = f32::from_bits(0x3f490fdb); // pi/4
+        assert_biteq!(cosf(-x), cosf(x));
+    }
+
+    #[test]
+    fn cosf_tiny_returns_one() {
+        let x = f32::from_bits(0x000116c2);
+        assert_biteq!(cosf(x), 1.0);
+    }
+
+    #[test]
+    fn cosf_nan_and_infinity() {
+        assert!(cosf(f32::NAN).is_nan());
+        assert!(cosf(f32::INFINITY).is_nan());
+        assert!(cosf(f32::NEG_INFINITY).is_nan());
+    }
+
+    #[test]
+    fn cosf_conformance_bit_exact() {
+        let cases = [
+            (0x3f800000_u32, 0x3f0a5140_u32),   // cos(1)
+            (0x3f490fdb_u32, 0x3f3504f3_u32),   // cos(pi/4)
+            (0x3fc90fdb_u32, 0xb33bbd2e_u32),   // cos(pi/2) (cancellation)
+            (0x4544597c_u32, 0x3f800000_u32),   // large arg
+        ];
+
+        for (x_bits, y_bits) in cases {
+            assert_biteq!(cosf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
+        }
+    }
+}

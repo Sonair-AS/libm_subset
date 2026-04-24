@@ -64,3 +64,52 @@ pub fn logf(mut x: f32) -> f32 {
     let dk = k as f32;
     s * (hfsq + r) + dk * LN2_LO - hfsq + f + dk * LN2_HI
 }
+
+#[cfg(test)]
+mod tests {
+    //! Unit tests for [`logf`].
+
+    use super::*;
+
+    #[test]
+    fn logf_one_is_zero() {
+        assert_biteq!(logf(1.0), 0.0);
+    }
+
+    #[test]
+    fn logf_zero_is_negative_infinity() {
+        assert_biteq!(logf(0.0), f32::NEG_INFINITY);
+        assert_biteq!(logf(-0.0), f32::NEG_INFINITY);
+    }
+
+    #[test]
+    fn logf_negative_is_nan() {
+        assert!(logf(-1.0).is_nan());
+    }
+
+    #[test]
+    fn logf_infinity() {
+        assert_biteq!(logf(f32::INFINITY), f32::INFINITY);
+    }
+
+    #[test]
+    fn logf_nan() {
+        assert!(logf(f32::NAN).is_nan());
+    }
+
+    #[test]
+    fn logf_conformance_log2_and_half() {
+        assert_biteq!(logf(f32::from_bits(0x40000000)), f32::from_bits(0x3f317218));
+        assert_biteq!(logf(f32::from_bits(0x3f000000)), f32::from_bits(0xbf317218));
+    }
+
+    #[test]
+    fn logf_conformance_log_e() {
+        assert_biteq!(logf(f32::from_bits(0x402df854)), f32::from_bits(0x3f800000));
+    }
+
+    #[test]
+    fn logf_conformance_tiny_normal() {
+        assert_biteq!(logf(f32::from_bits(0x0da24260)), f32::from_bits(0xc28a27b5));
+    }
+}

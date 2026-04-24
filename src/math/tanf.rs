@@ -79,3 +79,43 @@ pub fn tanf(x: f32) -> f32 {
     let (n, y) = rem_pio2f(x);
     k_tanf(y, n & 1 != 0)
 }
+
+#[cfg(test)]
+mod tests {
+    //! Unit tests for [`tanf`].
+
+    use super::*;
+
+    #[test]
+    fn tanf_preserves_odd_symmetry() {
+        let x = f32::from_bits(0x3f490fdb); // pi/4
+        assert_biteq!(tanf(-x), -tanf(x));
+    }
+
+    #[test]
+    fn tanf_tiny_returns_x() {
+        let x = f32::from_bits(0x000116c2);
+        assert_biteq!(tanf(x), x);
+    }
+
+    #[test]
+    fn tanf_nan_and_infinity() {
+        assert!(tanf(f32::NAN).is_nan());
+        assert!(tanf(f32::INFINITY).is_nan());
+        assert!(tanf(f32::NEG_INFINITY).is_nan());
+    }
+
+    #[test]
+    fn tanf_conformance_bit_exact() {
+        let cases = [
+            (0x3f800000_u32, 0x3fc75923_u32),   // tan(1)
+            (0x3f490fdb_u32, 0x3f800000_u32),   // tan(pi/4)
+            (0xbf490fdb_u32, 0xbf800000_u32),   // tan(-pi/4)
+            (0x4544597c_u32, 0x38fb56bf_u32),   // large arg
+        ];
+
+        for (x_bits, y_bits) in cases {
+            assert_biteq!(tanf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
+        }
+    }
+}

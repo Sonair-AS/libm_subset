@@ -95,3 +95,36 @@ pub fn expf(mut x: f32) -> f32 {
     let y = 1. + (x * c / (2. - c) - lo + hi);
     if k == 0 { y } else { scalbn(y, k) }
 }
+
+#[cfg(test)]
+mod tests {
+    //! Unit tests for [`expf`].
+
+    use super::*;
+
+    #[test]
+    fn expf_zero() {
+        assert_biteq!(expf(0.0), 1.0);
+    }
+
+    #[test]
+    fn expf_nan() {
+        let r = expf(f32::NAN);
+        assert!(r.is_nan());
+    }
+
+    #[test]
+    fn expf_conformance_bit_exact() {
+        let cases = [
+            (0x3f800000_u32, 0x402df854_u32), // exp(1)
+            (0xbf800000_u32, 0x3ebc5ab2_u32), // exp(-1)
+            (0x42b00000_u32, 0x7ef882b7_u32), // exp(88) finite overflow edge
+            (0xc2b00000_u32, 0x0041edc4_u32), // exp(-88) underflow-ish
+            (0x1e3ce508_u32, 0x3f800000_u32), // tiny x -> 1+x
+        ];
+
+        for (x_bits, y_bits) in cases {
+            assert_biteq!(expf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
+        }
+    }
+}

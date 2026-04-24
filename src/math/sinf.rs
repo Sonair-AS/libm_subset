@@ -94,3 +94,54 @@ pub fn sinf(x: f32) -> f32 {
         _ => -k_cosf(y),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    //! Unit tests for [`sinf`] (sine in radians, `f32`).
+
+    use super::*;
+
+    #[test]
+    fn sinf_preserves_signed_zero() {
+        assert_biteq!(sinf(0.0), 0.0);
+        assert_biteq!(sinf(-0.0), -0.0);
+    }
+
+    #[test]
+    fn sinf_tiny_returns_x() {
+        // |x| < 2**-12: implementation returns `x` (raises inexact; see `sinf` source).
+        let x = f32::from_bits(0x000116c2);
+        assert_biteq!(sinf(x), x);
+    }
+
+    #[test]
+    fn sinf_nan_and_infinity() {
+        assert!(sinf(f32::NAN).is_nan());
+        assert!(sinf(f32::INFINITY).is_nan());
+        assert!(sinf(f32::NEG_INFINITY).is_nan());
+    }
+
+    #[test]
+    fn sinf_odd_symmetry_known_quadrant() {
+        let x = f32::from_bits(0x3f490fdb); // pi/4
+        assert_biteq!(sinf(-x), -sinf(x));
+    }
+
+    #[test]
+    #[allow(clippy::approx_constant)]
+    fn sinf_conformance_bit_exact() {
+        let cases = [
+            (0x3f800000_u32, 0x3f576aa4_u32),   // sin(1.0)
+            (0x3f060a92_u32, 0x3f000000_u32),   // sin(pi/6) == 0.5
+            (0x3f490fdb_u32, 0x3f3504f3_u32),   // sin(pi/4)
+            (0x3fc90fdb_u32, 0x3f800000_u32),   // sin(pi/2) == 1.0
+            (0xbf490fdb_u32, 0xbf3504f3_u32),   // sin(-pi/4)
+            (0x4544597c_u32, 0x38fb56bf_u32),   // large arg -> `rem_pio2f` path
+            (0x40490fdb_u32, 0xb3bbbd2e_u32),   // sin(pi as f32) (cancellation)
+        ];
+
+        for (x_bits, y_bits) in cases {
+            assert_biteq!(sinf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
+        }
+    }
+}

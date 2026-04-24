@@ -341,3 +341,43 @@ pub fn powf(x: f32, y: f32) -> f32 {
     }
     sn * z
 }
+
+#[cfg(test)]
+mod tests {
+    //! Unit tests for [`powf`].
+
+    use super::*;
+
+    #[test]
+    fn powf_nan_inputs() {
+        assert!(powf(f32::NAN, 2.0).is_nan());
+        assert!(powf(2.0, f32::NAN).is_nan());
+    }
+
+    #[test]
+    fn powf_special_cases() {
+        assert_biteq!(powf(2.0, 0.0), 1.0);
+        assert_biteq!(powf(1.0, f32::NAN), 1.0);
+        assert_biteq!(powf(f32::NAN, 0.0), 1.0);
+    }
+
+    #[test]
+    fn powf_conformance_integer_and_sqrt() {
+        assert_biteq!(
+            powf(f32::from_bits(0x40000000), f32::from_bits(0x40400000)),
+            f32::from_bits(0x41000000)
+        );
+        assert_biteq!(
+            powf(f32::from_bits(0x40800000), f32::from_bits(0x3f000000)),
+            f32::from_bits(0x40000000)
+        );
+        assert_biteq!(
+            powf(f32::from_bits(0x40000000), f32::from_bits(0xc0000000)),
+            f32::from_bits(0x3e800000)
+        );
+        assert_biteq!(
+            powf(f32::from_bits(0x40400000), f32::from_bits(0x40000000)),
+            f32::from_bits(0x41100000)
+        );
+    }
+}

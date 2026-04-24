@@ -41,4 +41,18 @@ mod tests {
     fn spec_tests_f32() {
         spec_test::<f32>(fabsf);
     }
+
+    #[test]
+    fn fabsf_conformance_bit_exact() {
+        let cases = [
+            (0xbf800000_u32, 0x3f800000_u32), // |-1| = 1
+            (0xc0200000_u32, 0x40200000_u32), // |-2.5| = 2.5
+            (0x7f800000_u32, 0x7f800000_u32), // |+inf|
+            (0xff800000_u32, 0x7f800000_u32), // |-inf|
+        ];
+
+        for (x_bits, y_bits) in cases {
+            assert_biteq!(fabsf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
+        }
+    }
 }
