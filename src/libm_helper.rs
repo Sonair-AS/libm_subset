@@ -51,8 +51,6 @@ libm_helper! {
     f32,
     funcs: {
         // verify-sorted-start
-        // (fn acos(x: f32) -> (f32);                  => acosf);
-        (fn asin(x: f32) -> (f32);                  => asinf);
         (fn atan2(y: f32, x: f32) -> (f32);         => atan2f);
         (fn ceil(x: f32) -> (f32);                  => ceilf);
         (fn cos(x: f32) -> (f32);                   => cosf);
@@ -118,8 +116,6 @@ libm_helper! {
     f64,
     funcs: {
         // verify-sorted-start
-        (fn acos(x: f64) -> (f64);                  => acos);
-        (fn asin(x: f64) -> (f64);                  => asin);
         (fn atan2(y: f64, x: f64) -> (f64);         => atan2);
         (fn ceil(x: f64) -> (f64);                  => ceil);
         (fn cos(x: f64) -> (f64);                   => cos);

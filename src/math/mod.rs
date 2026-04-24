@@ -129,14 +129,6 @@ use self::support::{CastFrom, CastInto, DFloat, DInt, Float, HFloat, HInt, Int, 
 
 // Public modules
 #[cfg(not(feature = "sonair_certified"))]
-mod acos;
-#[cfg(not(feature = "sonair_certified"))]
-mod acosf;
-#[cfg(not(feature = "sonair_certified"))]
-mod asin;
-#[cfg(not(feature = "sonair_certified"))]
-mod asinf;
-#[cfg(not(feature = "sonair_certified"))]
 mod atan2;
 mod atan2f;
 mod ceil;
@@ -239,14 +231,6 @@ mod tgammaf;
 mod trunc;
 
 // Use separated imports instead of {}-grouped imports for easier merging.
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::acos::acos;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::acosf::acosf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::asin::asin;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::asinf::asinf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::atan2::atan2;
 pub use self::atan2f::atan2f;
