@@ -53,8 +53,6 @@ libm_helper! {
         // verify-sorted-start
         // (fn acos(x: f32) -> (f32);                  => acosf);
         (fn asin(x: f32) -> (f32);                  => asinf);
-        (fn asinh(x: f32) -> (f32);                 => asinhf);
-        (fn atan(x: f32) -> (f32);                  => atanf);
         (fn atan2(y: f32, x: f32) -> (f32);         => atan2f);
         (fn atanh(x: f32) -> (f32);                 => atanhf);
         (fn cbrt(x: f32) -> (f32);                  => cbrtf);
@@ -62,8 +60,6 @@ libm_helper! {
         (fn copysign(x: f32, y: f32) -> (f32);      => copysignf);
         (fn cos(x: f32) -> (f32);                   => cosf);
         (fn cosh(x: f32) -> (f32);                  => coshf);
-        (fn erf(x: f32) -> (f32);                   => erff);
-        (fn erfc(x: f32) -> (f32);                  => erfcf);
         (fn exp(x: f32) -> (f32);                   => expf);
         (fn exp10(x: f32) -> (f32);                 => exp10f);
         (fn exp2(x: f32) -> (f32);                  => exp2f);
@@ -139,8 +135,6 @@ libm_helper! {
         // verify-sorted-start
         (fn acos(x: f64) -> (f64);                  => acos);
         (fn asin(x: f64) -> (f64);                  => asin);
-        (fn asinh(x: f64) -> (f64);                 => asinh);
-        (fn atan(x: f64) -> (f64);                  => atan);
         (fn atan2(y: f64, x: f64) -> (f64);         => atan2);
         (fn atanh(x: f64) -> (f64);                 => atanh);
         (fn cbrt(x: f64) -> (f64);                  => cbrt);
@@ -148,8 +142,6 @@ libm_helper! {
         (fn copysign(x: f64, y: f64) -> (f64);      => copysign);
         (fn cos(x: f64) -> (f64);                   => cos);
         (fn cosh(x: f64) -> (f64);                  => cosh);
-        (fn erf(x: f64) -> (f64);                   => erf);
-        (fn erfc(x: f64) -> (f64);                  => erfc);
         (fn exp(x: f64) -> (f64);                   => exp);
         (fn exp10(x: f64) -> (f64);                 => exp10);
         (fn exp2(x: f64) -> (f64);                  => exp2);

@@ -149,15 +149,8 @@ mod asin;
 #[cfg(not(feature = "sonair_certified"))]
 mod asinf;
 #[cfg(not(feature = "sonair_certified"))]
-mod asinh;
-#[cfg(not(feature = "sonair_certified"))]
-mod asinhf;
-#[cfg(not(feature = "sonair_certified"))]
-mod atan;
-#[cfg(not(feature = "sonair_certified"))]
 mod atan2;
 mod atan2f;
-mod atanf;
 #[cfg(not(feature = "sonair_certified"))]
 mod atanh;
 #[cfg(not(feature = "sonair_certified"))]
@@ -175,10 +168,6 @@ mod cosf;
 mod cosh;
 #[cfg(not(feature = "sonair_certified"))]
 mod coshf;
-#[cfg(not(feature = "sonair_certified"))]
-mod erf;
-#[cfg(not(feature = "sonair_certified"))]
-mod erff;
 #[cfg(not(feature = "sonair_certified"))]
 mod exp10;
 #[cfg(not(feature = "sonair_certified"))]
@@ -316,15 +305,8 @@ pub use self::asin::asin;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::asinf::asinf;
 #[cfg(not(feature = "sonair_certified"))]
-pub use self::asinh::asinh;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::asinhf::asinhf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::atan::atan;
-#[cfg(not(feature = "sonair_certified"))]
 pub use self::atan2::atan2;
 pub use self::atan2f::atan2f;
-pub use self::atanf::atanf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::atanh::atanh;
 #[cfg(not(feature = "sonair_certified"))]
@@ -342,10 +324,6 @@ pub use self::cosf::cosf;
 pub use self::cosh::cosh;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::coshf::coshf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::erf::{erf, erfc};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::erff::{erfcf, erff};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::exp10::exp10;
 #[cfg(not(feature = "sonair_certified"))]
