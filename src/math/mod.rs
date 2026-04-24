@@ -96,14 +96,8 @@ cfg_if! {
 // Private modules
 mod arch;
 #[cfg(not(feature = "sonair_certified"))]
-mod expo2;
-#[cfg(not(feature = "sonair_certified"))]
 mod k_cos;
 mod k_cosf;
-#[cfg(not(feature = "sonair_certified"))]
-mod k_expo2;
-#[cfg(not(feature = "sonair_certified"))]
-mod k_expo2f;
 #[cfg(not(feature = "sonair_certified"))]
 mod k_sin;
 mod k_sinf;
@@ -117,14 +111,8 @@ mod rem_pio2f;
 
 // Private re-imports
 #[cfg(not(feature = "sonair_certified"))]
-use self::expo2::expo2;
-#[cfg(not(feature = "sonair_certified"))]
 use self::k_cos::k_cos;
 use self::k_cosf::k_cosf;
-#[cfg(not(feature = "sonair_certified"))]
-use self::k_expo2::k_expo2;
-#[cfg(not(feature = "sonair_certified"))]
-use self::k_expo2f::k_expo2f;
 #[cfg(not(feature = "sonair_certified"))]
 use self::k_sin::k_sin;
 use self::k_sinf::k_sinf;
@@ -151,19 +139,11 @@ mod asinf;
 #[cfg(not(feature = "sonair_certified"))]
 mod atan2;
 mod atan2f;
-#[cfg(not(feature = "sonair_certified"))]
-mod atanh;
-#[cfg(not(feature = "sonair_certified"))]
-mod atanhf;
 mod ceil;
 #[cfg(not(feature = "sonair_certified"))]
 mod cos;
 mod cosf;
 mod expf;
-#[cfg(not(feature = "sonair_certified"))]
-mod expm1;
-#[cfg(not(feature = "sonair_certified"))]
-mod expm1f;
 mod fabs;
 #[cfg(not(feature = "sonair_certified"))]
 mod fdim;
@@ -247,18 +227,10 @@ mod sincos;
 #[cfg(not(feature = "sonair_certified"))]
 mod sincosf;
 mod sinf;
-#[cfg(not(feature = "sonair_certified"))]
-mod sinh;
-#[cfg(not(feature = "sonair_certified"))]
-mod sinhf;
 mod sqrt;
 #[cfg(not(feature = "sonair_certified"))]
 mod tan;
 mod tanf;
-#[cfg(not(feature = "sonair_certified"))]
-mod tanh;
-#[cfg(not(feature = "sonair_certified"))]
-mod tanhf;
 #[cfg(not(feature = "sonair_certified"))]
 mod tgamma;
 #[cfg(not(feature = "sonair_certified"))]
@@ -278,10 +250,6 @@ pub use self::asinf::asinf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::atan2::atan2;
 pub use self::atan2f::atan2f;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::atanh::atanh;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::atanhf::atanhf;
 pub use self::ceil::ceilf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::cos::cos;
@@ -370,18 +338,10 @@ pub use self::sincos::sincos;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::sincosf::sincosf;
 pub use self::sinf::sinf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::sinh::sinh;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::sinhf::sinhf;
 pub use self::sqrt::sqrtf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::tan::tan;
 pub use self::tanf::tanf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::tanh::tanh;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::tanhf::tanhf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::tgamma::tgamma;
 #[cfg(not(feature = "sonair_certified"))]
@@ -417,10 +377,4 @@ fn with_set_low_word(f: f64, lo: u32) -> f64 {
     tmp &= 0xffffffff_00000000;
     tmp |= lo as u64;
     f64::from_bits(tmp)
-}
-
-#[cfg(not(feature = "sonair_certified"))]
-#[inline]
-fn combine_words(hi: u32, lo: u32) -> f64 {
-    f64::from_bits(((hi as u64) << 32) | lo as u64)
 }

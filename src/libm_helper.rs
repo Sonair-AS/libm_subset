@@ -54,7 +54,6 @@ libm_helper! {
         // (fn acos(x: f32) -> (f32);                  => acosf);
         (fn asin(x: f32) -> (f32);                  => asinf);
         (fn atan2(y: f32, x: f32) -> (f32);         => atan2f);
-        (fn atanh(x: f32) -> (f32);                 => atanhf);
         (fn ceil(x: f32) -> (f32);                  => ceilf);
         (fn cos(x: f32) -> (f32);                   => cosf);
         (fn exp(x: f32) -> (f32);                   => expf);
@@ -86,10 +85,8 @@ libm_helper! {
         (fn scalbn(x: f32, n: i32) -> (f32);        => scalbnf);
         (fn sin(x: f32) -> (f32);                   => sinf);
         (fn sincos(x: f32) -> (f32, f32);           => sincosf);
-        (fn sinh(x: f32) -> (f32);                  => sinhf);
         (fn sqrt(x: f32) -> (f32);                  => sqrtf);
         (fn tan(x: f32) -> (f32);                   => tanf);
-        (fn tanh(x: f32) -> (f32);                  => tanhf);
         (fn tgamma(x: f32) -> (f32);                => tgammaf);
         (fn trunc(x: f32) -> (f32);                 => truncf);
         // verify-sorted-end
@@ -124,7 +121,6 @@ libm_helper! {
         (fn acos(x: f64) -> (f64);                  => acos);
         (fn asin(x: f64) -> (f64);                  => asin);
         (fn atan2(y: f64, x: f64) -> (f64);         => atan2);
-        (fn atanh(x: f64) -> (f64);                 => atanh);
         (fn ceil(x: f64) -> (f64);                  => ceil);
         (fn cos(x: f64) -> (f64);                   => cos);
         (fn exp(x: f64) -> (f64);                   => exp);
@@ -164,10 +160,8 @@ libm_helper! {
         (fn scalbn(x: f64, n: i32) -> (f64);        => scalbn);
         (fn sin(x: f64) -> (f64);                   => sin);
         (fn sincos(x: f64) -> (f64, f64);           => sincos);
-        (fn sinh(x: f64) -> (f64);                  => sinh);
         (fn sqrt(x: f64) -> (f64);                  => sqrt);
         (fn tan(x: f64) -> (f64);                   => tan);
-        (fn tanh(x: f64) -> (f64);                  => tanh);
         (fn tgamma(x: f64) -> (f64);                => tgamma);
         (fn trunc(x: f64) -> (f64);                 => trunc);
         // verify-sorted-end
