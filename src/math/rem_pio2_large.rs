@@ -228,7 +228,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
     // when implemented with assembly.
     #[cfg_attr(x86_no_sse, inline(never))]
     extern "C" fn floor(x: f64) -> f64 {
-        super::floor(x)
+        super::floor::floor(x)
     }
 
     let x1p24 = f64::from_bits(0x4170000000000000); // 0x1p24 === 2 ^ 24

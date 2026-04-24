@@ -24,7 +24,7 @@
 mod libm_helper;
 mod math;
 
-use core::{f32, f64};
+use core::f32;
 
 pub use libm_helper::*;
 
