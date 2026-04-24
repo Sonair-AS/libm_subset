@@ -10,8 +10,6 @@ mod fma;
 #[cfg(not(feature = "sonair_certified"))]
 mod fma_wide;
 #[cfg(not(feature = "sonair_certified"))]
-mod fmod;
-#[cfg(not(feature = "sonair_certified"))]
 mod rint;
 mod round;
 mod scalbn;
@@ -26,8 +24,6 @@ pub use floor::floor;
 pub use fma::fma_round;
 #[cfg(not(feature = "sonair_certified"))]
 pub use fma_wide::fma_wide_round;
-#[cfg(not(feature = "sonair_certified"))]
-pub use fmod::fmod;
 #[cfg(not(feature = "sonair_certified"))]
 pub use rint::rint_round;
 pub use round::round;

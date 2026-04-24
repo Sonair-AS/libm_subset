@@ -139,26 +139,8 @@ mod expf;
 mod fabs;
 mod floor;
 #[cfg(not(feature = "sonair_certified"))]
-mod fmod;
-#[cfg(not(feature = "sonair_certified"))]
-mod modf;
-#[cfg(not(feature = "sonair_certified"))]
-mod modff;
-#[cfg(not(feature = "sonair_certified"))]
-mod nextafter;
-#[cfg(not(feature = "sonair_certified"))]
-mod nextafterf;
-#[cfg(not(feature = "sonair_certified"))]
 mod pow;
 mod powf;
-#[cfg(not(feature = "sonair_certified"))]
-mod remainder;
-#[cfg(not(feature = "sonair_certified"))]
-mod remainderf;
-#[cfg(not(feature = "sonair_certified"))]
-mod remquo;
-#[cfg(not(feature = "sonair_certified"))]
-mod remquof;
 #[cfg(not(feature = "sonair_certified"))]
 mod rint;
 mod round;
@@ -184,26 +166,8 @@ pub use self::expf::expf;
 pub use self::fabs::fabsf;
 pub use self::floor::{floor, floorf};
 #[cfg(not(feature = "sonair_certified"))]
-pub use self::fmod::{fmod, fmodf};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::modf::modf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::modff::modff;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::nextafter::nextafter;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::nextafterf::nextafterf;
-#[cfg(not(feature = "sonair_certified"))]
 pub use self::pow::pow;
 pub use self::powf::powf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::remainder::remainder;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::remainderf::remainderf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::remquo::remquo;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::remquof::remquof;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::rint::{rint, rintf};
 pub use self::round::roundf;

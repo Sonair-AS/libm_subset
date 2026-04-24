@@ -57,12 +57,7 @@ libm_helper! {
         (fn exp(x: f32) -> (f32);                   => expf);
         (fn fabs(x: f32) -> (f32);                  => fabsf);
         (fn floor(x: f32) -> (f32);                 => floorf);
-        (fn fmod(x: f32, y: f32) -> (f32);          => fmodf);
-        (fn modf(x: f32) -> (f32, f32);             => modff);
-        (fn nextafter(x: f32, y: f32) -> (f32);     => nextafterf);
         (fn pow(x: f32, y: f32) -> (f32);           => powf);
-        (fn remainder(x: f32, y: f32) -> (f32);     => remainderf);
-        (fn remquo(x: f32, y: f32) -> (f32, i32);   => remquof);
         (fn rint(x: f32) -> (f32);                  => rintf);
         (fn round(x: f32) -> (f32);                 => roundf);
         (fn roundeven(x: f32) -> (f32);             => roundevenf);
@@ -105,12 +100,7 @@ libm_helper! {
         (fn exp(x: f64) -> (f64);                   => exp);
         (fn fabs(x: f64) -> (f64);                  => fabs);
         (fn floor(x: f64) -> (f64);                 => floor);
-        (fn fmod(x: f64, y: f64) -> (f64);          => fmod);
-        (fn modf(x: f64) -> (f64, f64);             => modf);
-        (fn nextafter(x: f64, y: f64) -> (f64);     => nextafter);
         (fn pow(x: f64, y: f64) -> (f64);           => pow);
-        (fn remainder(x: f64, y: f64) -> (f64);     => remainder);
-        (fn remquo(x: f64, y: f64) -> (f64, i32);   => remquo);
         (fn rint(x: f64) -> (f64);                  => rint);
         (fn round(x: f64) -> (f64);                 => round);
         (fn roundevem(x: f64) -> (f64);             => roundeven);
