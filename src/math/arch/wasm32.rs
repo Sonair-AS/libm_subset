@@ -40,11 +40,3 @@ pub fn sqrt(x: f64) -> f64 {
 pub fn sqrtf(x: f32) -> f32 {
     core::arch::wasm32::f32_sqrt(x)
 }
-
-pub fn trunc(x: f64) -> f64 {
-    core::arch::wasm32::f64_trunc(x)
-}
-
-pub fn truncf(x: f32) -> f32 {
-    core::arch::wasm32::f32_trunc(x)
-}

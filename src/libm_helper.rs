@@ -68,11 +68,8 @@ libm_helper! {
         (fn roundeven(x: f32) -> (f32);             => roundevenf);
         (fn scalbn(x: f32, n: i32) -> (f32);        => scalbnf);
         (fn sin(x: f32) -> (f32);                   => sinf);
-        (fn sincos(x: f32) -> (f32, f32);           => sincosf);
         (fn sqrt(x: f32) -> (f32);                  => sqrtf);
         (fn tan(x: f32) -> (f32);                   => tanf);
-        (fn tgamma(x: f32) -> (f32);                => tgammaf);
-        (fn trunc(x: f32) -> (f32);                 => truncf);
         // verify-sorted-end
     }
 }
@@ -108,14 +105,6 @@ libm_helper! {
         (fn exp(x: f64) -> (f64);                   => exp);
         (fn fabs(x: f64) -> (f64);                  => fabs);
         (fn floor(x: f64) -> (f64);                 => floor);
-        (fn fmaximum(x: f64, y: f64) -> (f64);      => fmaximum);
-        (fn fmaximum_num(x: f64, y: f64) -> (f64);  => fmaximum_num);
-        (fn fmaximum_numf(x: f32, y: f32) -> (f32); => fmaximum_numf);
-        (fn fmaximumf(x: f32, y: f32) -> (f32);     => fmaximumf);
-        (fn fminimum(x: f64, y: f64) -> (f64);      => fminimum);
-        (fn fminimum_num(x: f64, y: f64) -> (f64);  => fminimum_num);
-        (fn fminimum_numf(x: f32, y: f32) -> (f32); => fminimum_numf);
-        (fn fminimumf(x: f32, y: f32) -> (f32);     => fminimumf);
         (fn fmod(x: f64, y: f64) -> (f64);          => fmod);
         (fn modf(x: f64) -> (f64, f64);             => modf);
         (fn nextafter(x: f64, y: f64) -> (f64);     => nextafter);
@@ -127,11 +116,8 @@ libm_helper! {
         (fn roundevem(x: f64) -> (f64);             => roundeven);
         (fn scalbn(x: f64, n: i32) -> (f64);        => scalbn);
         (fn sin(x: f64) -> (f64);                   => sin);
-        (fn sincos(x: f64) -> (f64, f64);           => sincos);
         (fn sqrt(x: f64) -> (f64);                  => sqrt);
         (fn tan(x: f64) -> (f64);                   => tan);
-        (fn tgamma(x: f64) -> (f64);                => tgamma);
-        (fn trunc(x: f64) -> (f64);                 => trunc);
         // verify-sorted-end
     }
 }

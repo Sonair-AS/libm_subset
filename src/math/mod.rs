@@ -139,10 +139,6 @@ mod expf;
 mod fabs;
 mod floor;
 #[cfg(not(feature = "sonair_certified"))]
-mod fminimum_fmaximum;
-#[cfg(not(feature = "sonair_certified"))]
-mod fminimum_fmaximum_num;
-#[cfg(not(feature = "sonair_certified"))]
 mod fmod;
 #[cfg(not(feature = "sonair_certified"))]
 mod modf;
@@ -171,22 +167,11 @@ mod roundeven;
 mod scalbn;
 #[cfg(not(feature = "sonair_certified"))]
 mod sin;
-#[cfg(not(feature = "sonair_certified"))]
-mod sincos;
-#[cfg(not(feature = "sonair_certified"))]
-mod sincosf;
 mod sinf;
 mod sqrt;
 #[cfg(not(feature = "sonair_certified"))]
 mod tan;
 mod tanf;
-#[cfg(not(feature = "sonair_certified"))]
-mod tgamma;
-#[cfg(not(feature = "sonair_certified"))]
-mod tgammaf;
-#[cfg(not(feature = "sonair_certified"))]
-mod trunc;
-
 // Use separated imports instead of {}-grouped imports for easier merging.
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::atan2::atan2;
@@ -198,10 +183,6 @@ pub use self::cosf::cosf;
 pub use self::expf::expf;
 pub use self::fabs::fabsf;
 pub use self::floor::{floor, floorf};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::fminimum_fmaximum::{fmaximum, fmaximumf, fminimum, fminimumf};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::fminimum_fmaximum_num::{fmaximum_num, fmaximum_numf, fminimum_num, fminimum_numf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::fmod::{fmod, fmodf};
 #[cfg(not(feature = "sonair_certified"))]
@@ -231,22 +212,11 @@ pub use self::roundeven::{roundeven, roundevenf};
 pub use self::scalbn::{scalbn, scalbnf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::sin::sin;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::sincos::sincos;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::sincosf::sincosf;
 pub use self::sinf::sinf;
 pub use self::sqrt::sqrtf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::tan::tan;
 pub use self::tanf::tanf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::tgamma::tgamma;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::tgammaf::tgammaf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::trunc::{trunc, truncf};
-
 #[cfg(not(feature = "sonair_certified"))]
 #[inline]
 fn get_high_word(x: f64) -> u32 {
