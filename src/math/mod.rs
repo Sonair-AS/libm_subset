@@ -145,21 +145,6 @@ mod fminimum_fmaximum_num;
 #[cfg(not(feature = "sonair_certified"))]
 mod fmod;
 #[cfg(not(feature = "sonair_certified"))]
-mod log;
-#[cfg(not(feature = "sonair_certified"))]
-mod log10;
-#[cfg(not(feature = "sonair_certified"))]
-mod log10f;
-#[cfg(not(feature = "sonair_certified"))]
-mod log1p;
-#[cfg(not(feature = "sonair_certified"))]
-mod log1pf;
-#[cfg(not(feature = "sonair_certified"))]
-mod log2;
-#[cfg(not(feature = "sonair_certified"))]
-mod log2f;
-mod logf;
-#[cfg(not(feature = "sonair_certified"))]
 mod modf;
 #[cfg(not(feature = "sonair_certified"))]
 mod modff;
@@ -219,21 +204,6 @@ pub use self::fminimum_fmaximum::{fmaximum, fmaximumf, fminimum, fminimumf};
 pub use self::fminimum_fmaximum_num::{fmaximum_num, fmaximum_numf, fminimum_num, fminimum_numf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::fmod::{fmod, fmodf};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log::log;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log10::log10;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log10f::log10f;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log1p::log1p;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log1pf::log1pf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log2::log2;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::log2f::log2f;
-pub use self::logf::logf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::modf::modf;
 #[cfg(not(feature = "sonair_certified"))]

@@ -58,10 +58,6 @@ libm_helper! {
         (fn fabs(x: f32) -> (f32);                  => fabsf);
         (fn floor(x: f32) -> (f32);                 => floorf);
         (fn fmod(x: f32, y: f32) -> (f32);          => fmodf);
-        (fn log(x: f32) -> (f32);                   => logf);
-        (fn log10(x: f32) -> (f32);                 => log10f);
-        (fn log1p(x: f32) -> (f32);                 => log1pf);
-        (fn log2(x: f32) -> (f32);                  => log2f);
         (fn modf(x: f32) -> (f32, f32);             => modff);
         (fn nextafter(x: f32, y: f32) -> (f32);     => nextafterf);
         (fn pow(x: f32, y: f32) -> (f32);           => powf);
@@ -121,10 +117,6 @@ libm_helper! {
         (fn fminimum_numf(x: f32, y: f32) -> (f32); => fminimum_numf);
         (fn fminimumf(x: f32, y: f32) -> (f32);     => fminimumf);
         (fn fmod(x: f64, y: f64) -> (f64);          => fmod);
-        (fn log(x: f64) -> (f64);                   => log);
-        (fn log10(x: f64) -> (f64);                 => log10);
-        (fn log1p(x: f64) -> (f64);                 => log1p);
-        (fn log2(x: f64) -> (f64);                  => log2);
         (fn modf(x: f64) -> (f64, f64);             => modf);
         (fn nextafter(x: f64, y: f64) -> (f64);     => nextafter);
         (fn pow(x: f64, y: f64) -> (f64);           => pow);
