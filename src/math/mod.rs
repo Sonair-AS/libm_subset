@@ -137,41 +137,13 @@ mod cos;
 mod cosf;
 mod expf;
 mod fabs;
-#[cfg(not(feature = "sonair_certified"))]
-mod fdim;
 mod floor;
-#[cfg(not(feature = "sonair_certified"))]
-mod fma;
-#[cfg(not(feature = "sonair_certified"))]
-mod fmin_fmax;
 #[cfg(not(feature = "sonair_certified"))]
 mod fminimum_fmaximum;
 #[cfg(not(feature = "sonair_certified"))]
 mod fminimum_fmaximum_num;
 #[cfg(not(feature = "sonair_certified"))]
 mod fmod;
-#[cfg(not(feature = "sonair_certified"))]
-mod frexp;
-#[cfg(not(feature = "sonair_certified"))]
-mod frexpf;
-#[cfg(not(feature = "sonair_certified"))]
-mod hypot;
-#[cfg(not(feature = "sonair_certified"))]
-mod hypotf;
-#[cfg(not(feature = "sonair_certified"))]
-mod ilogb;
-#[cfg(not(feature = "sonair_certified"))]
-mod ilogbf;
-#[cfg(not(feature = "sonair_certified"))]
-mod ldexp;
-#[cfg(not(feature = "sonair_certified"))]
-mod lgamma;
-#[cfg(not(feature = "sonair_certified"))]
-mod lgamma_r;
-#[cfg(not(feature = "sonair_certified"))]
-mod lgammaf;
-#[cfg(not(feature = "sonair_certified"))]
-mod lgammaf_r;
 #[cfg(not(feature = "sonair_certified"))]
 mod log;
 #[cfg(not(feature = "sonair_certified"))]
@@ -240,41 +212,13 @@ pub use self::cos::cos;
 pub use self::cosf::cosf;
 pub use self::expf::expf;
 pub use self::fabs::fabsf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::fdim::{fdim, fdimf};
 pub use self::floor::{floor, floorf};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::fma::{fma, fmaf};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::fmin_fmax::{fmax, fmaxf, fmin, fminf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::fminimum_fmaximum::{fmaximum, fmaximumf, fminimum, fminimumf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::fminimum_fmaximum_num::{fmaximum_num, fmaximum_numf, fminimum_num, fminimum_numf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::fmod::{fmod, fmodf};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::frexp::frexp;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::frexpf::frexpf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::hypot::hypot;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::hypotf::hypotf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::ilogb::ilogb;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::ilogbf::ilogbf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::ldexp::{ldexp, ldexpf};
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::lgamma::lgamma;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::lgamma_r::lgamma_r;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::lgammaf::lgammaf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::lgammaf_r::lgammaf_r;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::log::log;
 #[cfg(not(feature = "sonair_certified"))]

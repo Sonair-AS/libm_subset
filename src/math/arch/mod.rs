@@ -16,7 +16,7 @@ cfg_if! {
         };
     } else if #[cfg(target_feature = "sse2")] {
         mod x86;
-        pub use x86::{sqrt, sqrtf, fma, fmaf};
+        pub use x86::{sqrt, sqrtf};
     } else if #[cfg(all(
         any(target_arch = "aarch64", target_arch = "arm64ec"),
         target_feature = "neon"
@@ -24,14 +24,7 @@ cfg_if! {
         mod aarch64;
 
         #[cfg(not(feature = "sonair_certified"))]
-        pub use aarch64::{
-            fma,
-            fmaf,
-            rint,
-            rintf,
-            sqrt,
-            sqrtf,
-        };
+        pub use aarch64::{rint, rintf, sqrt, sqrtf};
 
         #[cfg(feature = "sonair_certified")]
         pub use aarch64::{

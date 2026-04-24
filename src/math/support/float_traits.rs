@@ -215,8 +215,8 @@ macro_rules! float_impl {
         $significand_bits:expr,
         $from_bits:path,
         $to_bits:path,
-        $fma_fn:ident,
-        $fma_intrinsic:ident
+        $fma_intrinsic:ident,
+        $fma_soft:ident
     ) => {
         impl Float for $ty {
             type Int = $ity;
@@ -294,7 +294,7 @@ macro_rules! float_impl {
                     if #[cfg(intrinsics_enabled)] {
                         core::intrinsics::$fma_intrinsic(self, y, z)
                     } else {
-                        super::super::$fma_fn(self, y, z)
+                        super::super::generic::$fma_soft(self, y, z, super::Round::Nearest).val
                     }
                 }
             }
@@ -318,8 +318,8 @@ float_impl!(
     23,
     f32_from_bits,
     f32_to_bits,
-    fmaf,
-    fmaf32
+    fmaf32,
+    fma_wide_round
 );
 float_impl!(
     f64,
@@ -329,8 +329,8 @@ float_impl!(
     52,
     f64_from_bits,
     f64_to_bits,
-    fma,
-    fmaf64
+    fmaf64,
+    fma_round
 );
 
 /* FIXME(msrv): vendor some things that are not const stable at our MSRV */
