@@ -119,3 +119,52 @@ where
     let scale = F::from_parts(false, (F::EXP_BIAS as i32 + n) as u32, zero);
     x * scale
 }
+
+#[cfg(test)]
+mod tests {
+    use super::scalbn;
+    use crate::support::{CastFrom, CastInto, Float};
+
+    fn spec_test<F: Float>(f: impl Fn(F, i32) -> F)
+    where
+        u32: CastInto<F::Int>,
+        F::Int: CastFrom<i32>,
+        F::Int: CastFrom<u32>,
+    {
+        assert_biteq!(f(F::NEG_ZERO, 10), F::NEG_ZERO);
+        assert_biteq!(f(F::NEG_ZERO, 0), F::NEG_ZERO);
+        assert_biteq!(f(F::NEG_ZERO, -10), F::NEG_ZERO);
+        assert_biteq!(f(F::ZERO, 10), F::ZERO);
+        assert_biteq!(f(F::ZERO, 0), F::ZERO);
+        assert_biteq!(f(F::ZERO, -10), F::ZERO);
+
+        assert_biteq!(f(F::MIN, 0), F::MIN);
+        assert_biteq!(f(F::MAX, 0), F::MAX);
+        assert_biteq!(f(F::INFINITY, 0), F::INFINITY);
+        assert_biteq!(f(F::NEG_INFINITY, 0), F::NEG_INFINITY);
+        assert_biteq!(f(F::ZERO, 0), F::ZERO);
+        assert_biteq!(f(F::NEG_ZERO, 0), F::NEG_ZERO);
+
+        assert_biteq!(f(F::INFINITY, 10), F::INFINITY);
+        assert_biteq!(f(F::INFINITY, -10), F::INFINITY);
+        assert_biteq!(f(F::NEG_INFINITY, 10), F::NEG_INFINITY);
+        assert_biteq!(f(F::NEG_INFINITY, -10), F::NEG_INFINITY);
+
+        assert!(f(F::NAN, 10).is_nan());
+        assert!(f(F::NAN, 0).is_nan());
+        assert!(f(F::NAN, -10).is_nan());
+        assert!(f(-F::NAN, 10).is_nan());
+        assert!(f(-F::NAN, 0).is_nan());
+        assert!(f(-F::NAN, -10).is_nan());
+    }
+
+    #[test]
+    fn spec_test_f32() {
+        spec_test::<f32>(scalbn);
+    }
+
+    #[test]
+    fn spec_test_f64() {
+        spec_test::<f64>(scalbn);
+    }
+}

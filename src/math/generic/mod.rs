@@ -23,6 +23,6 @@ pub use fma::fma_round;
 #[cfg(not(feature = "sonair_certified"))]
 pub use fma_wide::fma_wide_round;
 pub use round::round;
-pub use scalbn::scalbn;
+pub(crate) use scalbn::scalbn;
 pub use sqrt::sqrt;
 pub(crate) use trunc::trunc;

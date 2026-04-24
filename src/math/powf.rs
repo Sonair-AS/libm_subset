@@ -15,7 +15,7 @@
 
 use core::cmp::Ordering;
 
-use super::{fabsf, scalbnf, sqrtf};
+use super::{fabsf, generic::scalbn, sqrtf};
 
 const BP: [f32; 2] = [1.0, 1.5];
 const DP_H: [f32; 2] = [0.0, 5.84960938e-01]; /* 0x3f15c000 */
@@ -335,7 +335,7 @@ pub fn powf(x: f32, y: f32) -> f32 {
     j += n << 23;
     if (j >> 23) <= 0 {
         /* subnormal output */
-        z = scalbnf(z, n);
+        z = scalbn(z, n);
     } else {
         z = f32::from_bits(j as u32);
     }

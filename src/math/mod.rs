@@ -142,7 +142,6 @@ mod floor;
 mod pow;
 mod powf;
 mod round;
-mod scalbn;
 #[cfg(not(feature = "sonair_certified"))]
 mod sin;
 mod sinf;
@@ -165,7 +164,6 @@ pub use self::floor::{floor, floorf};
 pub use self::pow::pow;
 pub use self::powf::powf;
 pub use self::round::roundf;
-pub use self::scalbn::{scalbn, scalbnf};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::sin::sin;
 pub use self::sinf::sinf;

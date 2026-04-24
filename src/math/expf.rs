@@ -13,7 +13,7 @@
  * ====================================================
  */
 
-use super::scalbnf;
+use super::generic::scalbn;
 
 const HALF: [f32; 2] = [0.5, -0.5];
 const LN2_HI: f32 = 6.9314575195e-01; /* 0x3f317200 */
@@ -93,5 +93,5 @@ pub fn expf(mut x: f32) -> f32 {
     let xx = x * x;
     let c = x - xx * (P1 + xx * P2);
     let y = 1. + (x * c / (2. - c) - lo + hi);
-    if k == 0 { y } else { scalbnf(y, k) }
+    if k == 0 { y } else { scalbn(y, k) }
 }
