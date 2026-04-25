@@ -2,10 +2,6 @@
 #![no_std]
 #![cfg_attr(intrinsics_enabled, allow(internal_features))]
 #![cfg_attr(intrinsics_enabled, feature(core_intrinsics))]
-#![cfg_attr(
-    all(intrinsics_enabled, target_family = "wasm"),
-    feature(wasm_numeric_instr)
-)]
 #![allow(clippy::assign_op_pattern)]
 #![allow(clippy::deprecated_cfg_attr)]
 #![allow(clippy::eq_op)]

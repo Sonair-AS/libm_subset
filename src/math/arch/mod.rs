@@ -9,12 +9,7 @@
 // soft floats are required.
 #[cfg(arch_enabled)]
 cfg_if! {
-    if #[cfg(all(target_arch = "wasm32", intrinsics_enabled))] {
-        mod wasm32;
-        pub use wasm32::{
-            ceil, ceilf, fabs, fabsf, floor, floorf, sqrt, sqrtf,
-        };
-    } else if #[cfg(target_feature = "sse2")] {
+    if #[cfg(target_feature = "sse2")] {
         mod x86;
         pub use x86::{sqrt, sqrtf};
     } else if #[cfg(all(

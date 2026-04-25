@@ -5,7 +5,6 @@
 pub fn floor(x: f64) -> f64 {
     select_implementation! {
         name: floor,
-        use_arch: all(target_arch = "wasm32", intrinsics_enabled),
         use_arch_required: all(target_arch = "x86", not(target_feature = "sse2")),
         args: x,
     }
@@ -20,7 +19,6 @@ pub fn floor(x: f64) -> f64 {
 pub fn floorf(x: f32) -> f32 {
     select_implementation! {
         name: floorf,
-        use_arch: all(target_arch = "wasm32", intrinsics_enabled),
         args: x,
     }
 
