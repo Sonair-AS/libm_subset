@@ -109,74 +109,30 @@ use self::k_sinf::k_sinf;
 use self::k_tanf::k_tanf;
 use self::rem_pio2_large::rem_pio2_large;
 use self::rem_pio2f::rem_pio2f;
-#[allow(unused_imports)]
-#[cfg(not(feature = "sonair_certified"))]
-use self::support::{CastFrom, CastInto, DFloat, DInt, Float, HFloat, HInt, Int, IntTy, MinInt};
 
 // Public modules
 mod atan2f;
 mod ceil;
-#[cfg(not(feature = "sonair_certified"))]
-mod cos;
 mod cosf;
 mod expf;
 mod fabs;
 mod floor;
 mod logf;
-#[cfg(not(feature = "sonair_certified"))]
-mod pow;
 mod powf;
 mod round;
 mod sinf;
 mod sqrt;
-#[cfg(not(feature = "sonair_certified"))]
-mod tan;
 mod tanf;
 // Use separated imports instead of {}-grouped imports for easier merging.
 pub use self::atan2f::atan2f;
 pub use self::ceil::ceilf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::cos::cos;
 pub use self::cosf::cosf;
 pub use self::expf::expf;
 pub use self::fabs::fabsf;
 pub use self::floor::{floor, floorf};
 pub use self::logf::logf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::pow::pow;
 pub use self::powf::powf;
 pub use self::round::roundf;
 pub use self::sinf::sinf;
 pub use self::sqrt::sqrtf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::tan::tan;
 pub use self::tanf::tanf;
-#[cfg(not(feature = "sonair_certified"))]
-#[inline]
-fn get_high_word(x: f64) -> u32 {
-    (x.to_bits() >> 32) as u32
-}
-
-#[cfg(not(feature = "sonair_certified"))]
-#[inline]
-fn get_low_word(x: f64) -> u32 {
-    x.to_bits() as u32
-}
-
-#[cfg(not(feature = "sonair_certified"))]
-#[inline]
-fn with_set_high_word(f: f64, hi: u32) -> f64 {
-    let mut tmp = f.to_bits();
-    tmp &= 0x00000000_ffffffff;
-    tmp |= (hi as u64) << 32;
-    f64::from_bits(tmp)
-}
-
-#[cfg(not(feature = "sonair_certified"))]
-#[inline]
-fn with_set_low_word(f: f64, lo: u32) -> f64 {
-    let mut tmp = f.to_bits();
-    tmp &= 0xffffffff_00000000;
-    tmp |= lo as u64;
-    f64::from_bits(tmp)
-}
