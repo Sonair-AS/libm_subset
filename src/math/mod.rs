@@ -95,14 +95,8 @@ cfg_if! {
 
 // Private modules
 mod arch;
-#[cfg(not(feature = "sonair_certified"))]
-mod k_cos;
 mod k_cosf;
-#[cfg(not(feature = "sonair_certified"))]
-mod k_sin;
 mod k_sinf;
-#[cfg(not(feature = "sonair_certified"))]
-mod k_tan;
 mod k_tanf;
 #[cfg(not(feature = "sonair_certified"))]
 mod rem_pio2;
@@ -110,17 +104,9 @@ mod rem_pio2_large;
 mod rem_pio2f;
 
 // Private re-imports
-#[cfg(not(feature = "sonair_certified"))]
-use self::k_cos::k_cos;
 use self::k_cosf::k_cosf;
-#[cfg(not(feature = "sonair_certified"))]
-use self::k_sin::k_sin;
 use self::k_sinf::k_sinf;
-#[cfg(not(feature = "sonair_certified"))]
-use self::k_tan::k_tan;
 use self::k_tanf::k_tanf;
-#[cfg(not(feature = "sonair_certified"))]
-use self::rem_pio2::rem_pio2;
 use self::rem_pio2_large::rem_pio2_large;
 use self::rem_pio2f::rem_pio2f;
 #[allow(unused_imports)]
@@ -128,8 +114,6 @@ use self::rem_pio2f::rem_pio2f;
 use self::support::{CastFrom, CastInto, DFloat, DInt, Float, HFloat, HInt, Int, IntTy, MinInt};
 
 // Public modules
-#[cfg(not(feature = "sonair_certified"))]
-mod atan2;
 mod atan2f;
 mod ceil;
 #[cfg(not(feature = "sonair_certified"))]
@@ -143,16 +127,12 @@ mod logf;
 mod pow;
 mod powf;
 mod round;
-#[cfg(not(feature = "sonair_certified"))]
-mod sin;
 mod sinf;
 mod sqrt;
 #[cfg(not(feature = "sonair_certified"))]
 mod tan;
 mod tanf;
 // Use separated imports instead of {}-grouped imports for easier merging.
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::atan2::atan2;
 pub use self::atan2f::atan2f;
 pub use self::ceil::ceilf;
 #[cfg(not(feature = "sonair_certified"))]
@@ -166,8 +146,6 @@ pub use self::logf::logf;
 pub use self::pow::pow;
 pub use self::powf::powf;
 pub use self::round::roundf;
-#[cfg(not(feature = "sonair_certified"))]
-pub use self::sin::sin;
 pub use self::sinf::sinf;
 pub use self::sqrt::sqrtf;
 #[cfg(not(feature = "sonair_certified"))]
