@@ -266,7 +266,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
     let mut j = (jv as i32) - (jx as i32);
     let m = jx + jk;
     for i in 0..(m + 1) {
-        i!(f, i, =, if j < 0 {
+        i_mut!(f, i, =, if j < 0 {
             0.
         } else {
             i!(IPIO2, j as usize) as f64
@@ -280,7 +280,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         for j in 0..(jx + 1) {
             fw += i!(x, j) * i!(f, jx + i - j);
         }
-        i!(q, i, =, fw);
+        i_mut!(q, i, =, fw);
     }
 
     let mut jz = jk;
@@ -291,7 +291,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         z = i!(q, jz);
         for j in (1..(jz + 1)).rev() {
             fw = (x1p_24 * z) as i32 as f64;
-            i!(iq, i as usize, =, (z - x1p24 * fw) as i32);
+            i_mut!(iq, i as usize, =, (z - x1p24 * fw) as i32);
             z = i!(q, j - 1) + fw;
             i += 1;
         }
@@ -306,7 +306,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
             /* need iq[jz-1] to determine n */
             i = i!(iq, jz - 1) >> (24 - q0);
             n += i;
-            i!(iq, jz - 1, -=, i << (24 - q0));
+            i_mut!(iq, jz - 1, -=, i << (24 - q0));
             ih = i!(iq, jz - 1) >> (23 - q0);
         } else if q0 == 0 {
             ih = i!(iq, jz - 1) >> 23;
@@ -324,20 +324,20 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
                 if carry == 0 {
                     if j != 0 {
                         carry = 1;
-                        i!(iq, i, =, 0x1000000 - j);
+                        i_mut!(iq, i, =, 0x1000000 - j);
                     }
                 } else {
-                    i!(iq, i, =, 0xffffff - j);
+                    i_mut!(iq, i, =, 0xffffff - j);
                 }
             }
             if q0 > 0 {
                 /* rare case: chance is 1 in 12 */
                 match q0 {
                     1 => {
-                        i!(iq, jz - 1, &=, 0x7fffff);
+                        i_mut!(iq, jz - 1, &=, 0x7fffff);
                     }
                     2 => {
-                        i!(iq, jz - 1, &=, 0x3fffff);
+                        i_mut!(iq, jz - 1, &=, 0x3fffff);
                     }
                     _ => {}
                 }
@@ -365,12 +365,12 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
 
                 for i in (jz + 1)..(jz + k + 1) {
                     /* add q[jz+1] to q[jz+k] */
-                    i!(f, jx + i, =, i!(IPIO2, jv + i) as f64);
+                    i_mut!(f, jx + i, =, i!(IPIO2, jv + i) as f64);
                     fw = 0f64;
                     for j in 0..(jx + 1) {
                         fw += i!(x, j) * i!(f, jx + i - j);
                     }
-                    i!(q, i, =, fw);
+                    i_mut!(q, i, =, fw);
                 }
                 jz += k;
                 continue 'recompute;
@@ -393,19 +393,19 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         z = scalbn(z, -q0);
         if z >= x1p24 {
             fw = (x1p_24 * z) as i32 as f64;
-            i!(iq, jz, =, (z - x1p24 * fw) as i32);
+            i_mut!(iq, jz, =, (z - x1p24 * fw) as i32);
             jz += 1;
             q0 += 24;
-            i!(iq, jz, =, fw as i32);
+            i_mut!(iq, jz, =, fw as i32);
         } else {
-            i!(iq, jz, =, z as i32);
+            i_mut!(iq, jz, =, z as i32);
         }
     }
 
     /* convert integer "bit" chunk to floating-point value */
     fw = scalbn(1., q0);
     for i in (0..(jz + 1)).rev() {
-        i!(q, i, =, fw * (i!(iq, i) as f64));
+        i_mut!(q, i, =, fw * (i!(iq, i) as f64));
         fw *= x1p_24;
     }
 
@@ -417,7 +417,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
             fw += i!(PIO2, k) * i!(q, i + k);
             k += 1;
         }
-        i!(fq, jz - i, =, fw);
+        i_mut!(fq, jz - i, =, fw);
     }
 
     /* compress fq[] into y[] */
@@ -427,44 +427,44 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
             for i in (0..(jz + 1)).rev() {
                 fw += i!(fq, i);
             }
-            i!(y, 0, =, if ih == 0 { fw } else { -fw });
+            i_mut!(y, 0, =, if ih == 0 { fw } else { -fw });
         }
         1 | 2 => {
             fw = 0f64;
             for i in (0..(jz + 1)).rev() {
                 fw += i!(fq, i);
             }
-            i!(y, 0, =, if ih == 0 { fw } else { -fw });
+            i_mut!(y, 0, =, if ih == 0 { fw } else { -fw });
             fw = i!(fq, 0) - fw;
             for i in 1..(jz + 1) {
                 fw += i!(fq, i);
             }
-            i!(y, 1, =, if ih == 0 { fw } else { -fw });
+            i_mut!(y, 1, =, if ih == 0 { fw } else { -fw });
         }
         3 => {
             /* painful */
             for i in (1..(jz + 1)).rev() {
                 fw = i!(fq, i - 1) + i!(fq, i);
-                i!(fq, i, +=, i!(fq, i - 1) - fw);
-                i!(fq, i - 1, =, fw);
+                i_mut!(fq, i, +=, i!(fq, i - 1) - fw);
+                i_mut!(fq, i - 1, =, fw);
             }
             for i in (2..(jz + 1)).rev() {
                 fw = i!(fq, i - 1) + i!(fq, i);
-                i!(fq, i, +=, i!(fq, i - 1) - fw);
-                i!(fq, i - 1, =, fw);
+                i_mut!(fq, i, +=, i!(fq, i - 1) - fw);
+                i_mut!(fq, i - 1, =, fw);
             }
             fw = 0f64;
             for i in (2..(jz + 1)).rev() {
                 fw += i!(fq, i);
             }
             if ih == 0 {
-                i!(y, 0, =, i!(fq, 0));
-                i!(y, 1, =, i!(fq, 1));
-                i!(y, 2, =, fw);
+                i_mut!(y, 0, =, i!(fq, 0));
+                i_mut!(y, 1, =, i!(fq, 1));
+                i_mut!(y, 2, =, fw);
             } else {
-                i!(y, 0, =, -i!(fq, 0));
-                i!(y, 1, =, -i!(fq, 1));
-                i!(y, 2, =, -fw);
+                i_mut!(y, 0, =, -i!(fq, 0));
+                i_mut!(y, 1, =, -i!(fq, 1));
+                i_mut!(y, 2, =, -fw);
             }
         }
         #[cfg(debug_assertions)]

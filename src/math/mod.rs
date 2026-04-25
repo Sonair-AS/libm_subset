@@ -11,6 +11,25 @@ macro_rules! i {
     ($array:expr, $index:expr) => {
         unsafe { *$array.get_unchecked($index) }
     };
+    ($array:expr, $index:expr, == , $rhs:expr) => {
+        unsafe { *$array.get_unchecked_mut($index) == $rhs }
+    };
+}
+
+#[cfg(debug_assertions)]
+macro_rules! i {
+    ($array:expr, $index:expr) => {
+        *$array.get($index).unwrap()
+    };
+    ($array:expr, $index:expr, == , $rhs:expr) => {
+        *$array.get_mut($index).unwrap() == $rhs
+    };
+}
+
+/// Mutating indexed access (`=`, `+=`, `-=`, `&=`). For reads and `==`
+/// comparisons, use `i!` in the same module.
+#[cfg(not(debug_assertions))]
+macro_rules! i_mut {
     ($array:expr, $index:expr, = , $rhs:expr) => {
         unsafe {
             *$array.get_unchecked_mut($index) = $rhs;
@@ -31,16 +50,10 @@ macro_rules! i {
             *$array.get_unchecked_mut($index) &= $rhs;
         }
     };
-    ($array:expr, $index:expr, == , $rhs:expr) => {
-        unsafe { *$array.get_unchecked_mut($index) == $rhs }
-    };
 }
 
 #[cfg(debug_assertions)]
-macro_rules! i {
-    ($array:expr, $index:expr) => {
-        *$array.get($index).unwrap()
-    };
+macro_rules! i_mut {
     ($array:expr, $index:expr, = , $rhs:expr) => {
         *$array.get_mut($index).unwrap() = $rhs;
     };
@@ -52,9 +65,6 @@ macro_rules! i {
     };
     ($array:expr, $index:expr, &= , $rhs:expr) => {
         *$array.get_mut($index).unwrap() &= $rhs;
-    };
-    ($array:expr, $index:expr, == , $rhs:expr) => {
-        *$array.get_mut($index).unwrap() == $rhs
     };
 }
 
