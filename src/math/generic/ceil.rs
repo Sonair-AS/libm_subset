@@ -138,4 +138,59 @@ mod tests {
         ];
         spec_test::<f64>(&cases);
     }
+
+    #[test]
+    fn ceil_nan_preserved_f32() {
+        assert!(ceil(f32::NAN).is_nan());
+    }
+
+    #[test]
+    fn ceil_nan_preserved_f64() {
+        assert!(ceil(f64::NAN).is_nan());
+    }
+
+    #[test]
+    fn ceil_infinity_unchanged_f32() {
+        assert_biteq!(ceil(f32::INFINITY), f32::INFINITY);
+        assert_biteq!(ceil(f32::NEG_INFINITY), f32::NEG_INFINITY);
+    }
+
+    #[test]
+    fn ceil_infinity_unchanged_f64() {
+        assert_biteq!(ceil(f64::INFINITY), f64::INFINITY);
+        assert_biteq!(ceil(f64::NEG_INFINITY), f64::NEG_INFINITY);
+    }
+
+    #[test]
+    fn ceil_subnormal_fraction_f32_ceil_toward_one() {
+        let x = f32::from_bits(0x000116c2);
+        assert_biteq!(ceil(x), 1.0f32);
+        let FpResult { val, status } = ceil_status(x);
+        assert_biteq!(val, 1.0f32);
+        assert!(status == Status::INEXACT);
+    }
+
+    /// Bit-exact samples (in/out IEEE-754 bits).
+    #[test]
+    fn conformance_bit_exact_f32() {
+        let cases = [
+            (0x3fb33333_u32, 0x40000000_u32), // ceil(1.4) = 2.0
+            (0xbf99999a_u32, 0xbf800000_u32), // ceil(-1.2) = -1.0
+            (0x3f8ccccd_u32, 0x40000000_u32), // ceil(1.1) = 2.0
+        ];
+        for &(xb, yb) in &cases {
+            assert_biteq!(ceil(f32::from_bits(xb)), f32::from_bits(yb));
+        }
+    }
+
+    #[test]
+    fn conformance_bit_exact_f64() {
+        let cases = [
+            (0x3ff199999999999a_u64, 0x4000000000000000_u64), // ceil(1.1) = 2.0
+            (0xbff3333333333333_u64, 0xbff0000000000000_u64), // ceil(-1.2) = -1.0
+        ];
+        for &(xb, yb) in &cases {
+            assert_biteq!(ceil(f64::from_bits(xb)), f64::from_bits(yb));
+        }
+    }
 }
