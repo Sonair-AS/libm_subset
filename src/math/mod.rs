@@ -98,8 +98,6 @@ mod arch;
 mod k_cosf;
 mod k_sinf;
 mod k_tanf;
-#[cfg(not(feature = "sonair_certified"))]
-mod rem_pio2;
 mod rem_pio2_large;
 mod rem_pio2f;
 
