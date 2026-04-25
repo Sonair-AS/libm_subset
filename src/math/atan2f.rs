@@ -105,7 +105,11 @@ fn atan_for_atan2f(mut x: f32) -> f32 {
     }
     let id = id as usize;
     let z = i!(ATAN_HI, id) - ((x * (s1 + s2) - i!(ATAN_LO, id)) - x);
-    if sign { -z } else { z }
+    if sign {
+        -z
+    } else {
+        z
+    }
 }
 
 /// Arctangent of y/x (f32)
@@ -187,8 +191,31 @@ mod tests {
 
     #[test]
     fn atan2f_nan_inputs() {
-        assert!(atan2f(f32::NAN, 1.0).is_nan());
-        assert!(atan2f(1.0, f32::NAN).is_nan());
+        let nan = f32::NAN;
+        assert!(atan2f(nan, 1.0).is_nan());
+        assert!(atan2f(1.0, nan).is_nan());
+        assert!(atan2f(nan, nan).is_nan());
+    }
+
+    /// `atan2(±1, ±∞)`, `atan2(±∞, 1)`, and `atan2(±∞, ±∞)`; π/2 matches the internal atan(inf) hi constant.
+    #[test]
+    fn atan2f_infinity_and_mixed() {
+        let cases = [
+            (0x3f800000_u32, 0x7f800000_u32, 0x0_u32), // atan2(1,+inf)->+0
+            (0xbf800000_u32, 0x7f800000_u32, 0x80000000_u32), // atan2(-1,+inf)->-0
+            (0x3f800000_u32, 0xff800000_u32, 0x40490fdb_u32), // atan2(1,-inf)->π
+            (0xbf800000_u32, 0xff800000_u32, 0xc0490fdb_u32), // atan2(-1,-inf)->-π
+            (0x7f800000_u32, 0x3f800000_u32, 0x3fc90fda_u32), // atan2(+inf,1)->π/2
+            (0xff800000_u32, 0x3f800000_u32, 0xbfc90fda_u32), // atan2(-inf,1)->-π/2
+            (0x7f800000_u32, 0xff800000_u32, 0x4016cbe4_u32), // atan2(+inf,-inf)->3π/4
+            (0xff800000_u32, 0xff800000_u32, 0xc016cbe4_u32), // atan2(-inf,-inf)->-3π/4
+        ];
+        for (yb, xb, rb) in cases {
+            assert_biteq!(
+                atan2f(f32::from_bits(yb), f32::from_bits(xb)),
+                f32::from_bits(rb)
+            );
+        }
     }
 
     #[test]
@@ -203,8 +230,8 @@ mod tests {
     fn atan2f_conformance_bit_exact() {
         let cases = [
             (0x3f800000_u32, 0x3f800000_u32, 0x3f490fdb_u32), // atan2(1,1)
-            (0x3f800000_u32, 0x0_u32, 0x3fc90fdb_u32),       // atan2(1,0) = pi/2
-            (0xbf800000_u32, 0x0_u32, 0xbfc90fdb_u32),       // atan2(-1,0)
+            (0x3f800000_u32, 0x0_u32, 0x3fc90fdb_u32),        // atan2(1,0) = pi/2
+            (0xbf800000_u32, 0x0_u32, 0xbfc90fdb_u32),        // atan2(-1,0)
             (0x40400000_u32, 0x40800000_u32, 0x3f24bc7d_u32), // atan2(3,4)
             (0x7f800000_u32, 0x7f800000_u32, 0x3f490fdb_u32), // atan2(+inf,+inf)
             (0xff800000_u32, 0x7f800000_u32, 0xbf490fdb_u32), // atan2(-inf,+inf)

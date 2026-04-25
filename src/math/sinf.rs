@@ -137,6 +137,27 @@ mod tests {
         assert_biteq!(sinf(x), f32::from_bits(0x3f0bbc65));
     }
 
+    /// Each arm of `match n & 3` in [`sinf`] after `rem_pio2f` (lines 90–94).
+    /// Inputs are in the `rem_pio2f` medium path (`ix < 0x4dc90fdb`) and
+    /// above the `9π/4` fast path (`ix > 0x40e231d5`); one `x` per `n % 4`.
+    #[test]
+    fn rem_pio2f_match_n_and_3_all_arms() {
+        use super::rem_pio2f;
+        // (`x` bits, `n % 4`, `sinf(x)` expected bits) — bit-exact for this implementation.
+        let cases: &[(u32, i32, u32)] = &[
+            (0x413c7edd, 0, 0xbf3504f3), // 0 => k_sinf(y)
+            (0x40e231d6, 1, 0x3f3504f3), // 1 => k_cosf(y)
+            (0x410a3ae7, 2, 0x3f3504eb), // 2 => k_sinf(-y)
+            (0x41235ce2, 3, 0xbf3504f7), // 3 => -k_cosf(y)
+        ];
+        for &(xb, want_mod, expected_bits) in cases {
+            let x = f32::from_bits(xb);
+            let (n, _y) = rem_pio2f(x);
+            assert_eq!(n & 3, want_mod, "for x=0x{xb:08x}");
+            assert_biteq!(sinf(x), f32::from_bits(expected_bits));
+        }
+    }
+
     /// Arguments large enough that `|x|` is **not** handled by the π/4 … 9π/4
     /// `k_sinf` / `k_cosf` branches; `sinf` uses `rem_pio2f` and the
     /// `match n & 3` path (see `sinf` source). Values are bit-exact for this
@@ -155,13 +176,13 @@ mod tests {
     #[allow(clippy::approx_constant)]
     fn sinf_conformance_bit_exact() {
         let cases = [
-            (0x3f800000_u32, 0x3f576aa4_u32),   // sin(1.0)
-            (0x3f060a92_u32, 0x3f000000_u32),   // sin(pi/6) == 0.5
-            (0x3f490fdb_u32, 0x3f3504f3_u32),   // sin(pi/4)
-            (0x3fc90fdb_u32, 0x3f800000_u32),   // sin(pi/2) == 1.0
-            (0xbf490fdb_u32, 0xbf3504f3_u32),   // sin(-pi/4)
-            (0x4544597c_u32, 0x38fb56bf_u32),   // large arg -> `rem_pio2f` path
-            (0x40490fdb_u32, 0xb3bbbd2e_u32),   // sin(pi as f32) (cancellation)
+            (0x3f800000_u32, 0x3f576aa4_u32), // sin(1.0)
+            (0x3f060a92_u32, 0x3f000000_u32), // sin(pi/6) == 0.5
+            (0x3f490fdb_u32, 0x3f3504f3_u32), // sin(pi/4)
+            (0x3fc90fdb_u32, 0x3f800000_u32), // sin(pi/2) == 1.0
+            (0xbf490fdb_u32, 0xbf3504f3_u32), // sin(-pi/4)
+            (0x4544597c_u32, 0x38fb56bf_u32), // large arg -> `rem_pio2f` path
+            (0x40490fdb_u32, 0xb3bbbd2e_u32), // sin(pi as f32) (cancellation)
         ];
 
         for (x_bits, y_bits) in cases {

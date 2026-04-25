@@ -124,10 +124,10 @@ mod tests {
     #[test]
     fn cosf_conformance_bit_exact() {
         let cases = [
-            (0x3f800000_u32, 0x3f0a5140_u32),   // cos(1)
-            (0x3f490fdb_u32, 0x3f3504f3_u32),   // cos(pi/4)
-            (0x3fc90fdb_u32, 0xb33bbd2e_u32),   // cos(pi/2) (cancellation)
-            (0x4544597c_u32, 0x3f800000_u32),   // large arg
+            (0x3f800000_u32, 0x3f0a5140_u32), // cos(1)
+            (0x3f490fdb_u32, 0x3f3504f3_u32), // cos(pi/4)
+            (0x3fc90fdb_u32, 0xb33bbd2e_u32), // cos(pi/2) (cancellation)
+            (0x4544597c_u32, 0x3f800000_u32), // large arg
         ];
 
         for (x_bits, y_bits) in cases {
