@@ -167,4 +167,19 @@ mod tests {
     fn spec_test_f64() {
         spec_test::<f64>(scalbn);
     }
+
+    /// `n > F::EXP_MAX` (lines 51–64): prescale with `2^Emax` so the final `scale` factor fits.
+    #[test]
+    fn scalbn_n_greater_than_exp_max() {
+        assert_biteq!(scalbn(1.0f32, f32::EXP_MAX + 1), f32::INFINITY);
+        assert_biteq!(scalbn(-1.0f32, f32::EXP_MAX + 1), f32::NEG_INFINITY);
+        // Several rounds of `n -= exp_max` and the `n = exp_max` cap before the last multiply.
+        let huge = 3 * f32::EXP_MAX + 200;
+        assert_biteq!(scalbn(1.0f32, huge), f32::INFINITY);
+
+        assert_biteq!(scalbn(1.0f64, f64::EXP_MAX + 1), f64::INFINITY);
+        assert_biteq!(scalbn(-1.0f64, f64::EXP_MAX + 1), f64::NEG_INFINITY);
+        let huge64 = 3 * f64::EXP_MAX + 2000;
+        assert_biteq!(scalbn(1.0f64, huge64), f64::INFINITY);
+    }
 }

@@ -361,6 +361,31 @@ mod tests {
         assert_biteq!(powf(f32::NAN, 0.0), 1.0);
     }
 
+    /// Bases `x ∈ {0, ±0, 1, -1, ±∞}` in the fast paths of [`powf`].
+    #[test]
+    fn powf_x_zero_one_infinity() {
+        // `|x| == 0` or `|x| == inf` / `|x|==1` block (`ix` special) and `y == ±1` / `y == ±inf`.
+        assert_biteq!(powf(0.0, 2.0), 0.0);
+        assert_biteq!(powf(0.0, -1.0), f32::INFINITY);
+        assert_biteq!(powf(-0.0, 3.0), -0.0);
+
+        assert_biteq!(powf(f32::INFINITY, 2.0), f32::INFINITY);
+        assert_biteq!(powf(f32::INFINITY, -1.0), 0.0);
+        assert_biteq!(powf(f32::NEG_INFINITY, 2.0), f32::INFINITY);
+        assert_biteq!(powf(f32::NEG_INFINITY, 3.0), f32::NEG_INFINITY);
+
+        assert_biteq!(powf(1.0, 7.0), 1.0);
+        assert_biteq!(powf(1.0, -4.0), 1.0);
+        assert_biteq!(powf(1.0, f32::INFINITY), 1.0);
+        assert_biteq!(powf(1.0, f32::NEG_INFINITY), 1.0);
+
+        assert_biteq!(powf(-1.0, 4.0), 1.0);
+        assert_biteq!(powf(-1.0, 5.0), -1.0);
+        assert!(powf(-1.0, 0.5).is_nan());
+        assert_biteq!(powf(-1.0, f32::INFINITY), 1.0);
+        assert_biteq!(powf(-1.0, f32::NEG_INFINITY), 1.0);
+    }
+
     #[test]
     fn powf_conformance_integer_and_sqrt() {
         assert_biteq!(
