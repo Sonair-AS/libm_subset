@@ -11,6 +11,24 @@
  * ====================================================
  */
 
+// Temporary macro to avoid panic codegen for division (in debug mode too). At
+// the time of this writing this is only used in a few places, and once
+// rust-lang/rust#72751 is fixed then this macro will no longer be necessary and
+// the native `/` operator can be used and panics won't be codegen'd.
+#[cfg(any(debug_assertions, not(intrinsics_enabled)))]
+macro_rules! div {
+    ($a:expr, $b:expr) => {
+        $a / $b
+    };
+}
+
+#[cfg(all(not(debug_assertions), intrinsics_enabled))]
+macro_rules! div {
+    ($a:expr, $b:expr) => {
+        unsafe { core::intrinsics::unchecked_div($a, $b) }
+    };
+}
+
 use super::generic::scalbn;
 
 // initial value for jk
