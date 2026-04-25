@@ -60,4 +60,23 @@ mod tests {
             assert_biteq!(floorf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
         }
     }
+
+    #[test]
+    fn floorf_nan() {
+        assert!(floorf(f32::NAN).is_nan());
+    }
+
+    #[test]
+    fn floorf_infinity() {
+        assert_biteq!(floorf(f32::INFINITY), f32::INFINITY);
+        assert_biteq!(floorf(f32::NEG_INFINITY), f32::NEG_INFINITY);
+    }
+
+    #[test]
+    fn floorf_subnormal() {
+        let pos_sub = f32::from_bits(0x0000_0001);
+        assert_biteq!(floorf(pos_sub), 0.0);
+        let neg_sub = -pos_sub;
+        assert_biteq!(floorf(neg_sub), -1.0);
+    }
 }

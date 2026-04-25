@@ -87,6 +87,12 @@ mod tests {
     use super::*;
 
     #[test]
+    fn tanf_zero() {
+        assert_biteq!(tanf(0.0), 0.0);
+        assert_biteq!(tanf(-0.0), -0.0);
+    }
+
+    #[test]
     fn tanf_preserves_odd_symmetry() {
         let x = f32::from_bits(0x3f490fdb); // pi/4
         assert_biteq!(tanf(-x), -tanf(x));

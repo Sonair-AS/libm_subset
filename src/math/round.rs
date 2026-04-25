@@ -31,4 +31,30 @@ mod tests {
             assert_biteq!(roundf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
         }
     }
+
+    #[test]
+    fn roundf_nan() {
+        assert!(roundf(f32::NAN).is_nan());
+    }
+
+    #[test]
+    fn roundf_infinity() {
+        assert_biteq!(roundf(f32::INFINITY), f32::INFINITY);
+        assert_biteq!(roundf(f32::NEG_INFINITY), f32::NEG_INFINITY);
+    }
+
+    #[test]
+    fn roundf_subnormal() {
+        let pos_sub = f32::from_bits(0x0000_0001);
+        assert_biteq!(roundf(pos_sub), 0.0);
+        let neg_sub = -pos_sub;
+        assert_biteq!(roundf(neg_sub), -0.0);
+    }
+
+    #[test]
+    fn roundf_already_integer_large() {
+        let x = f32::from_bits(0x4b000000); // 2^23 = 8388608.0
+        assert_biteq!(roundf(x), x);
+        assert_biteq!(roundf(-x), -x);
+    }
 }

@@ -92,6 +92,12 @@ mod tests {
     use super::*;
 
     #[test]
+    fn cosf_zero_returns_one() {
+        assert_biteq!(cosf(0.0), 1.0);
+        assert_biteq!(cosf(-0.0), 1.0);
+    }
+
+    #[test]
     fn cosf_preserves_even_symmetry() {
         let x = f32::from_bits(0x3f490fdb); // pi/4
         assert_biteq!(cosf(-x), cosf(x));

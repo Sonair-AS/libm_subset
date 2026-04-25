@@ -109,6 +109,13 @@ mod tests {
     #[test]
     fn expf_zero() {
         assert_biteq!(expf(0.0), 1.0);
+        assert_biteq!(expf(-0.0), 1.0);
+    }
+
+    #[test]
+    fn expf_infinity_inputs() {
+        assert_biteq!(expf(f32::INFINITY), f32::INFINITY);
+        assert_biteq!(expf(f32::NEG_INFINITY), 0.0);
     }
 
     #[test]
