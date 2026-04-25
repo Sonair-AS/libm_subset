@@ -98,16 +98,16 @@ mod tests {
         assert_biteq!(trunc(1.1f64), 1.0);
 
         // C1
-        assert_biteq!(trunc(hf32!("0x1p23")), hf32!("0x1p23"));
-        assert_biteq!(trunc(hf64!("0x1p52")), hf64!("0x1p52"));
-        assert_biteq!(trunc(hf32!("-0x1p23")), hf32!("-0x1p23"));
-        assert_biteq!(trunc(hf64!("-0x1p52")), hf64!("-0x1p52"));
+        assert_biteq!(trunc(8388608.0f32), 8388608.0f32);
+        assert_biteq!(trunc(4503599627370496.0f64), 4503599627370496.0f64);
+        assert_biteq!(trunc(-8388608.0f32), -8388608.0f32);
+        assert_biteq!(trunc(-4503599627370496.0f64), -4503599627370496.0f64);
 
         // C2
-        assert_biteq!(trunc(hf32!("0x1p-1")), 0.0);
-        assert_biteq!(trunc(hf64!("0x1p-1")), 0.0);
-        assert_biteq!(trunc(hf32!("-0x1p-1")), -0.0);
-        assert_biteq!(trunc(hf64!("-0x1p-1")), -0.0);
+        assert_biteq!(trunc(0.5f32), 0.0);
+        assert_biteq!(trunc(0.5f64), 0.0);
+        assert_biteq!(trunc(-0.5f32), -0.0);
+        assert_biteq!(trunc(-0.5f64), -0.0);
     }
 
     #[test]

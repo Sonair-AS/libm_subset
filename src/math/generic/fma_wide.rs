@@ -5,6 +5,7 @@ use crate::support::{
 /// Fma implementation when a hardware-backed larger float type is available. For `f32` and `f64`,
 /// `f64` has enough precision to represent the `f32` in its entirety, except for double rounding.
 #[inline]
+#[allow(dead_code)] // Part of the upstream libm API surface, not used in sonair_certified subset
 pub fn fma_wide_round<F, B>(x: F, y: F, z: F, round: Round) -> FpResult<F>
 where
     F: Float + HFloat<D = B>,

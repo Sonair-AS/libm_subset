@@ -244,4 +244,132 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn atan_for_atan2f_nan() {
+        let result = atan2f(f32::NAN, 1.0);
+        assert!(result.is_nan());
+    }
+
+    #[test]
+    fn atan_for_atan2f_large_x() {
+        let large = f32::from_bits(0x4c800000); // 2^26
+        let result = atan2f(large, 1.0);
+        assert!((result - core::f32::consts::FRAC_PI_2).abs() < 1e-5);
+        let neg_result = atan2f(-large, 1.0);
+        assert!((neg_result + core::f32::consts::FRAC_PI_2).abs() < 1e-5);
+    }
+
+    #[test]
+    fn atan_for_atan2f_tiny_subnormal() {
+        let subnorm = f32::from_bits(0x0000_0001);
+        let result = atan2f(subnorm, 1.0);
+        assert_biteq!(result, subnorm);
+    }
+
+    #[test]
+    fn atan_for_atan2f_id_ranges() {
+        let cases: &[(f32, f32)] = &[
+            (0.3, 0.2915),  // id=-1: |x| < 0.4375
+            (0.5, 0.4636),  // id=0:  0.4375 <= |x| < 1.1875
+            (0.9, 0.7328),  // id=0
+            (1.3, 0.9151),  // id=1:  1.1875 <= |x| < 2.4375
+            (2.0, 1.1071),  // id=2:  same range
+            (3.0, 1.2490),  // id=3:  |x| >= 2.4375
+        ];
+        for &(y, expected) in cases {
+            let r = atan2f(y, 1.0);
+            assert!(
+                (r - expected).abs() < 0.01,
+                "atan2f({y}, 1.0) = {r}, expected ~{expected}"
+            );
+        }
+    }
+
+    #[test]
+    fn atan2f_x_zero_all_m_values() {
+        assert_biteq!(atan2f(1.0, 0.0), core::f32::consts::FRAC_PI_2);
+        assert_biteq!(atan2f(-1.0, 0.0), -core::f32::consts::FRAC_PI_2);
+    }
+
+    #[test]
+    fn atan2f_y_over_x_huge_ratio() {
+        let big_y = f32::from_bits(0x7f000000);
+        let small_x = f32::from_bits(0x00800000);
+        let result = atan2f(big_y, small_x);
+        assert!((result - core::f32::consts::FRAC_PI_2).abs() < 1e-5);
+    }
+
+    #[test]
+    fn atan2f_y_inf_x_finite() {
+        assert!((atan2f(f32::INFINITY, 1.0) - core::f32::consts::FRAC_PI_2).abs() < 1e-5);
+        assert!((atan2f(f32::NEG_INFINITY, 1.0) + core::f32::consts::FRAC_PI_2).abs() < 1e-5);
+    }
+
+    #[test]
+    fn atan2f_tiny_y_over_x_negative_x() {
+        let small_y = f32::from_bits(0x00800000);
+        let neg_x = -f32::from_bits(0x7f000000);
+        let result = atan2f(small_y, neg_x);
+        assert!((result - core::f32::consts::PI).abs() < 1e-3);
+    }
+
+    #[test]
+    fn atan2f_quadrant3_and_4() {
+        let r3 = atan2f(1.0, -1.0);
+        assert!((r3 - 3.0 * core::f32::consts::FRAC_PI_4).abs() < 1e-5);
+        let r4 = atan2f(-1.0, -1.0);
+        assert!((r4 + 3.0 * core::f32::consts::FRAC_PI_4).abs() < 1e-5);
+    }
+
+    #[test]
+    fn atan_for_atan2f_medium_range() {
+        let r = atan2f(0.3, 1.0);
+        assert!((r - 0.2915).abs() < 0.01);
+        let r2 = atan2f(-0.3, 1.0);
+        assert!((r2 + 0.2915).abs() < 0.01);
+    }
+
+    #[test]
+    fn atan_for_atan2f_id2_range() {
+        let r = atan2f(2.0, 1.0);
+        assert!((r - 1.1071).abs() < 0.01);
+    }
+
+    #[test]
+    fn atan_for_atan2f_id3_range() {
+        let r = atan2f(3.0, 1.0);
+        assert!((r - 1.2490).abs() < 0.01);
+    }
+
+    #[test]
+    fn atan2f_m0_positive_quadrant() {
+        let r = atan2f(1.0, 2.0);
+        assert!(r > 0.0);
+    }
+
+    #[test]
+    fn atan2f_y_zero_m1() {
+        assert_biteq!(atan2f(-0.0, 1.0), -0.0);
+    }
+
+    #[test]
+    fn atan2f_x_eq_one_negative_y() {
+        let r = atan2f(-0.5, 1.0);
+        assert!(r < 0.0);
+    }
+
+    #[test]
+    fn atan2f_y_zero_positive_x_not_one() {
+        assert_biteq!(atan2f(0.0, 2.0), 0.0);   // m=0, y=+0, x=+2
+        assert_biteq!(atan2f(-0.0, 2.0), -0.0);  // m=1, y=-0, x=+2
+    }
+
+    #[test]
+    fn atan2f_m0_full_path() {
+        let r = atan2f(1.0, 2.0);
+        assert!((r - 0.4636).abs() < 0.01);  // m=0: +y, +x (x != 1)
+        let r2 = atan2f(-1.0, 2.0);
+        assert!((r2 + 0.4636).abs() < 0.01); // m=1: -y, +x (x != 1)
+    }
 }

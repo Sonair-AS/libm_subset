@@ -8,6 +8,9 @@
 //! functions are implemented in this way.
 
 pub fn ceil(mut x: f64) -> f64 {
+    // SAFETY: Uses x87 FPU instructions which are always available on i586. The inline assembly
+    // saves/restores the FPU control word, operates only on the provided `x` via its pointer,
+    // and clobbers all x87 stack registers.
     unsafe {
         core::arch::asm!(
             "fld qword ptr [{x}]",
@@ -35,6 +38,9 @@ pub fn ceil(mut x: f64) -> f64 {
 }
 
 pub fn floor(mut x: f64) -> f64 {
+    // SAFETY: Uses x87 FPU instructions which are always available on i586. The inline assembly
+    // saves/restores the FPU control word, operates only on the provided `x` via its pointer,
+    // and clobbers all x87 stack registers.
     unsafe {
         core::arch::asm!(
             "fld qword ptr [{x}]",

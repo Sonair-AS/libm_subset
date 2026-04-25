@@ -8,6 +8,7 @@ use crate::support::{
 /// Fused multiply-add that works when there is not a larger float size available. Computes
 /// `(x * y) + z`.
 #[inline]
+#[allow(dead_code)] // Part of the upstream libm API surface, not used in sonair_certified subset
 pub fn fma_round<F>(x: F, y: F, z: F, _round: Round) -> FpResult<F>
 where
     F: Float,
@@ -217,6 +218,7 @@ where
 
 /// Representation of `F` that has handled subnormals.
 #[derive(Clone, Copy, Debug)]
+#[allow(dead_code)] // Used by fma_round which is part of the upstream API but not used in sonair_certified
 struct Norm<F: Float> {
     /// Normalized significand with one guard bit, unsigned.
     m: F::Int,
@@ -226,6 +228,7 @@ struct Norm<F: Float> {
     neg: bool,
 }
 
+#[allow(dead_code)] // Used by fma_round which is part of the upstream API but not used in sonair_certified
 impl<F: Float> Norm<F> {
     /// Unbias the exponent and account for the mantissa's precision, including the guard bit.
     const EXP_UNBIAS: u32 = F::EXP_BIAS + F::SIG_BITS + 1;

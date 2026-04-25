@@ -87,28 +87,6 @@ macro_rules! select_implementation {
     (@cfg $provided:meta; $ex:expr) => { #[cfg($provided)] $ex };
 }
 
-/// Construct a 32-bit float from hex float representation (C-style), guaranteed to
-/// evaluate at compile time.
-#[allow(unused_macros)]
-#[cfg_attr(feature = "unstable-public-internals", macro_export)]
-macro_rules! hf32 {
-    ($s:literal) => {{
-        const X: f32 = $crate::support::hf32($s);
-        X
-    }};
-}
-
-/// Construct a 64-bit float from hex float representation (C-style), guaranteed to
-/// evaluate at compile time.
-#[allow(unused_macros)]
-#[cfg_attr(feature = "unstable-public-internals", macro_export)]
-macro_rules! hf64 {
-    ($s:literal) => {{
-        const X: f64 = $crate::support::hf64($s);
-        X
-    }};
-}
-
 /// Assert `F::biteq` with better messages.
 #[cfg(test)]
 macro_rules! assert_biteq {

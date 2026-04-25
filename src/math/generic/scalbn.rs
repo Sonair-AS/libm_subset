@@ -182,4 +182,52 @@ mod tests {
         let huge64 = 3 * f64::EXP_MAX + 2000;
         assert_biteq!(scalbn(1.0f64, huge64), f64::INFINITY);
     }
+
+    #[test]
+    fn scalbn_n_less_than_exp_min_f32() {
+        let tiny = scalbn(1.0f32, f32::EXP_MIN - 1);
+        assert!(tiny > 0.0);
+        assert!(tiny < f32::MIN_POSITIVE);
+
+        let tinier = scalbn(1.0f32, f32::EXP_MIN - f32::SIG_BITS as i32 - 1);
+        assert_biteq!(tinier, 0.0f32);
+
+        let very_neg = -3 * f32::EXP_MAX - 200;
+        assert_biteq!(scalbn(1.0f32, very_neg), 0.0f32);
+    }
+
+    #[test]
+    fn scalbn_n_less_than_exp_min_f64() {
+        let tiny = scalbn(1.0f64, f64::EXP_MIN - 1);
+        assert!(tiny > 0.0);
+        assert!(tiny < f64::MIN_POSITIVE);
+
+        let very_neg = -3 * f64::EXP_MAX - 2000;
+        assert_biteq!(scalbn(1.0f64, very_neg), 0.0f64);
+    }
+
+    #[test]
+    fn scalbn_double_prescale_positive_f32() {
+        let n = 2 * f32::EXP_MAX + 1;
+        assert_biteq!(scalbn(1.0f32, n), f32::INFINITY);
+        assert_biteq!(scalbn(-1.0f32, n), f32::NEG_INFINITY);
+    }
+
+    #[test]
+    fn scalbn_double_prescale_negative_f32() {
+        let n = 2 * f32::EXP_MIN - (f32::SIG_BITS as i32) - 10;
+        assert_biteq!(scalbn(1.0f32, n), 0.0f32);
+    }
+
+    #[test]
+    fn scalbn_subnormal_result_f32() {
+        let result = scalbn(1.0f32, f32::EXP_MIN_SUBNORM);
+        assert_biteq!(result, f32::from_bits(1));
+    }
+
+    #[test]
+    fn scalbn_max_to_subnormal_f32() {
+        let result = scalbn(f32::MAX, -(f32::EXP_MAX + f32::EXP_MAX - f32::EXP_MIN_SUBNORM));
+        assert!(result >= 0.0);
+    }
 }

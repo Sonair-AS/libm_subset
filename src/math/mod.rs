@@ -1,11 +1,19 @@
-#![allow(clippy::approx_constant)] // many false positives
+#![allow(clippy::approx_constant)] // Mathematical constants (pi, e, etc.) appear as intermediate values in formulas, not as replaceable std constants
 
 macro_rules! force_eval {
     ($e:expr) => {
+        // SAFETY: read_volatile on a reference to a stack temporary. The reference is valid for
+        // the duration of the read. Used to force the compiler to evaluate the expression for
+        // its floating-point side effects (e.g. raising underflow).
         unsafe { ::core::ptr::read_volatile(&$e) }
     };
 }
 
+/// Unchecked array indexing for release builds. In debug builds this falls through to normal
+/// bounds-checked indexing (see below).
+///
+/// SAFETY for all arms: callers must ensure the index is within bounds. This invariant is
+/// verified by the debug-mode fallback which uses normal indexing and will panic on OOB.
 #[cfg(not(debug_assertions))]
 macro_rules! i {
     ($array:expr, $index:expr) => {
@@ -16,8 +24,10 @@ macro_rules! i {
     };
 }
 
-/// Mutating indexed access (`=`, `+=`, `-=`, `&=`). For reads and `==`
-/// comparisons, use `i!` in the same module.
+/// Unchecked mutating array indexing for release builds (`=`, `+=`, `-=`, `&=`).
+///
+/// SAFETY for all arms: callers must ensure the index is within bounds. This invariant is
+/// verified by the debug-mode fallback which uses normal indexing and will panic on OOB.
 #[cfg(not(debug_assertions))]
 macro_rules! i_mut {
     ($array:expr, $index:expr, = , $rhs:expr) => {

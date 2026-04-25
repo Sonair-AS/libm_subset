@@ -1,5 +1,3 @@
-/// The square root of `x` (f16).
-
 /// The square root of `x` (f32).
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn sqrtf(x: f32) -> f32 {

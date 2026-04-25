@@ -394,7 +394,7 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::approx_constant)]
+    #[allow(clippy::approx_constant)] // Intentional: tests use exact bit patterns, not approximate constants
     fn conformance_tests_f32() {
         let cases = [
             (f32::PI, 0x3fe2dfc5_u32),
@@ -409,6 +409,28 @@ mod tests {
     }
 
     #[test]
+    fn sqrt_perfect_squares_f32() {
+        for i in 0..100u32 {
+            let x = (i * i) as f32;
+            assert_biteq!(sqrt(x), i as f32);
+        }
+    }
+
+    #[test]
+    fn sqrt_subnormal_f32() {
+        assert!(sqrt(f32::from_bits(1)).is_finite());
+        assert!(sqrt(f32::from_bits(1)) > 0.0);
+        assert!(sqrt(f32::from_bits(0x007FFFFF)).is_finite());
+    }
+
+    #[test]
+    fn sqrt_large_f32() {
+        assert!(sqrt(f32::MAX).is_finite());
+        let r = sqrt(f32::from_bits(0x7f000000));
+        assert!(r.is_finite());
+    }
+
+    #[test]
     fn sanity_check_f64() {
         assert_biteq!(sqrt(100.0f64), 10.0);
         assert_biteq!(sqrt(4.0f64), 2.0);
@@ -420,7 +442,7 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::approx_constant)]
+    #[allow(clippy::approx_constant)] // Intentional: tests use exact bit patterns, not approximate constants
     fn conformance_tests_f64() {
         let cases = [
             (f64::PI, 0x3ffc5bf891b4ef6a_u64),
@@ -432,5 +454,44 @@ mod tests {
         for (input, output) in cases {
             assert_biteq!(sqrt(input), f64::from_bits(output));
         }
+    }
+
+    #[test]
+    fn sqrt_perfect_squares_f64() {
+        for i in 0..1000u64 {
+            let x = (i * i) as f64;
+            assert_biteq!(sqrt(x), i as f64);
+        }
+    }
+
+    #[test]
+    fn sqrt_subnormal_f64() {
+        assert!(sqrt(f64::from_bits(1)).is_finite());
+        assert!(sqrt(f64::from_bits(1)) > 0.0);
+        assert!(sqrt(f64::from_bits(0x000F_FFFF_FFFF_FFFF)).is_finite());
+    }
+
+    #[test]
+    fn sqrt_large_f64() {
+        assert!(sqrt(f64::MAX).is_finite());
+        assert_biteq!(sqrt(f64::INFINITY), f64::INFINITY);
+    }
+
+    #[test]
+    fn sqrt_negative_f64() {
+        assert!(sqrt(-1.0f64).is_nan());
+        assert!(sqrt(f64::NEG_INFINITY).is_nan());
+    }
+
+    #[test]
+    fn sqrt_zero_f64() {
+        assert_biteq!(sqrt(0.0f64), 0.0f64);
+        assert_biteq!(sqrt(-0.0f64), -0.0f64);
+    }
+
+    #[test]
+    fn sqrt_even_odd_exponent_f64() {
+        assert_biteq!(sqrt(4.0f64), 2.0);
+        assert_biteq!(sqrt(2.0f64), f64::from_bits(0x3ff6a09e667f3bcd));
     }
 }

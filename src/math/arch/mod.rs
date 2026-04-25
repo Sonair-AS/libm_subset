@@ -11,21 +11,20 @@
 cfg_if! {
     if #[cfg(target_feature = "sse2")] {
         mod x86;
-        pub use x86::{sqrt, sqrtf};
+        pub use x86::sqrtf;
+        #[cfg(not(feature = "sonair_certified"))]
+        #[allow(unused_imports)] // Exported for upstream API completeness; consumer may not use f64 sqrt
+        pub use x86::sqrt;
     } else if #[cfg(all(
         any(target_arch = "aarch64", target_arch = "arm64ec"),
         target_feature = "neon"
     ))] {
         mod aarch64;
 
-        #[cfg(not(feature = "sonair_certified"))]
-        pub use aarch64::{sqrt, sqrtf};
+        pub use aarch64::sqrtf;
 
-        #[cfg(feature = "sonair_certified")]
-        pub use aarch64::{
-            sqrt,
-            sqrtf,
-        };
+        #[cfg(not(feature = "sonair_certified"))]
+        pub use aarch64::sqrt;
 
         #[cfg(all(f16_enabled, target_feature = "fp16"))]
         pub use aarch64::{
@@ -38,7 +37,7 @@ cfg_if! {
 // There are certain architecture-specific implementations that are needed for correctness
 // even with `force-soft-float`. These are configured here.
 cfg_if! {
-    if #[cfg(all(target_arch = "x86", not(target_feature = "sse2")))] {
+    if #[cfg(all(target_arch = "x86", not(target_feature = "sse2"), not(feature = "sonair_certified")))] {
         mod i586;
         pub use i586::{ceil, floor};
     }

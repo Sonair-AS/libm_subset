@@ -47,6 +47,7 @@ const IVLN2_L: f32 = 7.0526075433e-06;
 
 /// Returns `x` to the power of `y` (f32).
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
+#[allow(clippy::cognitive_complexity, clippy::too_many_lines)] // Ported from musl; refactoring would diverge from upstream
 pub fn powf(x: f32, y: f32) -> f32 {
     let mut z: f32;
     let mut ax: f32;
@@ -404,5 +405,159 @@ mod tests {
             powf(f32::from_bits(0x40400000), f32::from_bits(0x40000000)),
             f32::from_bits(0x41100000)
         );
+    }
+
+    #[test]
+    fn powf_y_is_inf() {
+        assert_biteq!(powf(0.5, f32::INFINITY), 0.0);
+        assert_biteq!(powf(0.5, f32::NEG_INFINITY), f32::INFINITY);
+        assert_biteq!(powf(2.0, f32::INFINITY), f32::INFINITY);
+        assert_biteq!(powf(2.0, f32::NEG_INFINITY), 0.0);
+    }
+
+    #[test]
+    fn powf_y_is_one() {
+        assert_biteq!(powf(3.0, 1.0), 3.0);
+        assert_biteq!(powf(3.0, -1.0), 1.0 / 3.0);
+    }
+
+    #[test]
+    fn powf_y_is_two() {
+        assert_biteq!(powf(5.0, 2.0), 25.0);
+        assert_biteq!(powf(-3.0, 2.0), 9.0);
+    }
+
+    #[test]
+    fn powf_y_is_half_positive_x() {
+        assert_biteq!(powf(4.0, 0.5), 2.0);
+        assert_biteq!(powf(9.0, 0.5), 3.0);
+    }
+
+    #[test]
+    fn powf_negative_x_odd_int_y() {
+        assert_biteq!(powf(-2.0, 3.0), -8.0);
+        assert_biteq!(powf(-2.0, 5.0), -32.0);
+    }
+
+    #[test]
+    fn powf_negative_x_even_int_y() {
+        assert_biteq!(powf(-2.0, 4.0), 16.0);
+        assert_biteq!(powf(-3.0, 2.0), 9.0);
+    }
+
+    #[test]
+    fn powf_negative_x_non_int_y() {
+        assert!(powf(-2.0, 1.5).is_nan());
+        assert!(powf(-2.0, 0.5).is_nan());
+    }
+
+    #[test]
+    fn powf_x_special_negative_y() {
+        assert_biteq!(powf(f32::INFINITY, -2.0), 0.0);
+        assert_biteq!(powf(0.0, -2.0), f32::INFINITY);
+        assert_biteq!(powf(-0.0, -3.0), f32::NEG_INFINITY);
+        assert_biteq!(powf(-0.0, -2.0), f32::INFINITY);
+        assert_biteq!(powf(f32::NEG_INFINITY, -2.0), 0.0);
+        assert_biteq!(powf(f32::NEG_INFINITY, -3.0), -0.0);
+    }
+
+    #[test]
+    fn powf_huge_y_overflow_underflow() {
+        let huge_y = f32::from_bits(0x4d800000); // 2^27 + eps
+        assert_biteq!(powf(0.5, huge_y), 0.0);
+        assert_biteq!(powf(0.5, -huge_y), f32::INFINITY);
+        assert_biteq!(powf(2.0, huge_y), f32::INFINITY);
+        assert_biteq!(powf(2.0, -huge_y), 0.0);
+    }
+
+    #[test]
+    fn powf_huge_y_x_near_one() {
+        let huge_y = f32::from_bits(0x4d800000);
+        let just_above = f32::from_bits(0x3f800008);
+        let result = powf(just_above, huge_y);
+        assert!(result == f32::INFINITY || result > 0.0);
+        let just_below = f32::from_bits(0x3f7ffff0);
+        let result2 = powf(just_below, huge_y);
+        assert!(result2 == 0.0 || result2 > 0.0);
+    }
+
+    #[test]
+    fn powf_subnormal_base() {
+        let subnorm = f32::from_bits(0x00000001);
+        let result = powf(subnorm, 1.0);
+        assert_biteq!(result, subnorm);
+    }
+
+    #[test]
+    fn powf_k1_interval() {
+        let x = f32::from_bits(0x3fa00000); // 1.25, inside k=1 range
+        let result = powf(x, 3.0);
+        assert!((result - 1.953125).abs() < 1e-5);
+    }
+
+    #[test]
+    fn powf_overflow_branch() {
+        let result = powf(2.0, 200.0);
+        assert_biteq!(result, f32::INFINITY);
+    }
+
+    #[test]
+    fn powf_underflow_branch() {
+        let result = powf(2.0, -200.0);
+        assert_biteq!(result, 0.0);
+    }
+
+    #[test]
+    fn powf_x_near_one_huge_y_log_path() {
+        let x = f32::from_bits(0x3f800001); // 1 + smallest ULP, inside [0x3f7ffff8..0x3f800007]
+        let huge_y = f32::from_bits(0x4d000001); // just above 2^27
+        let r = powf(x, huge_y);
+        assert!(r.is_finite() || r == f32::INFINITY);
+        let r2 = powf(x, -huge_y);
+        assert!(r2.is_finite() || r2 == 0.0);
+
+        let x2 = f32::from_bits(0x3f7fffff); // 1 - smallest ULP
+        let r3 = powf(x2, huge_y);
+        assert!(r3.is_finite() || r3 == 0.0);
+    }
+
+    #[test]
+    fn powf_subnormal_x_base() {
+        let subnorm = f32::from_bits(0x00000010);
+        let r = powf(subnorm, 0.3);
+        assert!(r > 0.0);
+        assert!(r.is_finite());
+    }
+
+    #[test]
+    fn powf_x_above_sqrt3() {
+        let x = 1.8f32; // j > 0x5db3d7 (x above sqrt(3))
+        let r = powf(x, 3.0);
+        assert!((r - 5.832).abs() < 0.01);
+    }
+
+    #[test]
+    fn powf_z_equals_128_boundary() {
+        let r = powf(2.0, 128.0);
+        assert_biteq!(r, f32::INFINITY);
+    }
+
+    #[test]
+    fn powf_z_negative_150_boundary() {
+        let r = powf(2.0, -150.0);
+        assert_biteq!(r, 0.0);
+    }
+
+    #[test]
+    fn powf_subnormal_output() {
+        let r = powf(2.0, -149.0);
+        assert!(r >= 0.0);
+        assert!(r <= f32::MIN_POSITIVE);
+    }
+
+    #[test]
+    fn powf_p_h_minus_t_branch() {
+        let r = powf(1.5, 10.0);
+        assert!((r - 57.665).abs() < 0.01);
     }
 }

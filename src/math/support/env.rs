@@ -75,7 +75,7 @@ impl Status {
     /// The default result for division is +/-inf based on operand sign. For `logB`, the default
     /// result is -inf.
     /// `x / y` when `x != 0.0` and `y == 0.0`,
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg(any(not(feature = "sonair_certified"), test))]
     pub const DIVIDE_BY_ZERO: Self = Self(1 << 2);
 
     /// The result exceeds the maximum finite value.
@@ -83,10 +83,11 @@ impl Status {
     /// The default result depends on rounding mode. `Nearest*` rounds to +/- infinity, sign based
     /// on the intermediate result. `Zero` rounds to the signed maximum finite. `Positive` and
     /// `Negative` round to signed maximum finite in one direction, signed infinity in the other.
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg(any(not(feature = "sonair_certified"), test))]
     pub const OVERFLOW: Self = Self(1 << 3);
 
     /// The result is subnormal and lost precision.
+    #[cfg(any(not(feature = "sonair_certified"), test))]
     pub const UNDERFLOW: Self = Self(1 << 4);
 
     /// The finite-precision result does not match that of infinite precision, and the reason
@@ -94,13 +95,13 @@ impl Status {
     pub const INEXACT: Self = Self(1 << 5);
 
     /// True if `UNDERFLOW` is set.
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg(any(not(feature = "sonair_certified"), test))]
     pub const fn underflow(self) -> bool {
         self.0 & Self::UNDERFLOW.0 != 0
     }
 
     /// True if `OVERFLOW` is set.
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg(any(not(feature = "sonair_certified"), test))]
     pub const fn overflow(self) -> bool {
         self.0 & Self::OVERFLOW.0 != 0
     }
@@ -111,6 +112,7 @@ impl Status {
     }
 
     /// True if `INEXACT` is set.
+    #[cfg(any(not(feature = "sonair_certified"), test))]
     pub const fn inexact(self) -> bool {
         self.0 & Self::INEXACT.0 != 0
     }
@@ -129,7 +131,73 @@ impl Status {
         }
     }
 
+    #[cfg(any(not(feature = "sonair_certified"), test))]
     pub(crate) const fn with(self, rhs: Self) -> Self {
         Self(self.0 | rhs.0)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn status_ok_has_no_flags() {
+        let s = Status::OK;
+        assert!(!s.underflow());
+        assert!(!s.overflow());
+        assert!(!s.inexact());
+    }
+
+    #[test]
+    fn status_individual_flags() {
+        assert!(Status::UNDERFLOW.underflow());
+        assert!(!Status::UNDERFLOW.overflow());
+        assert!(!Status::UNDERFLOW.inexact());
+
+        assert!(Status::OVERFLOW.overflow());
+        assert!(!Status::OVERFLOW.underflow());
+        assert!(!Status::OVERFLOW.inexact());
+
+        assert!(Status::INEXACT.inexact());
+        assert!(!Status::INEXACT.underflow());
+        assert!(!Status::INEXACT.overflow());
+
+        assert!(Status::INVALID != Status::OK);
+        assert!(Status::DIVIDE_BY_ZERO != Status::OK);
+    }
+
+    #[test]
+    fn status_with_combines_flags() {
+        let s = Status::UNDERFLOW.with(Status::INEXACT);
+        assert!(s.underflow());
+        assert!(s.inexact());
+        assert!(!s.overflow());
+
+        let s2 = Status::OK.with(Status::OVERFLOW);
+        assert!(s2.overflow());
+        assert!(!s2.underflow());
+    }
+
+    #[test]
+    fn fp_result_ok_has_ok_status() {
+        let r = FpResult::ok(1.0f32);
+        assert!(r.status == Status::OK);
+        assert!(!r.status.underflow());
+    }
+
+    #[test]
+    fn fp_result_new_preserves_status() {
+        let r = FpResult::new(f32::NAN, Status::INVALID);
+        assert!(r.val.is_nan());
+        assert!(r.status == Status::INVALID);
+    }
+
+    #[test]
+    fn round_variants_are_distinct() {
+        assert!(Round::Nearest != Round::Negative);
+        assert!(Round::Nearest != Round::Positive);
+        assert!(Round::Nearest != Round::Zero);
+        assert!(Round::Negative != Round::Positive);
     }
 }

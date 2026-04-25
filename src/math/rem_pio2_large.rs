@@ -1,4 +1,4 @@
-#![allow(unused_unsafe)]
+#![allow(unused_unsafe)] // The i! and i_mut! macros expand to unsafe in release but safe in debug
 /* origin: FreeBSD /usr/src/lib/msun/src/k_rem_pio2.c */
 /*
  * ====================================================
@@ -25,6 +25,7 @@ macro_rules! div {
 #[cfg(all(not(debug_assertions), intrinsics_enabled))]
 macro_rules! div {
     ($a:expr, $b:expr) => {
+        // SAFETY: The divisor is always the constant 24 at all call sites, which is nonzero.
         unsafe { core::intrinsics::unchecked_div($a, $b) }
     };
 }
@@ -240,6 +241,7 @@ const PIO2: [f64; 8] = [
 /// more accurately, = 0 mod 8 ). Thus the number of operations are
 /// independent of the exponent of the input.
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
+#[allow(clippy::cognitive_complexity, clippy::too_many_lines)] // Ported from musl; refactoring would diverge from upstream
 pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> i32 {
     // FIXME(rust-lang/rust#144518): Inline assembly would cause `no_panic` to fail
     // on the callers of this function. As a workaround, avoid inlining `floor` here
@@ -491,4 +493,287 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         _ => {}
     }
     n & 7
+}
+
+#[cfg(test)]
+mod tests {
+    use super::rem_pio2_large;
+
+    fn call_via_rem_pio2f(x: f32) -> (i32, f64) {
+        let ix = x.to_bits() & 0x7fffffff;
+        let sign = (x.to_bits() >> 31) != 0;
+        let e0 = ((ix >> 23) - (0x7f + 23)) as i32;
+        let tx = [f32::from_bits(ix - (e0 << 23) as u32) as f64];
+        let mut ty = [0.0f64; 1];
+        let n = rem_pio2_large(&tx, &mut ty, e0, 0);
+        if sign { (-n, -ty[0]) } else { (n, ty[0]) }
+    }
+
+    #[test]
+    fn rem_pio2_large_basic() {
+        let x = f32::from_bits(0x4e6e6b28); // ~1e9
+        let (n, y) = call_via_rem_pio2f(x);
+        assert!((0..=7).contains(&(n & 7)));
+        assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01);
+    }
+
+    #[test]
+    fn rem_pio2_large_negative() {
+        let x = f32::from_bits(0xce6e6b28); // -1e9
+        let (n, y) = call_via_rem_pio2f(x);
+        assert!((0..=7).contains(&((-n) & 7)));
+        assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01);
+    }
+
+    #[test]
+    fn rem_pio2_large_huge_values() {
+        let x = f32::from_bits(0x7f000000); // ~1.7e38
+        let (n, y) = call_via_rem_pio2f(x);
+        assert!((n & 7) < 8);
+        assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01);
+    }
+
+    #[test]
+    fn rem_pio2_large_near_threshold() {
+        let x = f32::from_bits(0x4dc90fdb); // just above medium path threshold
+        let (n, y) = call_via_rem_pio2f(x);
+        assert!((n & 7) < 8);
+        assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01);
+    }
+
+    #[test]
+    fn rem_pio2_large_various_e0() {
+        let test_values: &[u32] = &[
+            0x4e000000, // 2^28
+            0x4f000000, // 2^30
+            0x50000000, // 2^32
+            0x58000000, // 2^48
+            0x60000000, // 2^64
+            0x70000000, // 2^96
+            0x7e800000, // 2^126
+        ];
+        for &bits in test_values {
+            let x = f32::from_bits(bits);
+            let (n, y) = call_via_rem_pio2f(x);
+            assert!(
+                (n & 7) < 8,
+                "n out of range for x=0x{bits:08x}: n={n}"
+            );
+            assert!(
+                y.abs() < core::f64::consts::FRAC_PI_2 + 0.01,
+                "rem_pio2_large failed for x=0x{bits:08x}: y={y}"
+            );
+        }
+    }
+
+    #[test]
+    fn rem_pio2_large_ih_gt_zero_path() {
+        let x = f32::from_bits(0x4f490fdb); // ~pi * 2^29, hits ih>0
+        let (n, y) = call_via_rem_pio2f(x);
+        assert!((n & 7) < 8);
+        assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01);
+    }
+
+    #[test]
+    fn rem_pio2_large_q0_positive() {
+        let test_values: &[u32] = &[
+            0x57490fdb, // pi * 2^47
+            0x5b490fdb, // pi * 2^55
+        ];
+        for &bits in test_values {
+            let x = f32::from_bits(bits);
+            let (_, y) = call_via_rem_pio2f(x);
+            assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01);
+        }
+    }
+
+    #[test]
+    fn rem_pio2_large_consistency_all_arms() {
+        let inputs: &[u32] = &[
+            0x4e6e6b28, // ~1e9
+            0x4f000000, // 2^30
+            0x4f800000, // 2^31
+            0x50000000, // 2^32
+            0x50800000, // 2^33
+            0x51000000, // 2^34
+            0x51800000, // 2^35
+            0x52000000, // 2^36
+        ];
+        let mut arms_hit = [false; 4];
+        for &bits in inputs {
+            let x = f32::from_bits(bits);
+            let (n, y) = call_via_rem_pio2f(x);
+            let arm = (n & 3) as usize;
+            arms_hit[arm] = true;
+            let sin_via_rem = match arm {
+                0 => crate::math::k_sinf(y),
+                1 => crate::math::k_cosf(y),
+                2 => crate::math::k_sinf(-y),
+                _ => -crate::math::k_cosf(y),
+            };
+            let sin_direct = crate::math::sinf(x);
+            assert!(
+                (sin_via_rem as f32 - sin_direct).abs() < 1e-5,
+                "Mismatch for x=0x{bits:08x}: rem={sin_via_rem}, direct={sin_direct}"
+            );
+        }
+        assert!(arms_hit.iter().all(|&h| h), "Not all match arms hit: {arms_hit:?}");
+    }
+
+    #[test]
+    fn rem_pio2_large_small_e0() {
+        let x = f32::from_bits(0x4dc90fdb); // threshold value, e0 is small
+        let (_, y) = call_via_rem_pio2f(x);
+        assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01);
+    }
+
+    #[test]
+    fn rem_pio2_large_z_equals_zero_path() {
+        let test_values: &[u32] = &[
+            0x4f490fdb, // pi * 2^29 (exact multiple)
+            0x50490fdb, // pi * 2^33
+            0x54490fdb, // pi * 2^41
+            0x58490fdb, // pi * 2^49
+            0x5c490fdb, // pi * 2^57
+            0x60490fdb, // pi * 2^65
+            0x64490fdb, // pi * 2^73
+            0x68490fdb, // pi * 2^81
+        ];
+        for &bits in test_values {
+            let x = f32::from_bits(bits);
+            let (_, y) = call_via_rem_pio2f(x);
+            assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01);
+        }
+    }
+
+    #[test]
+    fn rem_pio2_large_q0_positive_paths() {
+        for exp in 24..50u32 {
+            let bits = (exp + 0x7f) << 23 | 0x490fdb;
+            if bits >= 0x7f800000 { break; }
+            let x = f32::from_bits(bits);
+            let (_, y) = call_via_rem_pio2f(x);
+            assert!(y.abs() < core::f64::consts::FRAC_PI_2 + 0.01,
+                "Failed for exp={exp}, x=0x{bits:08x}");
+        }
+    }
+
+    fn call_with_prec(val: f64, e0: i32, prec: usize, ny: usize) -> (i32, [f64; 3]) {
+        let tx = [val];
+        let mut ty = [0.0f64; 3];
+        let n = rem_pio2_large(&tx, &mut ty[..ny], e0, prec);
+        (n, ty)
+    }
+
+    #[test]
+    fn rem_pio2_large_prec1() {
+        let (n, y) = call_with_prec(1.5, 1, 1, 2);
+        assert!((n & 7) < 8);
+        assert!(y[0].is_finite());
+    }
+
+    #[test]
+    fn rem_pio2_large_prec2() {
+        let (n, y) = call_with_prec(1.5, 1, 2, 2);
+        assert!((n & 7) < 8);
+        assert!(y[0].is_finite());
+    }
+
+    #[test]
+    fn rem_pio2_large_prec3() {
+        let (n, y) = call_with_prec(1.5, 1, 3, 3);
+        assert!((n & 7) < 8);
+        assert!(y[0].is_finite());
+        assert!(y[1].is_finite());
+        assert!(y[2].is_finite());
+    }
+
+    #[test]
+    fn rem_pio2_large_prec_various_e0() {
+        for e0 in [0, 1, 5, 10, 20, 50] {
+            let (n, y) = call_with_prec(1.5, e0, 2, 2);
+            assert!((n & 7) < 8, "n out of range for e0={e0}");
+            assert!(y[0].is_finite(), "y[0] not finite for e0={e0}");
+        }
+    }
+
+    #[test]
+    fn rem_pio2_large_prec3_ih_positive() {
+        let x = core::f64::consts::PI;
+        let tx = [x];
+        let mut ty = [0.0f64; 3];
+        let n = rem_pio2_large(&tx, &mut ty, 1, 3);
+        assert!((n & 7) < 8);
+    }
+
+    #[test]
+    fn rem_pio2_large_small_jv_path() {
+        let tx = [1.5, 1.0];
+        let mut ty = [0.0f64; 1];
+        let n = rem_pio2_large(&tx, &mut ty, 0, 0);
+        assert!((n & 7) < 8);
+    }
+
+    #[test]
+    fn rem_pio2_large_prec3_ih0() {
+        let tx = [0.5];
+        let mut ty = [0.0f64; 3];
+        let n = rem_pio2_large(&tx, &mut ty, 2, 3);
+        assert!((n & 7) < 8);
+        assert!(ty[0].is_finite());
+        assert!(ty[1].is_finite());
+        assert!(ty[2].is_finite());
+    }
+
+    #[test]
+    fn rem_pio2_large_negative_e0() {
+        let tx = [1.5];
+        let mut ty = [0.0f64; 2];
+        let n = rem_pio2_large(&tx, &mut ty, -1, 0);
+        assert!((n & 7) < 8);
+    }
+
+    #[test]
+    fn rem_pio2_large_very_negative_e0() {
+        let tx = [1.5];
+        let mut ty = [0.0f64; 1];
+        let n = rem_pio2_large(&tx, &mut ty, -30, 0);
+        assert!((n & 7) < 8);
+    }
+
+    #[test]
+    fn rem_pio2_large_large_z_path() {
+        let tx = [1.9999999];
+        let mut ty = [0.0f64; 2];
+        let n = rem_pio2_large(&tx, &mut ty, 50, 2);
+        assert!((n & 7) < 8);
+    }
+
+    #[test]
+    fn rem_pio2_large_multi_x() {
+        let tx = [1.5, 1.3, 0.7];
+        let mut ty = [0.0f64; 2];
+        let n = rem_pio2_large(&tx, &mut ty, 5, 2);
+        assert!((n & 7) < 8);
+    }
+
+    #[test]
+    fn rem_pio2_large_large_e0_for_z_overflow() {
+        for e0 in [80, 100, 120, 150] {
+            let tx = [1.99999];
+            let mut ty = [0.0f64; 2];
+            let n = rem_pio2_large(&tx, &mut ty, e0, 2);
+            assert!((n & 7) < 8, "e0={e0}");
+        }
+    }
+
+    #[test]
+    fn rem_pio2_large_prec3_various() {
+        for e0 in [0, 1, 3, 10, 25, 50, 51, 75] {
+            let tx = [1.5];
+            let mut ty = [0.0f64; 3];
+            let n = rem_pio2_large(&tx, &mut ty, e0, 3);
+            assert!((n & 7) < 8, "e0={e0}");
+        }
+    }
 }

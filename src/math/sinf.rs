@@ -173,7 +173,7 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::approx_constant)]
+    #[allow(clippy::approx_constant)] // Intentional: tests use exact bit patterns, not approximate constants
     fn sinf_conformance_bit_exact() {
         let cases = [
             (0x3f800000_u32, 0x3f576aa4_u32), // sin(1.0)
@@ -188,5 +188,59 @@ mod tests {
         for (x_bits, y_bits) in cases {
             assert_biteq!(sinf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
         }
+    }
+
+    #[test]
+    fn sinf_subnormal_returns_x() {
+        let x = f32::from_bits(0x0000_0001);
+        assert_biteq!(sinf(x), x);
+    }
+
+    #[test]
+    fn sinf_5pi4_to_3pi4_signed() {
+        let x = f32::from_bits(0x40490fdb); // pi
+        let neg_x = -x;
+        let _s = sinf(x);
+        let _sn = sinf(neg_x);
+        assert_biteq!(sinf(neg_x), -sinf(x));
+    }
+
+    #[test]
+    fn sinf_7pi4_to_9pi4_range() {
+        let x7pi4 = 7.0 * core::f32::consts::FRAC_PI_4;
+        let neg_x7pi4 = -x7pi4;
+        let s = sinf(x7pi4);
+        let sn = sinf(neg_x7pi4);
+        assert!((s + sn).abs() < 1e-6);
+    }
+
+    #[test]
+    fn sinf_near_9pi4() {
+        let x = 9.0 * core::f32::consts::FRAC_PI_4;
+        assert!((sinf(x) - sinf(x - 2.0 * core::f32::consts::PI)).abs() < 1e-4);
+        assert_biteq!(sinf(-x), -sinf(x));
+    }
+
+    #[test]
+    fn sinf_tiny_nonsubnormal_inexact_path() {
+        let x = f32::from_bits(0x30000000); // ~4.6e-10, non-subnormal, < 2^-12
+        assert_biteq!(sinf(x), x);
+        assert_biteq!(sinf(-x), -x);
+    }
+
+    #[test]
+    fn sinf_7pi4_range_sign_branches() {
+        let r_pos = sinf(5.0);
+        let r_neg = sinf(-5.0);
+        assert_biteq!(r_neg, -r_pos);
+        assert!(r_pos.abs() <= 1.0);
+    }
+
+    #[test]
+    fn sinf_negative_large_rem_pio2f_sign_path() {
+        let x = -f32::from_bits(0x4e6e6b28); // -1e9, above medium threshold
+        let r = sinf(x);
+        assert!(!r.is_nan());
+        assert!(r.abs() <= 1.0);
     }
 }

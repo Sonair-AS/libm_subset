@@ -112,4 +112,20 @@ mod tests {
     fn logf_conformance_tiny_normal() {
         assert_biteq!(logf(f32::from_bits(0x0da24260)), f32::from_bits(0xc28a27b5));
     }
+
+    #[test]
+    fn logf_subnormal_input() {
+        let subnorm = f32::from_bits(0x0000_0001);
+        let result = logf(subnorm);
+        assert!(result < -100.0);
+        assert!(result.is_finite());
+    }
+
+    #[test]
+    fn logf_subnormal_various() {
+        let subnorm2 = f32::from_bits(0x007F_FFFF);
+        let result = logf(subnorm2);
+        assert!(result < 0.0);
+        assert!(result.is_finite());
+    }
 }

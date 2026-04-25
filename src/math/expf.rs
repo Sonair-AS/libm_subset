@@ -125,10 +125,59 @@ mod tests {
             (0x42b00000_u32, 0x7ef882b7_u32), // exp(88) finite overflow edge
             (0xc2b00000_u32, 0x0041edc4_u32), // exp(-88) underflow-ish
             (0x1e3ce508_u32, 0x3f800000_u32), // tiny x -> 1+x
+            (0x42b17218_u32, 0x7f800000_u32), // exp(88.722839) -> overflow
         ];
 
         for (x_bits, y_bits) in cases {
             assert_biteq!(expf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
         }
+    }
+
+    #[test]
+    fn expf_overflow() {
+        assert_biteq!(expf(89.0), f32::INFINITY);
+        assert_biteq!(expf(200.0), f32::INFINITY);
+    }
+
+    #[test]
+    fn expf_deep_underflow() {
+        assert_biteq!(expf(-104.0), 0.0);
+        assert_biteq!(expf(-200.0), 0.0);
+    }
+
+    #[test]
+    fn expf_negative_underflow_edge() {
+        let result = expf(-87.0);
+        assert!(result > 0.0);
+        assert!(result < 1e-30);
+    }
+
+    #[test]
+    fn expf_small_range_k_zero() {
+        let x = f32::from_bits(0x39800000); // 2^-14 + epsilon
+        let result = expf(x);
+        assert!((result - 1.0).abs() < 0.01);
+    }
+
+    #[test]
+    fn expf_tiny_returns_one_plus_x() {
+        let tiny = f32::from_bits(0x38000000); // 2^-15 or so
+        let result = expf(tiny);
+        assert!((result - 1.0).abs() < 1e-4);
+    }
+
+    #[test]
+    fn expf_0_5_ln2_boundary() {
+        let x = 0.35; // slightly above 0.5*ln2 ~ 0.347
+        let result = expf(x);
+        let expected = 1.4190675f32;
+        assert!((result - expected).abs() < 1e-4);
+    }
+
+    #[test]
+    fn expf_scalbn_branch() {
+        let result = expf(10.0);
+        let expected = 22026.4648f32;
+        assert!((result - expected).abs() / expected < 1e-5);
     }
 }

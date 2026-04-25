@@ -129,4 +129,63 @@ mod tests {
             assert_biteq!(tanf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
         }
     }
+
+    #[test]
+    fn tanf_subnormal_returns_x() {
+        let x = f32::from_bits(0x0000_0001);
+        assert_biteq!(tanf(x), x);
+    }
+
+    #[test]
+    fn tanf_pi4_direct() {
+        let x = core::f32::consts::FRAC_PI_4;
+        assert!((tanf(x) - 1.0).abs() < 1e-5);
+    }
+
+    #[test]
+    fn tanf_3pi4_to_5pi4_range() {
+        let x = core::f32::consts::PI;
+        assert!(tanf(x).abs() < 1e-4);
+        assert_biteq!(tanf(-x), -tanf(x));
+    }
+
+    #[test]
+    fn tanf_5pi4_to_7pi4_range() {
+        let x = 5.0 * core::f32::consts::FRAC_PI_4 + 0.01;
+        assert!(tanf(x).is_finite());
+        assert_biteq!(tanf(-x), -tanf(x));
+    }
+
+    #[test]
+    fn tanf_7pi4_to_9pi4_range() {
+        let x = 7.0 * core::f32::consts::FRAC_PI_4;
+        assert!(tanf(x).is_finite());
+        assert_biteq!(tanf(-x), -tanf(x));
+    }
+
+    #[test]
+    fn tanf_9pi4_range() {
+        let x = 9.0 * core::f32::consts::FRAC_PI_4;
+        assert!((tanf(x) - 1.0).abs() < 0.01);
+        assert_biteq!(tanf(-x), -tanf(x));
+    }
+
+    #[test]
+    fn tanf_subnormal_underflow_path() {
+        let x = f32::from_bits(0x0000_0001);
+        assert_biteq!(tanf(x), x);
+    }
+
+    #[test]
+    fn tanf_tiny_nonsubnormal_inexact_path() {
+        let x = f32::from_bits(0x30000000); // ~4.6e-10, non-subnormal, < 2^-12
+        assert_biteq!(tanf(x), x);
+    }
+
+    #[test]
+    fn tanf_pi4_direct_k_tanf() {
+        let x = core::f32::consts::FRAC_PI_4 * 0.99;
+        assert!((tanf(x) - 0.99).abs() < 0.05);
+        assert_biteq!(tanf(-x), -tanf(x));
+    }
 }

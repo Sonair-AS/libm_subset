@@ -134,4 +134,84 @@ mod tests {
             assert_biteq!(cosf(f32::from_bits(x_bits)), f32::from_bits(y_bits));
         }
     }
+
+    #[test]
+    fn cosf_subnormal_returns_one() {
+        let x = f32::from_bits(0x0000_0001);
+        assert_biteq!(cosf(x), 1.0);
+    }
+
+    #[test]
+    fn cosf_3pi4_to_5pi4_range() {
+        let x = core::f32::consts::PI;
+        assert!((cosf(x) - (-1.0)).abs() < 1e-5);
+        assert!((cosf(-x) - (-1.0)).abs() < 1e-5);
+    }
+
+    #[test]
+    fn cosf_5pi4_sign_paths() {
+        let x = 5.0 * core::f32::consts::FRAC_PI_4;
+        assert_biteq!(cosf(x), cosf(-x));
+        assert!(cosf(x).abs() <= 1.0);
+    }
+
+    #[test]
+    fn cosf_7pi4_to_9pi4_range() {
+        let x = 7.0 * core::f32::consts::FRAC_PI_4;
+        let neg_x = -x;
+        assert!((cosf(x) - cosf(neg_x)).abs() < 1e-6);
+    }
+
+    #[test]
+    fn cosf_near_9pi4() {
+        let x = 9.0 * core::f32::consts::FRAC_PI_4;
+        let neg_x = -x;
+        assert!((cosf(x) - cosf(neg_x)).abs() < 1e-6);
+    }
+
+    #[test]
+    fn cosf_3pi4_region_signed() {
+        let x = 3.0 * core::f32::consts::FRAC_PI_4;
+        assert_biteq!(cosf(x), cosf(-x));
+        assert!(cosf(x) < 0.0);
+    }
+
+    #[test]
+    fn cosf_rem_pio2f_all_arms() {
+        use super::rem_pio2f;
+        let cases: &[(u32, i32)] = &[
+            (0x413c7edd, 0),
+            (0x40e231d6, 1),
+            (0x410a3ae7, 2),
+            (0x41235ce2, 3),
+        ];
+        for &(xb, want_mod) in cases {
+            let x = f32::from_bits(xb);
+            let (n, _y) = rem_pio2f(x);
+            assert_eq!(n & 3, want_mod, "for x=0x{xb:08x}");
+            let r = cosf(x);
+            assert!(r.abs() <= 1.0, "cosf(0x{xb:08x}) = {r}, out of [-1, 1]");
+            assert_biteq!(cosf(-x), cosf(x));
+        }
+    }
+
+    #[test]
+    fn cosf_subnormal_path() {
+        let x = f32::from_bits(0x0000_0001);
+        assert_biteq!(cosf(x), 1.0);
+        assert_biteq!(cosf(-x), 1.0);
+    }
+
+    #[test]
+    fn cosf_tiny_nonsubnormal_returns_one() {
+        let x = f32::from_bits(0x30000000); // ~4.6e-10, non-subnormal, < 2^-12
+        assert_biteq!(cosf(x), 1.0);
+    }
+
+    #[test]
+    fn cosf_inside_pi4() {
+        let x = 0.5f32;
+        let r = cosf(x);
+        assert!((r - 0.87758).abs() < 0.001);
+    }
 }

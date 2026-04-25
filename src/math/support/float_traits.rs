@@ -5,8 +5,7 @@ use core::{mem, ops};
 use super::int_traits::{CastFrom, Int, MinInt};
 
 /// Trait for some basic operations on floats
-// #[allow(dead_code)]
-#[allow(dead_code)] // Some constants are only used with tests
+#[allow(dead_code)] // Some trait items and constants are only used in tests or by specific float configurations
 pub trait Float:
     Copy
     // + fmt::Debug
@@ -90,13 +89,13 @@ pub trait Float:
     fn to_bits(self) -> Self::Int;
 
     /// Returns `self` transmuted to `Self::SignedInt`
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Part of the Float API; used by fma in non-certified builds
     fn to_bits_signed(self) -> Self::SignedInt {
         self.to_bits().signed()
     }
 
     /// Check bitwise equality.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used in tests via assert_biteq! macro
     fn biteq(self, rhs: Self) -> bool {
         self.to_bits() == rhs.to_bits()
     }
@@ -106,7 +105,7 @@ pub trait Float:
     ///
     /// This method returns `true` if two NaNs are compared. Use [`biteq`](Self::biteq) instead
     /// if `NaN` should not be treated separately.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used in tests for NaN-tolerant float comparison
     fn eq_repr(self, rhs: Self) -> bool {
         if self.is_nan() && rhs.is_nan() {
             true
@@ -130,7 +129,7 @@ pub trait Float:
     }
 
     /// Returns if `self` is subnormal.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used in tests for subnormal detection
     fn is_subnormal(self) -> bool {
         (self.to_bits() & Self::EXP_MASK) == Self::Int::ZERO
     }
@@ -146,7 +145,7 @@ pub trait Float:
     }
 
     /// Returns the significand with no implicit bit (or the "fractional" part)
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Part of the Float API; used in fma and test helpers
     fn frac(self) -> Self::Int {
         self.to_bits() & Self::SIG_MASK
     }
@@ -168,7 +167,7 @@ pub trait Float:
         )
     }
 
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Part of the Float API; used in non-certified builds
     fn abs(self) -> Self;
 
     /// Returns a number composed of the magnitude of self and the sign of sign.
@@ -179,12 +178,12 @@ pub trait Float:
     fn fma(self, y: Self, z: Self) -> Self;
 
     /// Returns (normalized exponent, normalized significand)
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Part of the Float API; used by fma in non-certified builds
     #[cfg(not(feature = "sonair_certified"))]
     fn normalize(significand: Self::Int) -> (i32, Self::Int);
 
     /// Returns a number that represents the sign of self.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Part of the Float API; available for downstream use
     fn signum(self) -> Self {
         if self.is_nan() {
             self
@@ -218,6 +217,7 @@ macro_rules! float_impl {
         $fma_intrinsic:ident,
         $fma_soft:ident
     ) => {
+        #[allow(unstable_name_collisions)] // Our Float::BITS may collide with future f32::BITS/f64::BITS in std
         impl Float for $ty {
             type Int = $ity;
             type SignedInt = $sity;
@@ -336,37 +336,40 @@ float_impl!(
 /* FIXME(msrv): vendor some things that are not const stable at our MSRV */
 
 /// `f32::from_bits`
-#[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[allow(dead_code)] // Called by float_impl! macro in const exprs; compiler const-evaluates away the call
+#[allow(unnecessary_transmutes)] // Transmute is needed for const fn; from_bits() is not const-stable on all supported MSRVs
 pub const fn f32_from_bits(bits: u32) -> f32 {
-    // SAFETY: POD cast with no preconditions
+    // SAFETY: u32 and f32 have the same size and alignment; any bit pattern is valid.
     unsafe { mem::transmute::<u32, f32>(bits) }
 }
 
 /// `f32::to_bits`
-#[allow(dead_code)] // workaround for false positive RUST-144060
-#[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[allow(dead_code)] // Counterpart to f32_from_bits; kept for API symmetry, used by float_impl! macro
+#[allow(unnecessary_transmutes)] // Transmute is needed for const fn; to_bits() is not const-stable on all supported MSRVs
 pub const fn f32_to_bits(x: f32) -> u32 {
-    // SAFETY: POD cast with no preconditions
+    // SAFETY: u32 and f32 have the same size and alignment; any bit pattern is valid.
     unsafe { mem::transmute::<f32, u32>(x) }
 }
 
 /// `f64::from_bits`
-#[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[allow(dead_code)] // Counterpart to f32_from_bits; kept for API symmetry, used by float_impl! macro
+#[allow(unnecessary_transmutes)] // Transmute is needed for const fn; from_bits() is not const-stable on all supported MSRVs
 pub const fn f64_from_bits(bits: u64) -> f64 {
-    // SAFETY: POD cast with no preconditions
+    // SAFETY: u64 and f64 have the same size and alignment; any bit pattern is valid.
     unsafe { mem::transmute::<u64, f64>(bits) }
 }
 
 /// `f64::to_bits`
-#[allow(dead_code)] // workaround for false positive RUST-144060
-#[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[allow(dead_code)] // Counterpart to f64_from_bits; kept for API symmetry, used by float_impl! macro
+#[allow(unnecessary_transmutes)] // Transmute is needed for const fn; to_bits() is not const-stable on all supported MSRVs
 pub const fn f64_to_bits(x: f64) -> u64 {
-    // SAFETY: POD cast with no preconditions
+    // SAFETY: u64 and f64 have the same size and alignment; any bit pattern is valid.
     unsafe { mem::transmute::<f64, u64>(x) }
 }
 
 /// Trait for floats twice the bit width of another integer.
 #[cfg(not(feature = "sonair_certified"))]
+#[allow(dead_code)] // Part of the upstream libm API; used by fma_wide in non-certified builds
 pub trait DFloat: Float {
     /// Float that is half the bit width of the floatthis trait is implemented for.
     type H: HFloat<D = Self>;
@@ -377,6 +380,7 @@ pub trait DFloat: Float {
 
 /// Trait for floats half the bit width of another float.
 #[cfg(not(feature = "sonair_certified"))]
+#[allow(dead_code)] // Part of the upstream libm API; used by fma_wide in non-certified builds
 pub trait HFloat: Float {
     /// Float that is double the bit width of the float this trait is implemented for.
     type D: DFloat<H = Self>;
@@ -450,7 +454,7 @@ mod tests {
         assert_biteq!(f32::from_parts(true, f32::EXP_BIAS, 0), -1.0f32);
         assert_biteq!(
             f32::from_parts(false, 10 + f32::EXP_BIAS, 0),
-            hf32!("0x1p10")
+            1024.0f32
         );
         assert_biteq!(f32::from_parts(false, 0, 1), f32::from_bits(0x1));
     }
@@ -480,8 +484,99 @@ mod tests {
         assert_biteq!(f64::from_parts(true, f64::EXP_BIAS, 0), -1.0f64);
         assert_biteq!(
             f64::from_parts(false, 10 + f64::EXP_BIAS, 0),
-            hf64!("0x1p10")
+            1024.0f64
         );
         assert_biteq!(f64::from_parts(false, 0, 1), f64::from_bits(0x1));
+    }
+
+    #[test]
+    fn to_bits_signed_f32() {
+        assert_eq!(1.0f32.to_bits_signed(), 1.0f32.to_bits() as i32);
+        assert_eq!((-1.0f32).to_bits_signed(), (-1.0f32).to_bits() as i32);
+    }
+
+    #[test]
+    fn biteq_f32() {
+        assert!(1.0f32.biteq(1.0f32));
+        assert!(!1.0f32.biteq(-1.0f32));
+        assert!(0.0f32.biteq(0.0f32));
+        assert!(!0.0f32.biteq(-0.0f32));
+        assert!(f32::NAN.biteq(f32::NAN));
+    }
+
+    #[test]
+    fn eq_repr_f32() {
+        assert!(1.0f32.eq_repr(1.0f32));
+        assert!(!1.0f32.eq_repr(-1.0f32));
+        assert!(f32::NAN.eq_repr(f32::NAN));
+        assert!(!0.0f32.eq_repr(-0.0f32));
+    }
+
+    /// Exercise Float trait methods through fully-qualified trait calls
+    /// so llvm-cov counts the macro-expanded bodies, not inherent methods.
+    #[inline(never)]
+    fn exercise_float<F: Float>(one: F, neg_one: F, zero: F, neg_zero: F, subnorm: F, nan: F) {
+        assert!(Float::is_subnormal(subnorm));
+        assert!(!Float::is_subnormal(one));
+
+        assert!(Float::frac(one) == F::Int::ZERO);
+
+        assert_biteq!(Float::signum(one), one);
+        assert_biteq!(Float::signum(neg_one), neg_one);
+        assert!(Float::signum(nan).is_nan());
+
+        assert_biteq!(Float::canonicalize(one), one);
+        assert_biteq!(Float::canonicalize(neg_one), neg_one);
+
+        assert!(Float::is_sign_positive(one));
+        assert!(!Float::is_sign_positive(neg_one));
+        assert!(Float::is_sign_positive(zero));
+        assert!(!Float::is_sign_positive(neg_zero));
+
+        assert!(Float::is_infinite(F::INFINITY));
+        assert!(Float::is_infinite(F::NEG_INFINITY));
+        assert!(!Float::is_infinite(one));
+
+        assert_biteq!(Float::abs(neg_one), one);
+        assert_biteq!(Float::abs(one), one);
+
+        assert_biteq!(Float::copysign(one, neg_one), neg_one);
+        assert_biteq!(Float::copysign(neg_one, one), one);
+    }
+
+    #[test]
+    fn float_trait_dispatch_f32() {
+        exercise_float::<f32>(1.0, -1.0, 0.0, -0.0, f32::from_bits(1), f32::NAN);
+    }
+
+    #[test]
+    fn float_trait_dispatch_f64() {
+        exercise_float::<f64>(1.0, -1.0, 0.0, -0.0, f64::from_bits(1), f64::NAN);
+    }
+
+    #[test]
+    fn f32_from_bits_fn() {
+        assert_eq!(f32_from_bits(0x3f800000), 1.0f32);
+        assert_eq!(f32_from_bits(0), 0.0f32);
+        assert!(f32_from_bits(0x7fc00000).is_nan());
+    }
+
+    #[test]
+    fn f32_to_bits_fn() {
+        assert_eq!(f32_to_bits(1.0f32), 0x3f800000);
+        assert_eq!(f32_to_bits(0.0f32), 0);
+    }
+
+    #[test]
+    fn f64_from_bits_fn() {
+        assert_eq!(f64_from_bits(0x3ff0000000000000), 1.0f64);
+        assert_eq!(f64_from_bits(0), 0.0f64);
+        assert!(f64_from_bits(0x7ff8000000000000).is_nan());
+    }
+
+    #[test]
+    fn f64_to_bits_fn() {
+        assert_eq!(f64_to_bits(1.0f64), 0x3ff0000000000000);
+        assert_eq!(f64_to_bits(0.0f64), 0);
     }
 }

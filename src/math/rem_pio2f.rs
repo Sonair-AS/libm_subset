@@ -65,3 +65,25 @@ pub(crate) fn rem_pio2f(x: f32) -> (i32, f64) {
     }
     (n, ty[0])
 }
+
+#[cfg(test)]
+mod tests {
+    use super::rem_pio2f;
+
+    #[test]
+    fn rem_pio2f_nan_returns_nan() {
+        let (n, y) = rem_pio2f(f32::NAN);
+        assert_eq!(n, 0);
+        assert!(y.is_nan());
+    }
+
+    #[test]
+    fn rem_pio2f_inf_returns_nan() {
+        let (n, y) = rem_pio2f(f32::INFINITY);
+        assert_eq!(n, 0);
+        assert!(y.is_nan());
+        let (n2, y2) = rem_pio2f(f32::NEG_INFINITY);
+        assert_eq!(n2, 0);
+        assert!(y2.is_nan());
+    }
+}

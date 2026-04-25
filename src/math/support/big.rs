@@ -10,7 +10,7 @@ use super::{DInt, HInt, Int, MinInt};
 const U128_LO_MASK: u128 = u64::MAX as u128;
 
 /// A 256-bit unsigned integer represented as two 128-bit native-endian limbs.
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types)] // Matches Rust primitive naming convention (u8, u16, u32, u64, u128)
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Eq, Ord)]
 pub struct u256 {
     pub hi: u128,
@@ -34,7 +34,7 @@ impl u256 {
 }
 
 /// A 256-bit signed integer represented as two 128-bit native-endian limbs.
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types)] // Matches Rust primitive naming convention (i8, i16, i32, i64, i128)
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Eq, Ord)]
 pub struct i256 {
     pub hi: i128,
@@ -172,7 +172,7 @@ macro_rules! impl_common {
 
                 self.hi = hi >> s;
 
-                #[allow(unused_comparisons)]
+                #[allow(unused_comparisons)] // Generic over signed/unsigned; comparison is tautological for unsigned
                 if rhs & half_bits == 0 {
                     self.lo = (hi << (low_mask ^ s) << 1) as _;
                     self.lo |= lo >> s;

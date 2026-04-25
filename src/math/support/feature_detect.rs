@@ -7,7 +7,7 @@ compile_error!("currently all targets that support `AtomicPtr` also support `Ato
 use core::sync::atomic::{AtomicU32, Ordering};
 
 /// Given a list of identifiers, assign each one a unique sequential single-bit mask.
-#[allow(unused_macros)]
+#[allow(unused_macros)] // Only used on architectures with runtime feature detection
 macro_rules! unique_masks {
     ($ty:ty, $($name:ident,)+) => {
         #[cfg(test)]
@@ -40,7 +40,7 @@ macro_rules! unique_masks {
 ///
 /// This is effectively our version of an ifunc without linker support. Note that `init` may be
 /// called more than once until one completes.
-#[allow(unused_macros)] // only used on some architectures
+#[allow(unused_macros)] // Only used on architectures with runtime feature detection
 macro_rules! select_once {
     (
         sig: fn($($arg:ident: $ArgTy:ty),*) -> $RetTy:ty,
@@ -76,7 +76,7 @@ macro_rules! select_once {
     }}
 }
 
-#[allow(unused_imports)]
+#[allow(unused_imports)] // Only used on architectures with runtime feature detection
 pub(crate) use {select_once, unique_masks};
 
 use crate::support::cold_path;
@@ -85,7 +85,7 @@ use crate::support::cold_path;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Flags(u32);
 
-#[allow(dead_code)] // only used on some architectures
+#[allow(dead_code)] // Only used on architectures with runtime feature detection
 impl Flags {
     /// No bits set.
     pub const fn empty() -> Self {
@@ -124,7 +124,7 @@ impl Flags {
 /// to do so.
 ///
 /// Note that `init` may run more than once.
-#[allow(dead_code)] // only used on some architectures
+#[allow(dead_code)] // Only used on architectures with runtime feature detection
 pub fn get_or_init_flags_cache(cache: &AtomicU32, init: impl FnOnce() -> Flags) -> Flags {
     // The top bit is used to indicate that the values have already been set once.
     const INITIALIZED: u32 = 1 << 31;
@@ -200,6 +200,7 @@ mod tests {
                     CALLED.fetch_add(1, Ordering::Relaxed);
                     nop
                 },
+                // SAFETY: fn_ptr is either `initializer` or `nop`, both safe to call.
                 call: |fn_ptr: Func| unsafe { fn_ptr() },
             }
         }
