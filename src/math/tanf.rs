@@ -105,6 +105,17 @@ mod tests {
         assert!(tanf(f32::NEG_INFINITY).is_nan());
     }
 
+    /// Large |x| forces the `rem_pio2f` path in `tanf` (not the T1…T4 `k_tanf` segment ranges).
+    #[test]
+    fn rem_pio2f_path_variants() {
+        let p1000 = f32::from_bits(0x4544597c);
+        assert_biteq!(tanf(p1000), f32::from_bits(0x38fb56bf));
+        let p1000_neg = f32::from_bits(0xc544597c);
+        assert_biteq!(tanf(p1000_neg), f32::from_bits(0xb8fb56bf));
+        let p500 = f32::from_bits(0x44c4597c);
+        assert_biteq!(tanf(p500), f32::from_bits(0x387b56bf));
+    }
+
     #[test]
     fn tanf_conformance_bit_exact() {
         let cases = [

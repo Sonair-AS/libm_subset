@@ -110,6 +110,17 @@ mod tests {
         assert!(cosf(f32::NEG_INFINITY).is_nan());
     }
 
+    /// Large |x| forces the `rem_pio2f` path in `cosf` (not the early `k_cosf` / `k_sinf` ranges).
+    #[test]
+    fn rem_pio2f_path_variants() {
+        let p1000 = f32::from_bits(0x4544597c);
+        assert_biteq!(cosf(p1000), f32::from_bits(0x3f800000));
+        let p1000_neg = f32::from_bits(0xc544597c);
+        assert_biteq!(cosf(p1000_neg), f32::from_bits(0x3f800000));
+        let p500 = f32::from_bits(0x44c4597c);
+        assert_biteq!(cosf(p500), f32::from_bits(0x3f800000));
+    }
+
     #[test]
     fn cosf_conformance_bit_exact() {
         let cases = [

@@ -127,6 +127,30 @@ mod tests {
         assert_biteq!(sinf(-x), -sinf(x));
     }
 
+    /// |x| so large that `rem_pio2f` does **not** use the medium-argument branch
+    /// (`ix < 0x4dc90fdb`); it calls `rem_pio2_large` (see `rem_pio2f.rs`).
+    /// `1000·π` and similar tests above still use the medium path; this input does not.
+    #[test]
+    fn rem_pio2_large_path_bit_exact() {
+        // ~1e9, just above the medium/large split in `rem_pio2f`
+        let x = f32::from_bits(0x4e6e6b28);
+        assert_biteq!(sinf(x), f32::from_bits(0x3f0bbc65));
+    }
+
+    /// Arguments large enough that `|x|` is **not** handled by the π/4 … 9π/4
+    /// `k_sinf` / `k_cosf` branches; `sinf` uses `rem_pio2f` and the
+    /// `match n & 3` path (see `sinf` source). Values are bit-exact for this
+    /// implementation.
+    #[test]
+    fn rem_pio2f_path_variants() {
+        let p1000 = f32::from_bits(0x4544597c); // ~1000·π
+        assert_biteq!(sinf(p1000), f32::from_bits(0x38fb56bf));
+        let p1000_neg = f32::from_bits(0xc544597c);
+        assert_biteq!(sinf(p1000_neg), f32::from_bits(0xb8fb56bf));
+        let p500 = f32::from_bits(0x44c4597c); // ~500·π, different `n` mod 4
+        assert_biteq!(sinf(p500), f32::from_bits(0x387b56bf));
+    }
+
     #[test]
     #[allow(clippy::approx_constant)]
     fn sinf_conformance_bit_exact() {
