@@ -60,10 +60,7 @@ macro_rules! select_implementation {
         $( use_arch_required: $use_arch_required:meta, )?
         args: $($arg:ident),+ ,
     ) => {
-        // FIXME: these use paths that are a pretty fragile (`super`). We should figure out
-        // something better w.r.t. how this is vendored into compiler-builtins.
-
-        // However, we do need a few things from `arch` that are used even with soft floats.
+        // We do need a few things from `arch` that are used even with soft floats.
         select_implementation! {
             @cfg $($use_arch_required)?;
             if true {

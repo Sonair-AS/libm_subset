@@ -252,7 +252,6 @@ const fn parse_hex(mut b: &[u8]) -> Result<Parsed, HexFloatParseError> {
                     sig <<= 4;
                     sig |= digit as u128;
                 } else {
-                    // FIXME: it is technically possible for exp to overflow if parsing a string with >500M digits
                     exp += 4;
                     inexact |= digit != 0;
                 }
@@ -316,13 +315,6 @@ const fn parse_hex(mut b: &[u8]) -> Result<Parsed, HexFloatParseError> {
             e as i32
         };
     }
-    /* FIXME(msrv): once MSRV >= 1.66, replace the above workaround block with:
-    if negate_exp {
-        exp = exp.saturating_sub_unsigned(pexp);
-    } else {
-        exp = exp.saturating_add_unsigned(pexp);
-    };
-    */
 
     Ok(Parsed { sig, exp })
 }
@@ -342,8 +334,6 @@ const fn hex_digit(c: u8) -> Option<u8> {
         _ => None,
     }
 }
-
-/* FIXME(msrv): vendor some things that are not const stable at our MSRV */
 
 /// `u128::ilog2`
 const fn u128_ilog2(v: u128) -> u32 {
@@ -514,7 +504,7 @@ mod parse_tests {
         let (xz, s2) = parse_any(s, 16, 10, Round::Zero)?;
         let (xn, s3) = parse_any(s, 16, 10, Round::Nearest)?;
 
-        // FIXME: A value between the least normal and largest subnormal
+        // A value between the least normal and largest subnormal
         // could have underflow status depend on rounding mode.
 
         if let Status::OK = s0 {
@@ -622,7 +612,6 @@ mod parse_tests {
         }
     }
 
-    // FIXME: this test is causing failures that are likely UB on various platforms
     #[cfg(all(target_arch = "x86_64", target_os = "linux"))]
     #[test]
     #[cfg(f128_enabled)]
@@ -885,7 +874,7 @@ mod parse_tests {
 }
 
 #[cfg(test)]
-// FIXME(ppc): something with `should_panic` tests cause a SIGILL with ppc64le
+// ppc64le seems to have issues with `should_panic` tests.
 #[cfg(not(all(target_arch = "powerpc64", target_endian = "little")))]
 mod tests_panicking {
     extern crate std;

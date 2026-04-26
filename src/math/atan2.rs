@@ -120,7 +120,7 @@ mod tests {
     use super::*;
 
     #[test]
-    #[cfg_attr(x86_no_sse, ignore = "FIXME(i586): possible incorrect rounding")]
+    #[cfg_attr(x86_no_sse, ignore = "i586: possible incorrect rounding")]
     fn sanity_check() {
         assert_eq!(atan2(0.0, 1.0), 0.0);
         assert_eq!(atan2(0.0, -1.0), PI);

@@ -223,7 +223,7 @@ const PIO2: [f64; 8] = [
 /// independent of the exponent of the input.
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> i32 {
-    // FIXME(rust-lang/rust#144518): Inline assembly would cause `no_panic` to fail
+    // Inline assembly would cause `no_panic` to fail
     // on the callers of this function. As a workaround, avoid inlining `floor` here
     // when implemented with assembly.
     #[cfg_attr(x86_no_sse, inline(never))]

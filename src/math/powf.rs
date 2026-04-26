@@ -294,7 +294,6 @@ pub fn powf(x: f32, y: f32) -> f32 {
         }
     } else if (j & 0x7fffffff) > 0x43160000 {
         /* z < -150 */
-        // FIXME: check should be  (uint32_t)j > 0xc3160000
         return sn * TINY * TINY; /* underflow */
     } else if j as u32 == 0xc3160000
               /* z == -150 */

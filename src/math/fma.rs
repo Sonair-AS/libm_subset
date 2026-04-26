@@ -104,7 +104,7 @@ mod tests {
                 hf64!("0x0.ffffffffffff8p-1022"),
             ),
             (
-                // FIXME: we raise underflow but this should only be inexact (based on C and
+                // We raise underflow but this should only be inexact (based on C and
                 // `rustc_apfloat`).
                 hf64!("0x1.0p-1070"),
                 hf64!("0x1.0p-1070"),

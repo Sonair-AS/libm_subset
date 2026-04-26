@@ -214,7 +214,7 @@ where
 
     let mut y = F::from_bits(m);
 
-    // FIXME(f16): the fenv math does not work for `f16`
+    // The fenv math does not work for `f16`
     if F::BITS > 16 {
         // Handle rounding and inexact. `(m + 1)^2 == 2^shift m` is exact; for all other cases, add
         // a tiny value to cause fenv effects.

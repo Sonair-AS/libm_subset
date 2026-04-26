@@ -1,4 +1,4 @@
-#![allow(unknown_lints)] // FIXME(msrv) we shouldn't need this
+#![allow(unknown_lints)] // MSRV: older Rust versions do not recognize lints added in newer releases (e.g. unnecessary_transmutes)
 
 use core::{mem, ops};
 #[cfg(not(feature = "sonair_certified"))]
@@ -218,7 +218,7 @@ pub trait Float:
     /// to be a nop and does not always quiet sNaNs.
     #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: not called by certified f32 functions
     fn canonicalize(self) -> Self {
-        // FIXME: LLVM often removes this. We should determine whether we can remove the operation,
+        // LLVM often removes this. We should determine whether we can remove the operation,
         // or switch to something based on `llvm.canonicalize` (which has crashes,
         // <https://github.com/llvm/llvm-project/issues/32650>).
         self * Self::ONE
@@ -292,7 +292,6 @@ macro_rules! float_impl {
             }
             fn abs(self) -> Self {
                 cfg_if! {
-                    // FIXME(msrv): `abs` is available in `core` starting with 1.85.
                     if #[cfg(intrinsics_enabled)] {
                         self.abs()
                     } else {
@@ -302,7 +301,6 @@ macro_rules! float_impl {
             }
             fn copysign(self, other: Self) -> Self {
                 cfg_if! {
-                    // FIXME(msrv): `copysign` is available in `core` starting with 1.85.
                     if #[cfg(intrinsics_enabled)] {
                         self.copysign(other)
                     } else {
@@ -379,8 +377,6 @@ float_impl!(
     fmaf128,
     fmaf128
 );
-
-/* FIXME(msrv): vendor some things that are not const stable at our MSRV */
 
 /// `f32::from_bits`
 #[allow(dead_code)] // MSRV workaround: used by float_impl! macro for Rust < 1.83 const from_bits

@@ -195,7 +195,6 @@ mod tests {
     use super::rem_pio2;
 
     #[test]
-    // FIXME(correctness): inaccurate results on i586
     #[cfg_attr(x86_no_sse, ignore)]
     fn test_near_pi() {
         let arg = 3.141592025756836;

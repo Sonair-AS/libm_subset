@@ -351,8 +351,6 @@ pub fn pow(x: f64, y: f64) -> f64 {
         }
     } else if (j & 0x7fffffff) >= 0x4090cc00 {
         /* z <= -1075 */
-        // FIXME: instead of abs(j) use unsigned j
-
         if (((j as u32) - 0xc090cc00) | (i as u32)) != 0 {
             /* z < -1075 */
             return s * TINY * TINY; /* underflow */
