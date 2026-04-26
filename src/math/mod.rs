@@ -2,12 +2,17 @@
 
 macro_rules! force_eval {
     ($e:expr) => {
+        // SAFETY: read_volatile on a stack reference is safe; used to prevent the compiler
+        // from optimizing away the expression (mimics C volatile semantics for FP side effects).
         unsafe { ::core::ptr::read_volatile(&$e) }
     };
 }
 
 #[cfg(not(debug_assertions))]
 macro_rules! i {
+    // SAFETY (all arms): Bounds are verified by the debug_assertions variant of this macro,
+    // which uses checked `.get()/.get_mut().unwrap()`. In release builds, unchecked access
+    // eliminates bounds-check overhead. Callers must ensure indices are in range.
     ($array:expr, $index:expr) => {
         unsafe { *$array.get_unchecked($index) }
     };
@@ -72,6 +77,8 @@ macro_rules! div {
 #[cfg(all(not(debug_assertions), intrinsics_enabled))]
 macro_rules! div {
     ($a:expr, $b:expr) => {
+        // SAFETY: Callers guarantee the divisor is non-zero. unchecked_div avoids
+        // panic codegen for division-by-zero in release builds (rust-lang/rust#72751).
         unsafe { core::intrinsics::unchecked_div($a, $b) }
     };
 }
