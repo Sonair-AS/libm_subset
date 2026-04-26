@@ -41,11 +41,7 @@ pub use hex_float::{hf32, hf64};
 #[allow(unused_imports)]
 pub use float_traits::FloatFmt;
 #[allow(unused_imports)]
-#[cfg(not(feature = "sonair_certified"))]
 pub use int_traits::{CastFrom, CastInto, DInt, HInt, Int, IntFmt, MinInt};
-#[allow(unused_imports)]
-#[cfg(feature = "sonair_certified")]
-pub use int_traits::{CastFrom, CastInto, DInt, HInt, Int, MinInt};
 
 /// Hint to the compiler that the current path is cold.
 pub fn cold_path() {
