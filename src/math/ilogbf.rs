@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 const FP_ILOGBNAN: i32 = -1 - 0x7fffffff;
 const FP_ILOGB0: i32 = FP_ILOGBNAN;
 

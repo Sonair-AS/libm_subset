@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Architecture-specific routines and operations.
 //!
 //! LLVM will already optimize calls to some of these in cases that there are hardware
@@ -35,7 +36,6 @@ cfg_if! {
 
         #[cfg(feature = "sonair_certified")]
         pub use aarch64::{
-            sqrt,
             sqrtf,
         };
 

@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /* origin: FreeBSD /usr/src/lib/msun/src/e_pow.c */
 /*
  * ====================================================
@@ -91,6 +92,8 @@ const IVLN2_L: f64 = 1.92596299112661746887e-08; /* 0x3e54ae0b_f85ddf44 =1/ln2 t
 
 /// Returns `x` to the power of `y` (f64).
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
+#[allow(clippy::cognitive_complexity)] // Upstream port from musl pow.c; splitting would obscure the algorithm
+#[allow(clippy::too_many_lines)] // Upstream port from musl pow.c; preserving structure for traceability
 pub fn pow(x: f64, y: f64) -> f64 {
     let t1: f64;
     let t2: f64;
@@ -350,8 +353,6 @@ pub fn pow(x: f64, y: f64) -> f64 {
         }
     } else if (j & 0x7fffffff) >= 0x4090cc00 {
         /* z <= -1075 */
-        // FIXME: instead of abs(j) use unsigned j
-
         if (((j as u32) - 0xc090cc00) | (i as u32)) != 0 {
             /* z < -1075 */
             return s * TINY * TINY; /* underflow */

@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Utilities for working with hex float formats.
 
 use super::{Round, Status, f32_from_bits, f64_from_bits};
@@ -251,7 +252,6 @@ const fn parse_hex(mut b: &[u8]) -> Result<Parsed, HexFloatParseError> {
                     sig <<= 4;
                     sig |= digit as u128;
                 } else {
-                    // FIXME: it is technically possible for exp to overflow if parsing a string with >500M digits
                     exp += 4;
                     inexact |= digit != 0;
                 }
@@ -315,13 +315,6 @@ const fn parse_hex(mut b: &[u8]) -> Result<Parsed, HexFloatParseError> {
             e as i32
         };
     }
-    /* FIXME(msrv): once MSRV >= 1.66, replace the above workaround block with:
-    if negate_exp {
-        exp = exp.saturating_sub_unsigned(pexp);
-    } else {
-        exp = exp.saturating_add_unsigned(pexp);
-    };
-    */
 
     Ok(Parsed { sig, exp })
 }
@@ -342,8 +335,6 @@ const fn hex_digit(c: u8) -> Option<u8> {
     }
 }
 
-/* FIXME(msrv): vendor some things that are not const stable at our MSRV */
-
 /// `u128::ilog2`
 const fn u128_ilog2(v: u128) -> u32 {
     assert!(v != 0);
@@ -361,7 +352,10 @@ mod hex_fmt {
 
     // Adapted from https://github.com/ericseppanen/hexfloat2/blob/a5c27932f0ff/src/format.rs
     #[cfg(not(feature = "compiler-builtins"))]
-    pub(super) fn fmt_any_hex<F: Float>(x: &F, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    pub(super) fn fmt_any_hex<F: Float>(x: &F, f: &mut fmt::Formatter<'_>) -> fmt::Result
+    where
+        F::Int: fmt::LowerHex,
+    {
         if x.is_sign_negative() {
             write!(f, "-")?;
         }
@@ -399,7 +393,10 @@ mod hex_fmt {
         unimplemented!()
     }
 
-    impl<F: Float> fmt::LowerHex for Hexf<F> {
+    impl<F: Float> fmt::LowerHex for Hexf<F>
+    where
+        F::Int: fmt::LowerHex,
+    {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             cfg_if! {
                 if #[cfg(feature = "compiler-builtins")] {
@@ -412,7 +409,10 @@ mod hex_fmt {
         }
     }
 
-    impl<F: Float> fmt::LowerHex for Hexf<(F, F)> {
+    impl<F: Float> fmt::LowerHex for Hexf<(F, F)>
+    where
+        F::Int: fmt::LowerHex,
+    {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             cfg_if! {
                 if #[cfg(feature = "compiler-builtins")] {
@@ -425,7 +425,10 @@ mod hex_fmt {
         }
     }
 
-    impl<F: Float> fmt::LowerHex for Hexf<(F, i32)> {
+    impl<F: Float> fmt::LowerHex for Hexf<(F, i32)>
+    where
+        F::Int: fmt::LowerHex,
+    {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             cfg_if! {
                 if #[cfg(feature = "compiler-builtins")] {
@@ -501,7 +504,7 @@ mod parse_tests {
         let (xz, s2) = parse_any(s, 16, 10, Round::Zero)?;
         let (xn, s3) = parse_any(s, 16, 10, Round::Nearest)?;
 
-        // FIXME: A value between the least normal and largest subnormal
+        // A value between the least normal and largest subnormal
         // could have underflow status depend on rounding mode.
 
         if let Status::OK = s0 {
@@ -609,7 +612,6 @@ mod parse_tests {
         }
     }
 
-    // FIXME: this test is causing failures that are likely UB on various platforms
     #[cfg(all(target_arch = "x86_64", target_os = "linux"))]
     #[test]
     #[cfg(f128_enabled)]
@@ -872,7 +874,7 @@ mod parse_tests {
 }
 
 #[cfg(test)]
-// FIXME(ppc): something with `should_panic` tests cause a SIGILL with ppc64le
+// ppc seems to have issues with `should_panic` tests.
 #[cfg(not(all(target_arch = "powerpc64", target_endian = "little")))]
 mod tests_panicking {
     extern crate std;

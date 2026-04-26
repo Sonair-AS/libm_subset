@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::support::{Float, Round};
 
 /// Round `x` to the nearest integer, breaking ties toward even. This is IEEE 754

@@ -1,10 +1,11 @@
 use core::{cmp, ops};
+#[cfg(not(feature = "sonair_certified"))]
+use core::fmt;
 
 /// Minimal integer implementations needed on all integer types, including wide integers.
-#[allow(dead_code)] // Some constants are only used with tests
+#[allow(dead_code)] // Trait constants (ZERO, ONE, MIN, MAX) are selectively used by different libm functions
 pub trait MinInt:
     Copy
-    // + fmt::Debug
     + ops::BitOr<Output = Self>
     + ops::Not<Output = Self>
     + ops::Shl<u32, Output = Self>
@@ -30,13 +31,21 @@ pub trait MinInt:
 /// types).
 pub type OtherSign<I> = <I as MinInt>::OtherSign;
 
+#[cfg(not(feature = "sonair_certified"))]
+pub trait IntFmt: fmt::Debug + fmt::Display + fmt::Binary + fmt::LowerHex {}
+#[cfg(not(feature = "sonair_certified"))]
+impl<T: fmt::Debug + fmt::Display + fmt::Binary + fmt::LowerHex> IntFmt for T {}
+
+#[cfg(feature = "sonair_certified")]
+pub trait IntFmt {}
+#[cfg(feature = "sonair_certified")]
+impl<T> IntFmt for T {}
+
 /// Trait for some basic operations on integers
-#[allow(dead_code)]
+#[allow(dead_code)] // Trait methods are selectively used by different libm functions
 pub trait Int:
     MinInt
-    // + fmt::Display
-    // + fmt::Binary
-    // + fmt::LowerHex
+    + IntFmt
     + ops::AddAssign
     + ops::SubAssign
     + ops::MulAssign
@@ -198,6 +207,7 @@ macro_rules! int_impl_common {
 
 macro_rules! int_impl {
     ($ity:ty, $uty:ty) => {
+        #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: boilerplate constant definitions and trivial delegation methods
         impl MinInt for $uty {
             type OtherSign = $ity;
             type Unsigned = $uty;
@@ -211,6 +221,7 @@ macro_rules! int_impl {
             const MAX: Self = <Self>::MAX;
         }
 
+        #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: boilerplate delegation methods for unsigned integer types
         impl Int for $uty {
             fn signed(self) -> $ity {
                 self as $ity
@@ -241,6 +252,7 @@ macro_rules! int_impl {
             int_impl_common!($uty);
         }
 
+        #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: boilerplate constant definitions for signed integer types
         impl MinInt for $ity {
             type OtherSign = $uty;
             type Unsigned = $uty;
@@ -254,6 +266,7 @@ macro_rules! int_impl {
             const MAX: Self = <Self>::MAX;
         }
 
+        #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: boilerplate delegation methods for signed integer types
         impl Int for $ity {
             fn signed(self) -> Self {
                 self
@@ -293,6 +306,7 @@ int_impl!(i128, u128);
 
 /// Trait for integers twice the bit width of another integer. This is implemented for all
 /// primitives except for `u8`, because there is not a smaller primitive.
+#[allow(dead_code)] // Trait methods are selectively used by different libm functions (e.g. sqrt uses lo/hi)
 pub trait DInt: MinInt {
     /// Integer that is half the bit width of the integer this trait is implemented for
     type H: HInt<D = Self>;
@@ -302,11 +316,13 @@ pub trait DInt: MinInt {
     /// Returns the high half of `self`
     fn hi(self) -> Self::H;
     /// Returns the low and high halves of `self` as a tuple
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: trivial composition of lo() and hi()
     fn lo_hi(self) -> (Self::H, Self::H) {
         (self.lo(), self.hi())
     }
     /// Constructs an integer using lower and higher half parts
-    #[allow(unused)]
+    #[allow(unused)] // Used by non-certified functions (e.g. fma); retained for API completeness
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: trivial composition of zero_widen and widen_hi
     fn from_lo_hi(lo: Self::H, hi: Self::H) -> Self {
         lo.zero_widen() | hi.widen_hi()
     }
@@ -314,6 +330,7 @@ pub trait DInt: MinInt {
 
 /// Trait for integers half the bit width of another integer. This is implemented for all
 /// primitives except for `u128`, because it there is not a larger primitive.
+#[allow(dead_code)] // Trait methods are selectively used by different libm functions (e.g. sqrt uses widen/zero_widen)
 pub trait HInt: Int {
     /// Integer that is double the bit width of the integer this trait is implemented for
     type D: DInt<H = Self> + MinInt;
@@ -328,7 +345,7 @@ pub trait HInt: Int {
     /// around problems with associated type bounds (such as `Int<Othersign: DInt>`) being unstable
     fn zero_widen(self) -> Self::D;
     /// Widens the integer to have double bit width and shifts the integer into the higher bits
-    #[allow(unused)]
+    #[allow(unused)] // Used by DInt::from_lo_hi default impl; retained for trait completeness
     fn widen_hi(self) -> Self::D;
     /// Widening multiplication with zero widening. This cannot overflow.
     fn zero_widen_mul(self, rhs: Self) -> Self::D;
@@ -339,6 +356,7 @@ pub trait HInt: Int {
 macro_rules! impl_d_int {
     ($($X:ident $D:ident),*) => {
         $(
+            #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: trivial cast operations for double-width integers
             impl DInt for $D {
                 type H = $X;
 
@@ -356,6 +374,7 @@ macro_rules! impl_d_int {
 macro_rules! impl_h_int {
     ($($H:ident $uH:ident $X:ident),*) => {
         $(
+            #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: trivial widening/cast operations for half-width integers
             impl HInt for $H {
                 type D = $X;
 
@@ -392,6 +411,7 @@ impl_h_int!(
 );
 
 /// Trait to express (possibly lossy) casting of integers
+#[allow(dead_code)] // Trait methods are selectively used; cast_lossy is used by non-certified fma
 pub trait CastInto<T: Copy>: Copy {
     /// By default, casts should be exact.
     #[track_caller]
@@ -404,6 +424,7 @@ pub trait CastInto<T: Copy>: Copy {
     fn cast_lossy(self) -> T;
 }
 
+#[allow(dead_code)] // Blanket-implemented from CastInto; used by Float::ex and other trait methods
 pub trait CastFrom<T: Copy>: Copy {
     /// By default, casts should be exact.
     #[track_caller]
@@ -413,6 +434,7 @@ pub trait CastFrom<T: Copy>: Copy {
     fn cast_from_lossy(value: T) -> Self;
 }
 
+#[cfg_attr(coverage_nightly, coverage(off))] // Blanket impl: trivial delegation to CastInto::cast
 impl<T: Copy, U: CastInto<T> + Copy> CastFrom<U> for T {
     fn cast_from(value: U) -> Self {
         value.cast()
@@ -428,10 +450,9 @@ macro_rules! cast_into {
         cast_into!($ty; usize, isize, u8, i8, u16, i16, u32, i32, u64, i64, u128, i128);
     };
     ($ty:ty; $($into:ty),*) => {$(
+        #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: trivial `as` cast for integer-to-integer conversion
         impl CastInto<$into> for $ty {
             fn cast(self) -> $into {
-                // All we can really do to enforce casting rules is check the rules when in
-                // debug mode.
                 #[cfg(not(feature = "compiler-builtins"))]
                 #[cfg(not(feature = "sonair_certified"))]
                 debug_assert!(<$into>::try_from(self).is_ok(), "failed cast from {self}");
@@ -456,6 +477,7 @@ macro_rules! cast_into_float {
         cast_into_float!($ty; f128);
     };
     ($ty:ty; $($into:ty),*) => {$(
+        #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: trivial `as` cast for integer-to-float conversion
         impl CastInto<$into> for $ty {
             fn cast(self) -> $into {
                 #[cfg(not(feature = "compiler-builtins"))]

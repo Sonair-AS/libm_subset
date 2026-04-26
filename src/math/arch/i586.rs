@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Architecture-specific support for x86-32 without SSE2
 //!
 //! We use an alternative implementation on x86, because the

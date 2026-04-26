@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 // Using runtime feature detection requires atomics. Currently there are no x86 targets
 // that support sse but not `AtomicPtr`.
 

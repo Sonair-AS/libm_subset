@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))] // Macro-generated delegation wrappers: Libm<f32>::sin() just calls sinf(), no logic to cover
 use core::marker::PhantomData;
 
 use crate::*;
@@ -24,7 +25,7 @@ pub struct Libm<T>(PhantomData<T>);
 macro_rules! libm_helper {
     ($t:ident, funcs: $funcs:tt) => {
         impl Libm<$t> {
-            #![allow(unused_parens)]
+            #![allow(unused_parens)] // Macro expansion produces `-> (f32)` from the return type tuple syntax
 
             libm_helper! { $funcs }
         }

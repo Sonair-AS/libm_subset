@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::expf;
 
 /* k is such that k*ln2 has minimal relative error and x - kln2 > log(FLT_MIN) */

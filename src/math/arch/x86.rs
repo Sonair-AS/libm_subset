@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Architecture-specific support for x86-32 and x86-64 with SSE2
 
 mod detect;

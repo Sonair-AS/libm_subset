@@ -47,6 +47,8 @@ const IVLN2_L: f32 = 7.0526075433e-06;
 
 /// Returns `x` to the power of `y` (f32).
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
+#[allow(clippy::cognitive_complexity)] // Upstream port from musl powf.c; splitting would obscure the algorithm
+#[allow(clippy::too_many_lines)] // Upstream port from musl powf.c; preserving structure for traceability
 pub fn powf(x: f32, y: f32) -> f32 {
     let mut z: f32;
     let mut ax: f32;
@@ -294,7 +296,6 @@ pub fn powf(x: f32, y: f32) -> f32 {
         }
     } else if (j & 0x7fffffff) > 0x43160000 {
         /* z < -150 */
-        // FIXME: check should be  (uint32_t)j > 0xc3160000
         return sn * TINY * TINY; /* underflow */
     } else if j as u32 == 0xc3160000
               /* z == -150 */

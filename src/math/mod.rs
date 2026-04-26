@@ -2,12 +2,17 @@
 
 macro_rules! force_eval {
     ($e:expr) => {
+        // SAFETY: read_volatile on a stack reference is safe; used to prevent the compiler
+        // from optimizing away the expression (mimics C volatile semantics for FP side effects).
         unsafe { ::core::ptr::read_volatile(&$e) }
     };
 }
 
 #[cfg(not(debug_assertions))]
 macro_rules! i {
+    // SAFETY (all arms): Bounds are verified by the debug_assertions variant of this macro,
+    // which uses checked `.get()/.get_mut().unwrap()`. In release builds, unchecked access
+    // eliminates bounds-check overhead. Callers must ensure indices are in range.
     ($array:expr, $index:expr) => {
         unsafe { *$array.get_unchecked($index) }
     };
@@ -72,6 +77,8 @@ macro_rules! div {
 #[cfg(all(not(debug_assertions), intrinsics_enabled))]
 macro_rules! div {
     ($a:expr, $b:expr) => {
+        // SAFETY: Callers guarantee the divisor is non-zero. unchecked_div avoids
+        // panic codegen for division-by-zero in release builds (rust-lang/rust#72751).
         unsafe { core::intrinsics::unchecked_div($a, $b) }
     };
 }
@@ -171,6 +178,7 @@ mod cbrt;
 #[cfg(not(feature = "sonair_certified"))]
 mod cbrtf;
 mod ceil;
+#[cfg(not(feature = "sonair_certified"))]
 mod copysign;
 #[cfg(not(feature = "sonair_certified"))]
 mod cos;
@@ -183,6 +191,7 @@ mod coshf;
 mod erf;
 #[cfg(not(feature = "sonair_certified"))]
 mod erff;
+#[cfg(not(feature = "sonair_certified"))]
 mod exp;
 #[cfg(not(feature = "sonair_certified"))]
 mod exp10;
@@ -342,8 +351,13 @@ pub use self::atanhf::atanhf;
 pub use self::cbrt::cbrt;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::cbrtf::cbrtf;
-pub use self::ceil::{ceil, ceilf};
-pub use self::copysign::{copysign, copysignf};
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::ceil::ceil;
+pub use self::ceil::ceilf;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::copysign::copysign;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::copysign::copysignf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::cos::cos;
 pub use self::cosf::cosf;
@@ -355,6 +369,7 @@ pub use self::coshf::coshf;
 pub use self::erf::{erf, erfc};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::erff::{erfcf, erff};
+#[cfg(not(feature = "sonair_certified"))]
 pub use self::exp::exp;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::exp2::exp2;
@@ -369,7 +384,9 @@ pub use self::expf::expf;
 pub use self::expm1::expm1;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::expm1f::expm1f;
-pub use self::fabs::{fabs, fabsf};
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::fabs::fabs;
+pub use self::fabs::fabsf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::fdim::{fdim, fdimf};
 pub use self::floor::{floor, floorf};
@@ -453,7 +470,9 @@ pub use self::remquo::remquo;
 pub use self::remquof::remquof;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::rint::{rint, rintf};
-pub use self::round::{round, roundf};
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::round::round;
+pub use self::round::roundf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::roundeven::{roundeven, roundevenf};
 pub use self::scalbn::{scalbn, scalbnf};
@@ -468,7 +487,9 @@ pub use self::sinf::sinf;
 pub use self::sinh::sinh;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::sinhf::sinhf;
-pub use self::sqrt::{sqrt, sqrtf};
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::sqrt::sqrt;
+pub use self::sqrt::sqrtf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::tan::tan;
 pub use self::tanf::tanf;
@@ -484,7 +505,7 @@ pub use self::tgammaf::tgammaf;
 pub use self::trunc::{trunc, truncf};
 
 cfg_if! {
-    if #[cfg(f16_enabled)] {
+    if #[cfg(all(f16_enabled, not(feature = "sonair_certified")))] {
         // verify-sorted-start
         pub use self::ceil::ceilf16;
         pub use self::copysign::copysignf16;
@@ -510,7 +531,7 @@ cfg_if! {
 }
 
 cfg_if! {
-    if #[cfg(f128_enabled)] {
+    if #[cfg(all(f128_enabled, not(feature = "sonair_certified")))] {
         // verify-sorted-start
         pub use self::ceil::ceilf128;
         pub use self::copysign::copysignf128;
@@ -534,18 +555,21 @@ cfg_if! {
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn get_high_word(x: f64) -> u32 {
     (x.to_bits() >> 32) as u32
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn get_low_word(x: f64) -> u32 {
     x.to_bits() as u32
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn with_set_high_word(f: f64, hi: u32) -> f64 {
     let mut tmp = f.to_bits();
@@ -555,6 +579,7 @@ fn with_set_high_word(f: f64, hi: u32) -> f64 {
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn with_set_low_word(f: f64, lo: u32) -> f64 {
     let mut tmp = f.to_bits();
@@ -564,7 +589,11 @@ fn with_set_low_word(f: f64, lo: u32) -> f64 {
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn combine_words(hi: u32, lo: u32) -> f64 {
     f64::from_bits(((hi as u64) << 32) | lo as u64)
 }
+
+#[cfg(test)]
+mod sonair_tests;

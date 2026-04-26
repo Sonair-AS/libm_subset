@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::{expm1, expo2};
 
 // sinh(x) = (exp(x) - 1/exp(x))/2

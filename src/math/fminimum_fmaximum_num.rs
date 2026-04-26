@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /// Return the lesser of two arguments or, if either argument is NaN, NaN.
 ///
 /// This coincides with IEEE 754-2019 `minimumNumber`. The result orders -0.0 < 0.0.

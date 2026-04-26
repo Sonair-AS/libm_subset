@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::{log1pf, logf, sqrtf};
 
 const LN2: f32 = 0.693147180559945309417232121458176568;

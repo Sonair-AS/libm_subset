@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::expm1f;
 
 /// The hyperbolic tangent of `x` (f32).

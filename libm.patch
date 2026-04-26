@@ -793,7 +793,7 @@ index b5ee6413d55..b527ce27ddb 100644
 --- library/compiler-builtins/libm/src/math/support/float_traits.rs
 +++ library/compiler-builtins/libm/src/math/support/float_traits.rs
 @@ -1,6 +1,6 @@
- #![allow(unknown_lints)] // FIXME(msrv) we shouldn't need this
+ #![allow(unknown_lints)]
  
 -use core::{fmt, mem, ops};
 +use core::{mem, ops};

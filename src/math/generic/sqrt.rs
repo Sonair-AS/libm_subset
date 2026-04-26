@@ -214,7 +214,7 @@ where
 
     let mut y = F::from_bits(m);
 
-    // FIXME(f16): the fenv math does not work for `f16`
+    // The fenv math does not work for `f16`
     if F::BITS > 16 {
         // Handle rounding and inexact. `(m + 1)^2 == 2^shift m` is exact; for all other cases, add
         // a tiny value to cause fenv effects.
@@ -371,6 +371,7 @@ mod tests {
     use super::*;
 
     /// Test behavior specified in IEEE 754 `squareRoot`.
+    #[cfg_attr(coverage_nightly, coverage(off))] // Test helper: generic over F, exercised by type-specific test functions
     fn spec_test<F>()
     where
         F: Float + SqrtHelper,
@@ -415,7 +416,7 @@ mod tests {
 
     #[test]
     #[cfg(f16_enabled)]
-    #[allow(clippy::approx_constant)]
+    #[allow(clippy::approx_constant)] // Bit-exact reference values intentionally close to mathematical constants
     fn conformance_tests_f16() {
         let cases = [
             (f16::PI, 0x3f17_u16),
@@ -437,18 +438,21 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(coverage_nightly, coverage(off))] // Test function: not production code
     fn sanity_check_f32() {
         assert_biteq!(sqrt(100.0f32), 10.0);
         assert_biteq!(sqrt(4.0f32), 2.0);
     }
 
     #[test]
+    #[cfg_attr(coverage_nightly, coverage(off))] // Test function: not production code
     fn spec_tests_f32() {
         spec_test::<f32>();
     }
 
     #[test]
-    #[allow(clippy::approx_constant)]
+    #[allow(clippy::approx_constant)] // Bit-exact reference values intentionally close to mathematical constants
+    #[cfg_attr(coverage_nightly, coverage(off))] // Test function: not production code
     fn conformance_tests_f32() {
         let cases = [
             (f32::PI, 0x3fe2dfc5_u32),
@@ -468,18 +472,21 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(coverage_nightly, coverage(off))] // Test function: not production code
     fn sanity_check_f64() {
         assert_biteq!(sqrt(100.0f64), 10.0);
         assert_biteq!(sqrt(4.0f64), 2.0);
     }
 
     #[test]
+    #[cfg_attr(coverage_nightly, coverage(off))] // Test function: not production code
     fn spec_tests_f64() {
         spec_test::<f64>();
     }
 
     #[test]
-    #[allow(clippy::approx_constant)]
+    #[allow(clippy::approx_constant)] // Bit-exact reference values intentionally close to mathematical constants
+    #[cfg_attr(coverage_nightly, coverage(off))] // Test function: not production code
     fn conformance_tests_f64() {
         let cases = [
             (f64::PI, 0x3ffc5bf891b4ef6a_u64),
@@ -513,7 +520,7 @@ mod tests {
 
     #[test]
     #[cfg(f128_enabled)]
-    #[allow(clippy::approx_constant)]
+    #[allow(clippy::approx_constant)] // Bit-exact reference values intentionally close to mathematical constants
     fn conformance_tests_f128() {
         let cases = [
             (f128::PI, 0x3fffc5bf891b4ef6aa79c3b0520d5db9_u128),

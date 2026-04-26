@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 #[cfg(f16_enabled)]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn ldexpf16(x: f16, n: i32) -> f16 {

@@ -14,10 +14,11 @@
 /// A value combined with a floating point status.
 pub struct FpResult<T> {
     pub val: T,
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))] // Field is read by tests and unstable-public-internals consumers; appears unused in normal builds
     pub status: Status,
 }
 
+#[cfg_attr(coverage_nightly, coverage(off))] // Infrastructure type: constructors are trivial field assignments
 impl<T> FpResult<T> {
     pub fn new(val: T, status: Status) -> Self {
         Self { val, status }
@@ -35,7 +36,7 @@ impl<T> FpResult<T> {
 /// IEEE 754 rounding mode, excluding the optional `roundTiesToAway` version of nearest.
 ///
 /// Integer representation comes from what CORE-MATH uses for indexing.
-#[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+#[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))] // Variants beyond Nearest are used by non-certified rounding functions; appears unused in normal builds
 #[cfg_attr(not(feature = "sonair_certified"), derive(Debug))]
 #[derive(Clone, Copy, PartialEq)]
 pub enum Round {
@@ -54,6 +55,7 @@ pub enum Round {
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Status(u8);
 
+#[cfg_attr(coverage_nightly, coverage(off))] // Infrastructure type: status flag constants and trivial bitwise query methods
 impl Status {
     /// Default status indicating no errors.
     pub const OK: Self = Self(0);
@@ -75,7 +77,7 @@ impl Status {
     /// The default result for division is +/-inf based on operand sign. For `logB`, the default
     /// result is -inf.
     /// `x / y` when `x != 0.0` and `y == 0.0`,
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))] // Used by non-certified logB/division functions; not used by certified f32 functions
     pub const DIVIDE_BY_ZERO: Self = Self(1 << 2);
 
     /// The result exceeds the maximum finite value.
@@ -83,7 +85,7 @@ impl Status {
     /// The default result depends on rounding mode. `Nearest*` rounds to +/- infinity, sign based
     /// on the intermediate result. `Zero` rounds to the signed maximum finite. `Positive` and
     /// `Negative` round to signed maximum finite in one direction, signed infinity in the other.
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))] // Used by non-certified overflow-detecting functions; not used by certified f32 functions
     pub const OVERFLOW: Self = Self(1 << 3);
 
     /// The result is subnormal and lost precision.
@@ -94,13 +96,13 @@ impl Status {
     pub const INEXACT: Self = Self(1 << 5);
 
     /// True if `UNDERFLOW` is set.
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))] // Query method exposed for testing; not called in certified production code
     pub const fn underflow(self) -> bool {
         self.0 & Self::UNDERFLOW.0 != 0
     }
 
     /// True if `OVERFLOW` is set.
-    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))]
+    #[cfg_attr(not(feature = "unstable-public-internals"), allow(dead_code))] // Query method exposed for testing; not called in certified production code
     pub const fn overflow(self) -> bool {
         self.0 & Self::OVERFLOW.0 != 0
     }
@@ -111,6 +113,7 @@ impl Status {
     }
 
     /// True if `INEXACT` is set.
+    #[allow(dead_code)] // Query method for INEXACT flag; used by non-certified functions and tests
     pub const fn inexact(self) -> bool {
         self.0 & Self::INEXACT.0 != 0
     }
@@ -129,6 +132,7 @@ impl Status {
         }
     }
 
+    #[allow(dead_code)] // Used internally by generic math functions to combine status flags
     pub(crate) const fn with(self, rhs: Self) -> Self {
         Self(self.0 | rhs.0)
     }

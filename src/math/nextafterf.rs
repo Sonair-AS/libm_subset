@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn nextafterf(x: f32, y: f32) -> f32 {
     if x.is_nan() || y.is_nan() {

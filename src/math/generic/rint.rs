@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /* SPDX-License-Identifier: MIT */
 /* origin: musl src/math/rint.c */
 

@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Use assembly fma if the `fma` or `fma4` feature is detected at runtime.
 
 use core::arch::asm;
@@ -122,9 +123,6 @@ unsafe fn fmaf_with_fma4(mut x: f32, y: f32, z: f32) -> f32 {
     }
     x
 }
-
-// FIXME: the `select_implementation` macro should handle arch implementations that want
-// to use the fallback, so we don't need to recreate the body.
 
 fn fma_fallback(x: f64, y: f64, z: f64) -> f64 {
     generic::fma_round(x, y, z, Round::Nearest).val

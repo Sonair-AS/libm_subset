@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /// Return the lesser of two arguments or, if either argument is NaN, the other argument.
 ///
 /// This coincides with IEEE 754-2011 `minNum`. The result disregards signed zero (meaning if

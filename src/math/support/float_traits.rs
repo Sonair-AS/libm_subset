@@ -1,15 +1,26 @@
-#![allow(unknown_lints)] // FIXME(msrv) we shouldn't need this
+#![allow(unknown_lints)] // MSRV: older Rust versions do not recognize lints added in newer releases (e.g. unnecessary_transmutes)
 
 use core::{mem, ops};
+#[cfg(not(feature = "sonair_certified"))]
+use core::fmt;
 
 use super::int_traits::{CastFrom, Int, MinInt};
 
+#[cfg(not(feature = "sonair_certified"))]
+pub trait FloatFmt: fmt::Debug {}
+#[cfg(not(feature = "sonair_certified"))]
+impl<T: fmt::Debug> FloatFmt for T {}
+
+#[cfg(feature = "sonair_certified")]
+pub trait FloatFmt {}
+#[cfg(feature = "sonair_certified")]
+impl<T> FloatFmt for T {}
+
 /// Trait for some basic operations on floats
-// #[allow(dead_code)]
-#[allow(dead_code)] // Some constants are only used with tests
+#[allow(dead_code)] // Trait constants (ZERO, NAN, etc.) and methods are selectively used by different libm functions
 pub trait Float:
     Copy
-    // + fmt::Debug
+    + FloatFmt
     + PartialEq
     + PartialOrd
     + ops::AddAssign
@@ -90,13 +101,15 @@ pub trait Float:
     fn to_bits(self) -> Self::Int;
 
     /// Returns `self` transmuted to `Self::SignedInt`
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used by non-certified functions; retained for API completeness
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: not directly called by certified f32 functions
     fn to_bits_signed(self) -> Self::SignedInt {
         self.to_bits().signed()
     }
 
     /// Check bitwise equality.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used by assert_biteq! macro in tests only
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: only exercised via test macros
     fn biteq(self, rhs: Self) -> bool {
         self.to_bits() == rhs.to_bits()
     }
@@ -106,7 +119,8 @@ pub trait Float:
     ///
     /// This method returns `true` if two NaNs are compared. Use [`biteq`](Self::biteq) instead
     /// if `NaN` should not be treated separately.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used by assert_biteq! macro in tests only
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: only exercised via test macros
     fn eq_repr(self, rhs: Self) -> bool {
         if self.is_nan() && rhs.is_nan() {
             true
@@ -125,28 +139,33 @@ pub trait Float:
     fn is_sign_negative(self) -> bool;
 
     /// Returns true if the sign is positive. Extracts the sign bit regardless of zero or NaN.
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: trivial negation of is_sign_negative
     fn is_sign_positive(self) -> bool {
         !self.is_sign_negative()
     }
 
     /// Returns if `self` is subnormal.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used by non-certified functions; retained for API completeness
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: not called by certified f32 functions
     fn is_subnormal(self) -> bool {
         (self.to_bits() & Self::EXP_MASK) == Self::Int::ZERO
     }
 
     /// Returns the exponent, not adjusting for bias, not accounting for subnormals or zero.
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: exercised via macro-generated impl, not directly
     fn ex(self) -> u32 {
         u32::cast_from(self.to_bits() >> Self::SIG_BITS) & Self::EXP_SAT
     }
 
     /// Extract the exponent and adjust it for bias, not accounting for subnormals or zero.
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: exercised via macro-generated impl, not directly
     fn exp_unbiased(self) -> i32 {
         self.ex().signed() - (Self::EXP_BIAS as i32)
     }
 
     /// Returns the significand with no implicit bit (or the "fractional" part)
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used by non-certified functions; retained for API completeness
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: not called by certified f32 functions
     fn frac(self) -> Self::Int {
         self.to_bits() & Self::SIG_MASK
     }
@@ -155,6 +174,7 @@ pub trait Float:
     fn from_bits(a: Self::Int) -> Self;
 
     /// Constructs a `Self` from its parts. Inputs are treated as bits and shifted into position.
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: exercised via macro-generated impl, not directly
     fn from_parts(negative: bool, exponent: u32, significand: Self::Int) -> Self {
         let sign = if negative {
             Self::Int::ONE
@@ -168,7 +188,7 @@ pub trait Float:
         )
     }
 
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Called by fabsf via generic::fabs, also used in copysign impl
     fn abs(self) -> Self;
 
     /// Returns a number composed of the magnitude of self and the sign of sign.
@@ -184,7 +204,8 @@ pub trait Float:
     fn normalize(significand: Self::Int) -> (i32, Self::Int);
 
     /// Returns a number that represents the sign of self.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // Used by non-certified functions; retained for API completeness
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: not called by certified f32 functions
     fn signum(self) -> Self {
         if self.is_nan() {
             self
@@ -195,8 +216,9 @@ pub trait Float:
 
     /// Make a best-effort attempt to canonicalize the number. Note that this is allowed
     /// to be a nop and does not always quiet sNaNs.
+    #[cfg_attr(coverage_nightly, coverage(off))] // Trait default method: not called by certified f32 functions
     fn canonicalize(self) -> Self {
-        // FIXME: LLVM often removes this. We should determine whether we can remove the operation,
+        // LLVM often removes this. We should determine whether we can remove the operation,
         // or switch to something based on `llvm.canonicalize` (which has crashes,
         // <https://github.com/llvm/llvm-project/issues/32650>).
         self * Self::ONE
@@ -218,6 +240,7 @@ macro_rules! float_impl {
         $fma_fn:ident,
         $fma_intrinsic:ident
     ) => {
+        #[cfg_attr(coverage_nightly, coverage(off))] // Macro-generated impl: boilerplate constant definitions and trivial method bodies
         impl Float for $ty {
             type Int = $ity;
             type SignedInt = $sity;
@@ -269,7 +292,6 @@ macro_rules! float_impl {
             }
             fn abs(self) -> Self {
                 cfg_if! {
-                    // FIXME(msrv): `abs` is available in `core` starting with 1.85.
                     if #[cfg(intrinsics_enabled)] {
                         self.abs()
                     } else {
@@ -279,7 +301,6 @@ macro_rules! float_impl {
             }
             fn copysign(self, other: Self) -> Self {
                 cfg_if! {
-                    // FIXME(msrv): `copysign` is available in `core` starting with 1.85.
                     if #[cfg(intrinsics_enabled)] {
                         self.copysign(other)
                     } else {
@@ -357,33 +378,37 @@ float_impl!(
     fmaf128
 );
 
-/* FIXME(msrv): vendor some things that are not const stable at our MSRV */
-
 /// `f32::from_bits`
-#[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[allow(dead_code)] // MSRV workaround: used by float_impl! macro for Rust < 1.83 const from_bits
+#[allow(unnecessary_transmutes)] // Lint added in newer Rust versions; transmute is intentional here
+#[cfg_attr(coverage_nightly, coverage(off))] // MSRV const fn shim: trivial transmute, no logic to cover
 pub const fn f32_from_bits(bits: u32) -> f32 {
     // SAFETY: POD cast with no preconditions
     unsafe { mem::transmute::<u32, f32>(bits) }
 }
 
 /// `f32::to_bits`
-#[allow(dead_code)] // workaround for false positive RUST-144060
-#[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[allow(dead_code)] // Workaround for false positive RUST-144060
+#[allow(unnecessary_transmutes)] // Lint added in newer Rust versions; transmute is intentional here
+#[cfg_attr(coverage_nightly, coverage(off))] // MSRV const fn shim: trivial transmute, no logic to cover
 pub const fn f32_to_bits(x: f32) -> u32 {
     // SAFETY: POD cast with no preconditions
     unsafe { mem::transmute::<f32, u32>(x) }
 }
 
 /// `f64::from_bits`
-#[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[allow(dead_code)] // MSRV workaround: used by float_impl! macro for Rust < 1.83 const from_bits
+#[allow(unnecessary_transmutes)] // Lint added in newer Rust versions; transmute is intentional here
+#[cfg_attr(coverage_nightly, coverage(off))] // MSRV const fn shim: trivial transmute, no logic to cover
 pub const fn f64_from_bits(bits: u64) -> f64 {
     // SAFETY: POD cast with no preconditions
     unsafe { mem::transmute::<u64, f64>(bits) }
 }
 
 /// `f64::to_bits`
-#[allow(dead_code)] // workaround for false positive RUST-144060
-#[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[allow(dead_code)] // Workaround for false positive RUST-144060
+#[allow(unnecessary_transmutes)] // Lint added in newer Rust versions; transmute is intentional here
+#[cfg_attr(coverage_nightly, coverage(off))] // MSRV const fn shim: trivial transmute, no logic to cover
 pub const fn f64_to_bits(x: f64) -> u64 {
     // SAFETY: POD cast with no preconditions
     unsafe { mem::transmute::<f64, u64>(x) }
@@ -413,6 +438,7 @@ pub trait HFloat: Float {
 macro_rules! impl_d_float {
     ($($X:ident $D:ident),*) => {
         $(
+            #[cfg_attr(coverage_nightly, coverage(off))]
             impl DFloat for $D {
                 type H = $X;
 
@@ -428,6 +454,7 @@ macro_rules! impl_d_float {
 macro_rules! impl_h_float {
     ($($H:ident $X:ident),*) => {
         $(
+            #[cfg_attr(coverage_nightly, coverage(off))]
             impl HFloat for $H {
                 type D = $X;
 

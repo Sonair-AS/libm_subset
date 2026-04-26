@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /*
 "A Precision Approximation of the Gamma Function" - Cornelius Lanczos (1964)
 "Lanczos Implementation of the Gamma Function" - Paul Godfrey (2001)

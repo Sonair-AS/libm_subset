@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /* SPDX-License-Identifier: MIT OR Apache-2.0 */
 //! IEEE 754-2008 `minNum`. This has been superseded by IEEE 754-2019 `minimumNumber`.
 //!

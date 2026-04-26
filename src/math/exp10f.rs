@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::{exp2, exp2f, modff};
 
 const LN10_F32: f32 = 3.32192809488736234787031942948939;

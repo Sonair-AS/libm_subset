@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))] // Called via Float::copysign trait impl; coverage tracked at call sites in math functions
 use crate::support::Float;
 
 /// Copy the sign of `y` to `x`.

@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn frexp(x: f64) -> (f64, i32) {
     let mut y = x.to_bits();
