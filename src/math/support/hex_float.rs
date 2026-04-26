@@ -874,7 +874,7 @@ mod parse_tests {
 }
 
 #[cfg(test)]
-// ppc64le seems to have issues with `should_panic` tests.
+// ppc seems to have issues with `should_panic` tests.
 #[cfg(not(all(target_arch = "powerpc64", target_endian = "little")))]
 mod tests_panicking {
     extern crate std;
