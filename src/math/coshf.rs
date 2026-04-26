@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::{expf, expm1f, k_expo2f};
 
 /// Hyperbolic cosine (f64)

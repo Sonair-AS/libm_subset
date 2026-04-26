@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::{combine_words, exp};
 
 /* exp(x)/2 for x >= log(DBL_MAX), slightly better than 0.5*exp(x/2)*exp(x/2) */

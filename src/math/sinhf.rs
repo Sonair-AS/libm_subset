@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::{expm1f, k_expo2f};
 
 /// The hyperbolic sine of `x` (f32).

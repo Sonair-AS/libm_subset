@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use crate::support::{
     CastFrom, CastInto, DFloat, Float, FpResult, HFloat, IntTy, MinInt, Round, Status,
 };

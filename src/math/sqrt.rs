@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /// The square root of `x` (f16).
 #[cfg(all(f16_enabled, not(feature = "sonair_certified")))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]

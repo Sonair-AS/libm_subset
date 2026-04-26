@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::tgamma;
 
 /// The [Gamma function](https://en.wikipedia.org/wiki/Gamma_function) (f32).

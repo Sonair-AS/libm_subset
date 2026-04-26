@@ -548,18 +548,21 @@ cfg_if! {
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn get_high_word(x: f64) -> u32 {
     (x.to_bits() >> 32) as u32
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn get_low_word(x: f64) -> u32 {
     x.to_bits() as u32
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn with_set_high_word(f: f64, hi: u32) -> f64 {
     let mut tmp = f.to_bits();
@@ -569,6 +572,7 @@ fn with_set_high_word(f: f64, hi: u32) -> f64 {
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn with_set_low_word(f: f64, lo: u32) -> f64 {
     let mut tmp = f.to_bits();
@@ -578,7 +582,11 @@ fn with_set_low_word(f: f64, lo: u32) -> f64 {
 }
 
 #[cfg(not(feature = "sonair_certified"))]
+#[cfg_attr(coverage_nightly, coverage(off))]
 #[inline]
 fn combine_words(hi: u32, lo: u32) -> f64 {
     f64::from_bits(((hi as u64) << 32) | lo as u64)
 }
+
+#[cfg(test)]
+mod sonair_tests;

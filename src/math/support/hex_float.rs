@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Utilities for working with hex float formats.
 
 use super::{Round, Status, f32_from_bits, f64_from_bits};

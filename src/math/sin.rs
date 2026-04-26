@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 // origin: FreeBSD /usr/src/lib/msun/src/s_sin.c */
 //
 // ====================================================

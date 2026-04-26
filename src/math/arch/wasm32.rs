@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Wasm has builtins for simple float operations. Use the unstable `core::arch` intrinsics which
 //! are significantly faster than soft float operations.
 

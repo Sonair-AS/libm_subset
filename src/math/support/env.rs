@@ -18,6 +18,7 @@ pub struct FpResult<T> {
     pub status: Status,
 }
 
+#[cfg_attr(coverage_nightly, coverage(off))]
 impl<T> FpResult<T> {
     pub fn new(val: T, status: Status) -> Self {
         Self { val, status }
@@ -54,6 +55,7 @@ pub enum Round {
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Status(u8);
 
+#[cfg_attr(coverage_nightly, coverage(off))]
 impl Status {
     /// Default status indicating no errors.
     pub const OK: Self = Self(0);

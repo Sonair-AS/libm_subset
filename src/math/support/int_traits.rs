@@ -207,6 +207,7 @@ macro_rules! int_impl_common {
 
 macro_rules! int_impl {
     ($ity:ty, $uty:ty) => {
+        #[cfg_attr(coverage_nightly, coverage(off))]
         impl MinInt for $uty {
             type OtherSign = $ity;
             type Unsigned = $uty;
@@ -220,6 +221,7 @@ macro_rules! int_impl {
             const MAX: Self = <Self>::MAX;
         }
 
+        #[cfg_attr(coverage_nightly, coverage(off))]
         impl Int for $uty {
             fn signed(self) -> $ity {
                 self as $ity
@@ -250,6 +252,7 @@ macro_rules! int_impl {
             int_impl_common!($uty);
         }
 
+        #[cfg_attr(coverage_nightly, coverage(off))]
         impl MinInt for $ity {
             type OtherSign = $uty;
             type Unsigned = $uty;
@@ -263,6 +266,7 @@ macro_rules! int_impl {
             const MAX: Self = <Self>::MAX;
         }
 
+        #[cfg_attr(coverage_nightly, coverage(off))]
         impl Int for $ity {
             fn signed(self) -> Self {
                 self
@@ -312,11 +316,13 @@ pub trait DInt: MinInt {
     /// Returns the high half of `self`
     fn hi(self) -> Self::H;
     /// Returns the low and high halves of `self` as a tuple
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn lo_hi(self) -> (Self::H, Self::H) {
         (self.lo(), self.hi())
     }
     /// Constructs an integer using lower and higher half parts
     #[allow(unused)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn from_lo_hi(lo: Self::H, hi: Self::H) -> Self {
         lo.zero_widen() | hi.widen_hi()
     }
@@ -350,6 +356,7 @@ pub trait HInt: Int {
 macro_rules! impl_d_int {
     ($($X:ident $D:ident),*) => {
         $(
+            #[cfg_attr(coverage_nightly, coverage(off))]
             impl DInt for $D {
                 type H = $X;
 
@@ -367,6 +374,7 @@ macro_rules! impl_d_int {
 macro_rules! impl_h_int {
     ($($H:ident $uH:ident $X:ident),*) => {
         $(
+            #[cfg_attr(coverage_nightly, coverage(off))]
             impl HInt for $H {
                 type D = $X;
 
@@ -426,6 +434,7 @@ pub trait CastFrom<T: Copy>: Copy {
     fn cast_from_lossy(value: T) -> Self;
 }
 
+#[cfg_attr(coverage_nightly, coverage(off))]
 impl<T: Copy, U: CastInto<T> + Copy> CastFrom<U> for T {
     fn cast_from(value: U) -> Self {
         value.cast()
@@ -441,10 +450,9 @@ macro_rules! cast_into {
         cast_into!($ty; usize, isize, u8, i8, u16, i16, u32, i32, u64, i64, u128, i128);
     };
     ($ty:ty; $($into:ty),*) => {$(
+        #[cfg_attr(coverage_nightly, coverage(off))]
         impl CastInto<$into> for $ty {
             fn cast(self) -> $into {
-                // All we can really do to enforce casting rules is check the rules when in
-                // debug mode.
                 #[cfg(not(feature = "compiler-builtins"))]
                 #[cfg(not(feature = "sonair_certified"))]
                 debug_assert!(<$into>::try_from(self).is_ok(), "failed cast from {self}");
@@ -469,6 +477,7 @@ macro_rules! cast_into_float {
         cast_into_float!($ty; f128);
     };
     ($ty:ty; $($into:ty),*) => {$(
+        #[cfg_attr(coverage_nightly, coverage(off))]
         impl CastInto<$into> for $ty {
             fn cast(self) -> $into {
                 #[cfg(not(feature = "compiler-builtins"))]

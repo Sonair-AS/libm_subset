@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Helpers for runtime target feature detection that are shared across architectures.
 
 // `AtomicU32` is preferred for a consistent size across targets.

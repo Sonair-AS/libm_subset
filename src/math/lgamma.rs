@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::lgamma_r;
 
 /// The natural logarithm of the

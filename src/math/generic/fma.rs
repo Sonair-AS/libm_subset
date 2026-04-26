@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /* SPDX-License-Identifier: MIT */
 /* origin: musl src/math/fma.c. Ported to generic Rust algorithm in 2025, TG. */
 

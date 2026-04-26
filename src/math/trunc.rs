@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /// Rounds the number toward 0 to the closest integral value (f16).
 ///
 /// This effectively removes the decimal part of the number, leaving the integral part.

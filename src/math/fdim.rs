@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /// Positive difference (f16)
 ///
 /// Determines the positive difference between arguments, returning:

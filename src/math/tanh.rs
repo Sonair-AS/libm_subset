@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::expm1;
 
 /* tanh(x) = (exp(x) - exp(-x))/(exp(x) + exp(-x))

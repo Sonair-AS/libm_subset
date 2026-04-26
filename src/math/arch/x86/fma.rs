@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Use assembly fma if the `fma` or `fma4` feature is detected at runtime.
 
 use core::arch::asm;

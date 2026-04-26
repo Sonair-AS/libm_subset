@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Architecture-specific support for aarch64 with neon.
 
 use core::arch::asm;

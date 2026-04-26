@@ -371,6 +371,7 @@ mod tests {
     use super::*;
 
     /// Test behavior specified in IEEE 754 `squareRoot`.
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn spec_test<F>()
     where
         F: Float + SqrtHelper,
@@ -437,18 +438,21 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn sanity_check_f32() {
         assert_biteq!(sqrt(100.0f32), 10.0);
         assert_biteq!(sqrt(4.0f32), 2.0);
     }
 
     #[test]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn spec_tests_f32() {
         spec_test::<f32>();
     }
 
     #[test]
     #[allow(clippy::approx_constant)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn conformance_tests_f32() {
         let cases = [
             (f32::PI, 0x3fe2dfc5_u32),
@@ -468,18 +472,21 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn sanity_check_f64() {
         assert_biteq!(sqrt(100.0f64), 10.0);
         assert_biteq!(sqrt(4.0f64), 2.0);
     }
 
     #[test]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn spec_tests_f64() {
         spec_test::<f64>();
     }
 
     #[test]
     #[allow(clippy::approx_constant)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn conformance_tests_f64() {
         let cases = [
             (f64::PI, 0x3ffc5bf891b4ef6a_u64),

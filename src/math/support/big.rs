@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 //! Integers used for wide operations, larger than `u128`.
 
 #[cfg(test)]

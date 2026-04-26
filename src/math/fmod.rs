@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /// Calculate the remainder of `x / y`, the precise result of `x - trunc(x / y) * y`.
 #[cfg(f16_enabled)]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]

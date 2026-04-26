@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use crate::support::Float;
 
 /// Copy the sign of `y` to `x`.

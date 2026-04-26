@@ -73,6 +73,7 @@ mod tests {
     use crate::support::Hexf;
 
     /// Test against https://en.cppreference.com/w/cpp/numeric/math/floor
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn spec_test<F: Float>(cases: &[(F, F, Status)]) {
         let roundtrip = [
             F::ZERO,

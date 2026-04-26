@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 use super::{exp, fabs, get_high_word, with_set_low_word};
 /* origin: FreeBSD /usr/src/lib/msun/src/s_erf.c */
 /*

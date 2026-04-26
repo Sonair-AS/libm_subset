@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /* SPDX-License-Identifier: MIT OR Apache-2.0 */
 use crate::support::{CastFrom, Float, Int, MinInt};
 

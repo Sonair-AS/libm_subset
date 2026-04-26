@@ -1,3 +1,4 @@
+#![cfg_attr(coverage_nightly, coverage(off))]
 /// Sign of Y, magnitude of X (f16)
 ///
 /// Constructs a number with the magnitude (absolute value) of its

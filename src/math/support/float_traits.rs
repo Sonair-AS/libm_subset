@@ -102,12 +102,14 @@ pub trait Float:
 
     /// Returns `self` transmuted to `Self::SignedInt`
     #[allow(dead_code)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn to_bits_signed(self) -> Self::SignedInt {
         self.to_bits().signed()
     }
 
     /// Check bitwise equality.
     #[allow(dead_code)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn biteq(self, rhs: Self) -> bool {
         self.to_bits() == rhs.to_bits()
     }
@@ -118,6 +120,7 @@ pub trait Float:
     /// This method returns `true` if two NaNs are compared. Use [`biteq`](Self::biteq) instead
     /// if `NaN` should not be treated separately.
     #[allow(dead_code)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn eq_repr(self, rhs: Self) -> bool {
         if self.is_nan() && rhs.is_nan() {
             true
@@ -136,28 +139,33 @@ pub trait Float:
     fn is_sign_negative(self) -> bool;
 
     /// Returns true if the sign is positive. Extracts the sign bit regardless of zero or NaN.
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn is_sign_positive(self) -> bool {
         !self.is_sign_negative()
     }
 
     /// Returns if `self` is subnormal.
     #[allow(dead_code)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn is_subnormal(self) -> bool {
         (self.to_bits() & Self::EXP_MASK) == Self::Int::ZERO
     }
 
     /// Returns the exponent, not adjusting for bias, not accounting for subnormals or zero.
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn ex(self) -> u32 {
         u32::cast_from(self.to_bits() >> Self::SIG_BITS) & Self::EXP_SAT
     }
 
     /// Extract the exponent and adjust it for bias, not accounting for subnormals or zero.
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn exp_unbiased(self) -> i32 {
         self.ex().signed() - (Self::EXP_BIAS as i32)
     }
 
     /// Returns the significand with no implicit bit (or the "fractional" part)
     #[allow(dead_code)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn frac(self) -> Self::Int {
         self.to_bits() & Self::SIG_MASK
     }
@@ -166,6 +174,7 @@ pub trait Float:
     fn from_bits(a: Self::Int) -> Self;
 
     /// Constructs a `Self` from its parts. Inputs are treated as bits and shifted into position.
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn from_parts(negative: bool, exponent: u32, significand: Self::Int) -> Self {
         let sign = if negative {
             Self::Int::ONE
@@ -196,6 +205,7 @@ pub trait Float:
 
     /// Returns a number that represents the sign of self.
     #[allow(dead_code)]
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn signum(self) -> Self {
         if self.is_nan() {
             self
@@ -206,6 +216,7 @@ pub trait Float:
 
     /// Make a best-effort attempt to canonicalize the number. Note that this is allowed
     /// to be a nop and does not always quiet sNaNs.
+    #[cfg_attr(coverage_nightly, coverage(off))]
     fn canonicalize(self) -> Self {
         // FIXME: LLVM often removes this. We should determine whether we can remove the operation,
         // or switch to something based on `llvm.canonicalize` (which has crashes,
@@ -229,6 +240,7 @@ macro_rules! float_impl {
         $fma_fn:ident,
         $fma_intrinsic:ident
     ) => {
+        #[cfg_attr(coverage_nightly, coverage(off))]
         impl Float for $ty {
             type Int = $ity;
             type SignedInt = $sity;
@@ -373,6 +385,7 @@ float_impl!(
 /// `f32::from_bits`
 #[allow(dead_code)]
 #[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[cfg_attr(coverage_nightly, coverage(off))]
 pub const fn f32_from_bits(bits: u32) -> f32 {
     // SAFETY: POD cast with no preconditions
     unsafe { mem::transmute::<u32, f32>(bits) }
@@ -381,6 +394,7 @@ pub const fn f32_from_bits(bits: u32) -> f32 {
 /// `f32::to_bits`
 #[allow(dead_code)] // workaround for false positive RUST-144060
 #[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[cfg_attr(coverage_nightly, coverage(off))]
 pub const fn f32_to_bits(x: f32) -> u32 {
     // SAFETY: POD cast with no preconditions
     unsafe { mem::transmute::<f32, u32>(x) }
@@ -389,6 +403,7 @@ pub const fn f32_to_bits(x: f32) -> u32 {
 /// `f64::from_bits`
 #[allow(dead_code)]
 #[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[cfg_attr(coverage_nightly, coverage(off))]
 pub const fn f64_from_bits(bits: u64) -> f64 {
     // SAFETY: POD cast with no preconditions
     unsafe { mem::transmute::<u64, f64>(bits) }
@@ -397,6 +412,7 @@ pub const fn f64_from_bits(bits: u64) -> f64 {
 /// `f64::to_bits`
 #[allow(dead_code)] // workaround for false positive RUST-144060
 #[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
+#[cfg_attr(coverage_nightly, coverage(off))]
 pub const fn f64_to_bits(x: f64) -> u64 {
     // SAFETY: POD cast with no preconditions
     unsafe { mem::transmute::<f64, u64>(x) }
@@ -426,6 +442,7 @@ pub trait HFloat: Float {
 macro_rules! impl_d_float {
     ($($X:ident $D:ident),*) => {
         $(
+            #[cfg_attr(coverage_nightly, coverage(off))]
             impl DFloat for $D {
                 type H = $X;
 
@@ -441,6 +458,7 @@ macro_rules! impl_d_float {
 macro_rules! impl_h_float {
     ($($H:ident $X:ident),*) => {
         $(
+            #[cfg_attr(coverage_nightly, coverage(off))]
             impl HFloat for $H {
                 type D = $X;
 
