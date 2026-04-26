@@ -1,10 +1,11 @@
 use core::{cmp, ops};
+#[cfg(not(feature = "sonair_certified"))]
+use core::fmt;
 
 /// Minimal integer implementations needed on all integer types, including wide integers.
 #[allow(dead_code)] // Some constants are only used with tests
 pub trait MinInt:
     Copy
-    // + fmt::Debug
     + ops::BitOr<Output = Self>
     + ops::Not<Output = Self>
     + ops::Shl<u32, Output = Self>
@@ -30,13 +31,17 @@ pub trait MinInt:
 /// types).
 pub type OtherSign<I> = <I as MinInt>::OtherSign;
 
+#[cfg(not(feature = "sonair_certified"))]
+pub trait IntFmt: fmt::Debug + fmt::Display + fmt::Binary + fmt::LowerHex {}
+#[cfg(not(feature = "sonair_certified"))]
+impl<T: fmt::Debug + fmt::Display + fmt::Binary + fmt::LowerHex> IntFmt for T {}
+
 /// Trait for some basic operations on integers
+#[cfg(not(feature = "sonair_certified"))]
 #[allow(dead_code)]
 pub trait Int:
     MinInt
-    // + fmt::Display
-    // + fmt::Binary
-    // + fmt::LowerHex
+    + IntFmt
     + ops::AddAssign
     + ops::SubAssign
     + ops::MulAssign
@@ -88,6 +93,81 @@ pub trait Int:
     fn abs_diff(self, other: Self) -> Self::Unsigned;
 
     // copied from primitive integers, but put in a trait
+    fn is_zero(self) -> bool;
+    fn checked_add(self, other: Self) -> Option<Self>;
+    fn checked_sub(self, other: Self) -> Option<Self>;
+    fn wrapping_neg(self) -> Self;
+    fn wrapping_add(self, other: Self) -> Self;
+    fn wrapping_mul(self, other: Self) -> Self;
+    fn wrapping_sub(self, other: Self) -> Self;
+    fn wrapping_shl(self, other: u32) -> Self;
+    fn wrapping_shr(self, other: u32) -> Self;
+    fn rotate_left(self, other: u32) -> Self;
+    fn overflowing_add(self, other: Self) -> (Self, bool);
+    fn overflowing_sub(self, other: Self) -> (Self, bool);
+    fn carrying_add(self, other: Self, carry: bool) -> (Self, bool);
+    fn borrowing_sub(self, other: Self, borrow: bool) -> (Self, bool);
+    fn leading_zeros(self) -> u32;
+    fn trailing_zeros(self) -> u32;
+    fn ilog2(self) -> u32;
+}
+
+/// Certified build: identical to `Int` above but without `IntFmt` bound,
+/// which causes method resolution issues on the Ferrocene compiler.
+#[cfg(feature = "sonair_certified")]
+#[allow(dead_code)]
+pub trait Int:
+    MinInt
+    + ops::AddAssign
+    + ops::SubAssign
+    + ops::MulAssign
+    + ops::DivAssign
+    + ops::RemAssign
+    + ops::BitAndAssign
+    + ops::BitOrAssign
+    + ops::BitXorAssign
+    + ops::ShlAssign<i32>
+    + ops::ShlAssign<u32>
+    + ops::ShrAssign<u32>
+    + ops::ShrAssign<i32>
+    + ops::Add<Output = Self>
+    + ops::Sub<Output = Self>
+    + ops::Mul<Output = Self>
+    + ops::Div<Output = Self>
+    + ops::Rem<Output = Self>
+    + ops::Shl<i32, Output = Self>
+    + ops::Shl<u32, Output = Self>
+    + ops::Shr<i32, Output = Self>
+    + ops::Shr<u32, Output = Self>
+    + ops::BitXor<Output = Self>
+    + ops::BitAnd<Output = Self>
+    + cmp::Ord
+    + From<bool>
+    + CastFrom<i32>
+    + CastFrom<u16>
+    + CastFrom<u32>
+    + CastFrom<u8>
+    + CastFrom<usize>
+    + CastInto<i32>
+    + CastInto<u16>
+    + CastInto<u32>
+    + CastInto<u8>
+    + CastInto<usize>
+{
+    fn signed(self) -> OtherSign<Self::Unsigned>;
+    fn unsigned(self) -> Self::Unsigned;
+    fn from_unsigned(unsigned: Self::Unsigned) -> Self;
+    fn abs(self) -> Self;
+    fn unsigned_abs(self) -> Self::Unsigned;
+
+    fn from_bool(b: bool) -> Self;
+
+    /// Prevents the need for excessive conversions between signed and unsigned
+    fn logical_shr(self, other: u32) -> Self;
+
+    /// Absolute difference between two integers.
+    fn abs_diff(self, other: Self) -> Self::Unsigned;
+
     fn is_zero(self) -> bool;
     fn checked_add(self, other: Self) -> Option<Self>;
     fn checked_sub(self, other: Self) -> Option<Self>;
@@ -293,6 +373,7 @@ int_impl!(i128, u128);
 
 /// Trait for integers twice the bit width of another integer. This is implemented for all
 /// primitives except for `u8`, because there is not a smaller primitive.
+#[allow(dead_code)]
 pub trait DInt: MinInt {
     /// Integer that is half the bit width of the integer this trait is implemented for
     type H: HInt<D = Self>;
@@ -314,6 +395,7 @@ pub trait DInt: MinInt {
 
 /// Trait for integers half the bit width of another integer. This is implemented for all
 /// primitives except for `u128`, because it there is not a larger primitive.
+#[allow(dead_code)]
 pub trait HInt: Int {
     /// Integer that is double the bit width of the integer this trait is implemented for
     type D: DInt<H = Self> + MinInt;
@@ -392,6 +474,7 @@ impl_h_int!(
 );
 
 /// Trait to express (possibly lossy) casting of integers
+#[allow(dead_code)]
 pub trait CastInto<T: Copy>: Copy {
     /// By default, casts should be exact.
     #[track_caller]
@@ -404,6 +487,7 @@ pub trait CastInto<T: Copy>: Copy {
     fn cast_lossy(self) -> T;
 }
 
+#[allow(dead_code)]
 pub trait CastFrom<T: Copy>: Copy {
     /// By default, casts should be exact.
     #[track_caller]

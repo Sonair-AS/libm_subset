@@ -1,4 +1,4 @@
-#[cfg(f16_enabled)]
+#[cfg(all(f16_enabled, not(feature = "sonair_certified")))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn scalbnf16(x: f16, n: i32) -> f16 {
     super::generic::scalbn(x, n)
@@ -14,7 +14,7 @@ pub fn scalbn(x: f64, n: i32) -> f64 {
     super::generic::scalbn(x, n)
 }
 
-#[cfg(f128_enabled)]
+#[cfg(all(f128_enabled, not(feature = "sonair_certified")))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn scalbnf128(x: f128, n: i32) -> f128 {
     super::generic::scalbn(x, n)

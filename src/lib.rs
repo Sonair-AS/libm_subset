@@ -26,6 +26,7 @@
 mod libm_helper;
 mod math;
 
+#[allow(unused_imports)]
 use core::{f32, f64};
 
 pub use libm_helper::*;

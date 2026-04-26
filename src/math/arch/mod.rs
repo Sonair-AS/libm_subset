@@ -35,7 +35,6 @@ cfg_if! {
 
         #[cfg(feature = "sonair_certified")]
         pub use aarch64::{
-            sqrt,
             sqrtf,
         };
 

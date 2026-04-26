@@ -1,5 +1,5 @@
 /// The square root of `x` (f16).
-#[cfg(f16_enabled)]
+#[cfg(all(f16_enabled, not(feature = "sonair_certified")))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn sqrtf16(x: f16) -> f16 {
     select_implementation! {
@@ -28,6 +28,7 @@ pub fn sqrtf(x: f32) -> f32 {
 }
 
 /// The square root of `x` (f64).
+#[cfg(not(feature = "sonair_certified"))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn sqrt(x: f64) -> f64 {
     select_implementation! {
@@ -44,7 +45,7 @@ pub fn sqrt(x: f64) -> f64 {
 }
 
 /// The square root of `x` (f128).
-#[cfg(f128_enabled)]
+#[cfg(all(f128_enabled, not(feature = "sonair_certified")))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn sqrtf128(x: f128) -> f128 {
     return super::generic::sqrt(x);

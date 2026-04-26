@@ -361,7 +361,10 @@ mod hex_fmt {
 
     // Adapted from https://github.com/ericseppanen/hexfloat2/blob/a5c27932f0ff/src/format.rs
     #[cfg(not(feature = "compiler-builtins"))]
-    pub(super) fn fmt_any_hex<F: Float>(x: &F, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    pub(super) fn fmt_any_hex<F: Float>(x: &F, f: &mut fmt::Formatter<'_>) -> fmt::Result
+    where
+        F::Int: fmt::LowerHex,
+    {
         if x.is_sign_negative() {
             write!(f, "-")?;
         }
@@ -399,7 +402,10 @@ mod hex_fmt {
         unimplemented!()
     }
 
-    impl<F: Float> fmt::LowerHex for Hexf<F> {
+    impl<F: Float> fmt::LowerHex for Hexf<F>
+    where
+        F::Int: fmt::LowerHex,
+    {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             cfg_if! {
                 if #[cfg(feature = "compiler-builtins")] {
@@ -412,7 +418,10 @@ mod hex_fmt {
         }
     }
 
-    impl<F: Float> fmt::LowerHex for Hexf<(F, F)> {
+    impl<F: Float> fmt::LowerHex for Hexf<(F, F)>
+    where
+        F::Int: fmt::LowerHex,
+    {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             cfg_if! {
                 if #[cfg(feature = "compiler-builtins")] {
@@ -425,7 +434,10 @@ mod hex_fmt {
         }
     }
 
-    impl<F: Float> fmt::LowerHex for Hexf<(F, i32)> {
+    impl<F: Float> fmt::LowerHex for Hexf<(F, i32)>
+    where
+        F::Int: fmt::LowerHex,
+    {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             cfg_if! {
                 if #[cfg(feature = "compiler-builtins")] {

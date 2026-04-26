@@ -2,7 +2,7 @@
 ///
 /// Calculates the absolute value (magnitude) of the argument `x`,
 /// by direct manipulation of the bit representation of `x`.
-#[cfg(f16_enabled)]
+#[cfg(all(f16_enabled, not(feature = "sonair_certified")))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn fabsf16(x: f16) -> f16 {
     super::generic::fabs(x)
@@ -27,6 +27,7 @@ pub fn fabsf(x: f32) -> f32 {
 ///
 /// Calculates the absolute value (magnitude) of the argument `x`,
 /// by direct manipulation of the bit representation of `x`.
+#[cfg(not(feature = "sonair_certified"))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn fabs(x: f64) -> f64 {
     select_implementation! {
@@ -42,7 +43,7 @@ pub fn fabs(x: f64) -> f64 {
 ///
 /// Calculates the absolute value (magnitude) of the argument `x`,
 /// by direct manipulation of the bit representation of `x`.
-#[cfg(f128_enabled)]
+#[cfg(all(f128_enabled, not(feature = "sonair_certified")))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
 pub fn fabsf128(x: f128) -> f128 {
     super::generic::fabs(x)

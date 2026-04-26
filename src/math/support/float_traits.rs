@@ -1,15 +1,26 @@
 #![allow(unknown_lints)] // FIXME(msrv) we shouldn't need this
 
 use core::{mem, ops};
+#[cfg(not(feature = "sonair_certified"))]
+use core::fmt;
 
 use super::int_traits::{CastFrom, Int, MinInt};
 
+#[cfg(not(feature = "sonair_certified"))]
+pub trait FloatFmt: fmt::Debug {}
+#[cfg(not(feature = "sonair_certified"))]
+impl<T: fmt::Debug> FloatFmt for T {}
+
+#[cfg(feature = "sonair_certified")]
+pub trait FloatFmt {}
+#[cfg(feature = "sonair_certified")]
+impl<T> FloatFmt for T {}
+
 /// Trait for some basic operations on floats
-// #[allow(dead_code)]
 #[allow(dead_code)] // Some constants are only used with tests
 pub trait Float:
     Copy
-    // + fmt::Debug
+    + FloatFmt
     + PartialEq
     + PartialOrd
     + ops::AddAssign
@@ -360,6 +371,7 @@ float_impl!(
 /* FIXME(msrv): vendor some things that are not const stable at our MSRV */
 
 /// `f32::from_bits`
+#[allow(dead_code)]
 #[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
 pub const fn f32_from_bits(bits: u32) -> f32 {
     // SAFETY: POD cast with no preconditions
@@ -375,6 +387,7 @@ pub const fn f32_to_bits(x: f32) -> u32 {
 }
 
 /// `f64::from_bits`
+#[allow(dead_code)]
 #[allow(unnecessary_transmutes)] // lint appears in newer versions of Rust
 pub const fn f64_from_bits(bits: u64) -> f64 {
     // SAFETY: POD cast with no preconditions

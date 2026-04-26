@@ -171,6 +171,7 @@ mod cbrt;
 #[cfg(not(feature = "sonair_certified"))]
 mod cbrtf;
 mod ceil;
+#[cfg(not(feature = "sonair_certified"))]
 mod copysign;
 #[cfg(not(feature = "sonair_certified"))]
 mod cos;
@@ -183,6 +184,7 @@ mod coshf;
 mod erf;
 #[cfg(not(feature = "sonair_certified"))]
 mod erff;
+#[cfg(not(feature = "sonair_certified"))]
 mod exp;
 #[cfg(not(feature = "sonair_certified"))]
 mod exp10;
@@ -342,8 +344,13 @@ pub use self::atanhf::atanhf;
 pub use self::cbrt::cbrt;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::cbrtf::cbrtf;
-pub use self::ceil::{ceil, ceilf};
-pub use self::copysign::{copysign, copysignf};
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::ceil::ceil;
+pub use self::ceil::ceilf;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::copysign::copysign;
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::copysign::copysignf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::cos::cos;
 pub use self::cosf::cosf;
@@ -355,6 +362,7 @@ pub use self::coshf::coshf;
 pub use self::erf::{erf, erfc};
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::erff::{erfcf, erff};
+#[cfg(not(feature = "sonair_certified"))]
 pub use self::exp::exp;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::exp2::exp2;
@@ -369,7 +377,9 @@ pub use self::expf::expf;
 pub use self::expm1::expm1;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::expm1f::expm1f;
-pub use self::fabs::{fabs, fabsf};
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::fabs::fabs;
+pub use self::fabs::fabsf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::fdim::{fdim, fdimf};
 pub use self::floor::{floor, floorf};
@@ -453,7 +463,9 @@ pub use self::remquo::remquo;
 pub use self::remquof::remquof;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::rint::{rint, rintf};
-pub use self::round::{round, roundf};
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::round::round;
+pub use self::round::roundf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::roundeven::{roundeven, roundevenf};
 pub use self::scalbn::{scalbn, scalbnf};
@@ -468,7 +480,9 @@ pub use self::sinf::sinf;
 pub use self::sinh::sinh;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::sinhf::sinhf;
-pub use self::sqrt::{sqrt, sqrtf};
+#[cfg(not(feature = "sonair_certified"))]
+pub use self::sqrt::sqrt;
+pub use self::sqrt::sqrtf;
 #[cfg(not(feature = "sonair_certified"))]
 pub use self::tan::tan;
 pub use self::tanf::tanf;
@@ -484,7 +498,7 @@ pub use self::tgammaf::tgammaf;
 pub use self::trunc::{trunc, truncf};
 
 cfg_if! {
-    if #[cfg(f16_enabled)] {
+    if #[cfg(all(f16_enabled, not(feature = "sonair_certified")))] {
         // verify-sorted-start
         pub use self::ceil::ceilf16;
         pub use self::copysign::copysignf16;
@@ -510,7 +524,7 @@ cfg_if! {
 }
 
 cfg_if! {
-    if #[cfg(f128_enabled)] {
+    if #[cfg(all(f128_enabled, not(feature = "sonair_certified")))] {
         // verify-sorted-start
         pub use self::ceil::ceilf128;
         pub use self::copysign::copysignf128;

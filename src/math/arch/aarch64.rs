@@ -86,6 +86,7 @@ pub fn rintf16(mut x: f16) -> f16 {
     x
 }
 
+#[cfg(not(feature = "sonair_certified"))]
 pub fn sqrt(mut x: f64) -> f64 {
     // SAFETY: `fsqrt` is available with neon and has no side effects.
     unsafe {

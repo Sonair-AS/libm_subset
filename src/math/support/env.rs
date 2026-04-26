@@ -111,6 +111,7 @@ impl Status {
     }
 
     /// True if `INEXACT` is set.
+    #[allow(dead_code)]
     pub const fn inexact(self) -> bool {
         self.0 & Self::INEXACT.0 != 0
     }
@@ -129,6 +130,7 @@ impl Status {
         }
     }
 
+    #[allow(dead_code)]
     pub(crate) const fn with(self, rhs: Self) -> Self {
         Self(self.0 | rhs.0)
     }

@@ -24,6 +24,7 @@ pub use env::{FpResult, Round, Status};
 pub use float_traits::{DFloat, Float, HFloat, IntTy};
 #[cfg(feature = "sonair_certified")]
 pub use float_traits::{Float, IntTy};
+#[allow(unused_imports)]
 pub(crate) use float_traits::{f32_from_bits, f64_from_bits};
 #[cfg(not(feature = "sonair_certified"))]
 #[cfg(any(test, feature = "unstable-public-internals"))]
@@ -37,6 +38,13 @@ pub use hex_float::hf128;
 #[allow(unused_imports)]
 #[cfg(not(feature = "sonair_certified"))]
 pub use hex_float::{hf32, hf64};
+#[allow(unused_imports)]
+pub use float_traits::FloatFmt;
+#[allow(unused_imports)]
+#[cfg(not(feature = "sonair_certified"))]
+pub use int_traits::{CastFrom, CastInto, DInt, HInt, Int, IntFmt, MinInt};
+#[allow(unused_imports)]
+#[cfg(feature = "sonair_certified")]
 pub use int_traits::{CastFrom, CastInto, DInt, HInt, Int, MinInt};
 
 /// Hint to the compiler that the current path is cold.
