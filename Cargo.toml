@@ -47,4 +47,6 @@ no-panic = "0.1.35"
 unexpected_cfgs = { level = "warn", check-cfg = [
   # compiler-builtins sets this feature, but we use it in `libm`
   'cfg(feature, values("compiler-builtins"))',
+  # Set by cargo-llvm-cov on nightly to enable #[coverage(off)]
+  'cfg(coverage_nightly)',
 ] }

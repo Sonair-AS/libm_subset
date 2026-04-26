@@ -1,4 +1,4 @@
-#![cfg_attr(coverage_nightly, coverage(off))]
+#![cfg_attr(coverage_nightly, coverage(off))] // Thin wrapper: delegates to arch intrinsic (aarch64/sse2) or generic::sqrt
 /// The square root of `x` (f16).
 #[cfg(all(f16_enabled, not(feature = "sonair_certified")))]
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]

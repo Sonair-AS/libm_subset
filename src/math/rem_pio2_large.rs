@@ -1,4 +1,4 @@
-#![allow(unused_unsafe)]
+#![allow(unused_unsafe)] // The i!() macro wraps array access in unsafe for release builds; in debug builds the unsafe is unused
 /* origin: FreeBSD /usr/src/lib/msun/src/k_rem_pio2.c */
 /*
  * ====================================================
