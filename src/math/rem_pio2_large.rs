@@ -222,6 +222,8 @@ const PIO2: [f64; 8] = [
 /// more accurately, = 0 mod 8 ). Thus the number of operations are
 /// independent of the exponent of the input.
 #[cfg_attr(assert_no_panic, no_panic::no_panic)]
+#[allow(clippy::cognitive_complexity)] // Upstream port from FreeBSD k_rem_pio2.c; splitting would obscure the algorithm
+#[allow(clippy::too_many_lines)] // Upstream port from FreeBSD k_rem_pio2.c; preserving structure for traceability
 pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> i32 {
     // Inline assembly would cause `no_panic` to fail
     // on the callers of this function. As a workaround, avoid inlining `floor` here
